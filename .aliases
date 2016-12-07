@@ -58,5 +58,5 @@ fi
 
 # Get private aliases file if it exists
 if [ -f ~/.dotfiles/private/.aliases ]; then
-    . ~/.dotfiles/private/.aliases
+	source ~/.dotfiles/private/.aliases
 fi

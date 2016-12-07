@@ -1,4 +1,4 @@
 # Pull from .bashrc instead
 if [ -f ~/.bashrc ]; then
-   source ~/.bashrc
+	source ~/.bashrc
 fi

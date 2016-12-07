@@ -1,6 +1,6 @@
 # Get main shared profile
 if [ -f ~/.profile ]; then
-    source ~/.profile
+	source ~/.profile
 fi
 
 # Path to your oh-my-zsh installation.
@@ -55,10 +55,10 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 if [[ $os == "Linux" ]]; then
-    plugins=(git node npm gulp)
+	plugins=(git node npm gulp)
 fi
 if [[ $os == "Darwin" ]]; then
-    plugins=(git node npm gulp brew brew-cask)
+	plugins=(git node npm gulp brew brew-cask)
 fi
 
 # User configuration
