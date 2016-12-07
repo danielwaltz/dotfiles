@@ -1,0 +1,23 @@
+# Update all the things
+alias update="echo 'General & System Packages'; pacaur -Syu; echo 'Atom Packages'; apm update"
+
+# Misc quick directory access
+alias danieldir="cd ~/Projects/personal/danielwaltz"
+alias theserverdir="cd ~/Projects/personal/serverforgamesandstuff"
+
+# Misc quick SSH access
+alias theserverssh="ssh theserver@serverforgamesandstuff.com"
+alias dinkerssh="ssh dinker@dinker.io"
+
+# Start http server in current directory
+alias serve="http-server -o"
+
+# Quickly run gulp commands
+alias gw="gulp watch"
+alias gu="gulp uploadsync"
+
+# Misc system helpers
+alias open="xdg-open"
+
+# Misc
+alias fixwf="mv ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe.cpy ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe"
