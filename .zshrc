@@ -54,10 +54,10 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-if [[ uname == "Linux" ]]; then
+if [[ $os == "Linux" ]]; then
     plugins=(git node npm gulp)
 fi
-if [[ uname == "Darwin" ]]; then
+if [[ $os == "Darwin" ]]; then
     plugins=(git node npm gulp brew brew-cask)
 fi
 
