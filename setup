@@ -1,24 +1,19 @@
-files=(.zshrc .bashrc .aliases .npm)
+files=(.profile .zshrc .bashrc .bash_profile .aliases)
 
-for file in ${files[@]}
-do
-	if [ -L ~/$file ];
-	then
+for file in ${files[@]}; do
+	if [ -L ~/$file ]; then
 		# File symlinked to dotfiles
 		echo "$file already symlinked"
 	else
-		if [ -f ~/$file ]
-		then
+		if [ -f ~/$file ]; then
 			# File exists in home
 			echo "$file already exists in home directory"
 			echo "(1) Remove $file and create symlink to ~/.dotfiles/$file"
 			echo "(2) Move $file to ~/.dotfiles/$file and create symlink"
 			read -p "" -r
-			if [[ $REPLY =~ ^[1]$ ]]
-			then
+			if [[ $REPLY =~ ^[1]$ ]]; then
 				# Option 1
-				if [ -f ~/.dotfiles/$file ]
-				then
+				if [ -f ~/.dotfiles/$file ]; then
 					mv ~/$file ~/$file.old
 					ln -s ~/.dotfiles/$file ~/$file
 					echo "$file renamed to $file.old and ~/.dotfiles/$file symlinked"
@@ -27,15 +22,12 @@ do
 					ln -s ~/.dotfiles/$file ~/$file
 					echo "~/.dotfiles/$file did not exist, moved instead"
 				fi
-			elif [[ $REPLY =~ ^[2]$ ]]
-			then
+			elif [[ $REPLY =~ ^[2]$ ]]; then
 				# Option 2
-				if [ -f ~/.dotfiles/$file ]
-				then
+				if [ -f ~/.dotfiles/$file ]; then
 					read -p "$file already exists in ~/.dotfiles, overwrite? " -n 1 -r
 					echo # newline
-					if [[ $REPLY =~ ^[Yy]$ ]]
-					then
+					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						mv ~/$file ~/.dotfiles/$file
 						ln -s ~/.dotfiles/$file ~/$file
 						echo "File moved and symlinked"
@@ -50,8 +42,7 @@ do
 			fi
 		else
 			# File not in home
-			if [ -f ~/.dotfiles/$file ]
-			then
+			if [ -f ~/.dotfiles/$file ]; then
 				ln -s ~/.dotfiles/$file ~/$file
 				echo "$file not found in home directory, created symlink to ~/.dotfiles/$file"
 			else
