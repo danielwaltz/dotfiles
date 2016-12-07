@@ -7,8 +7,8 @@ alias gw="gulp watch"
 alias gu="gulp uploadsync"
 
 # Git stuff
-alias gf="git fetch --all"
-alias gl='git log --graph --all --pretty=format:"%C(red bold)%h%Creset -%C(auto)%d%Creset %s%Creset - %C(green bold)%an %C(green dim)(%cr)"'
+alias gitf="git fetch --all"
+alias gitl="git log --graph"
 
 # Detect which ls flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU 'ls'
