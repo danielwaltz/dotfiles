@@ -1,4 +1,4 @@
-files=(.profile .zshrc .bashrc .bash_profile .aliases)
+files=(.profile .zshrc .bashrc .bash_profile .hushlogin .aliases)
 
 for file in ${files[@]}; do
 	if [ -L ~/$file ]; then
