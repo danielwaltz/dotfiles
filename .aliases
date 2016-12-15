@@ -5,6 +5,9 @@ alias dotfiles="atom ~/.dotfiles"
 alias serve="http-server -o"
 alias servep="php -S localhost:9000"
 
+# Quick port tunneling
+dbtunnel () { ssh -L 3306:127.0.0.1:3306 $@ -N }
+
 # Quickly run gulp commands
 alias gw="gulp watch"
 alias gu="gulp uploadsync"
