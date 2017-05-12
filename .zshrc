@@ -35,7 +35,7 @@ ZSH_THEME="kolo"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -55,10 +55,10 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 if [[ $os == "Linux" ]]; then
-	plugins=(git node npm gulp)
+	plugins=(git node npm yarn gulp docker systemd zsh-autosuggestions)
 fi
 if [[ $os == "Darwin" ]]; then
-	plugins=(git node npm gulp brew brew-cask)
+	plugins=(git node npm yarn gulp brew brew-cask)
 fi
 
 # User configuration
