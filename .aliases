@@ -13,8 +13,10 @@ alias gw="gulp watch"
 alias gu="gulp uploadsync"
 
 # Git stuff
+alias gits="git status --short"
+alias gitd="git diff"
 alias gitf="git fetch --all"
-alias gitl="git log --graph"
+alias gitl="tig"
 
 # Detect which ls flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU 'ls'
