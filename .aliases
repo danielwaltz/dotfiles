@@ -38,7 +38,7 @@ if [[ $os == "Linux" ]]; then
 	alias update="echo 'General & System Packages'; pacaur -Syu; echo 'Atom Packages'; apm update"
 
 	# Misc system helpers
-	alias open="xdg-open"
+	alias open="gio open"
 
 	# Misc
 	alias fixwf="mv ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe.cpy ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe"
