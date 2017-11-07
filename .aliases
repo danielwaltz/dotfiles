@@ -1,10 +1,6 @@
 # Edit dotfiles
 alias dotfiles="atom ~/.dotfiles"
 
-# Start servers in current directory
-alias serve="http-server -o"
-alias servep="php -S localhost:9000"
-
 # Quick port tunneling
 dbtunnel () { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
 
@@ -42,8 +38,10 @@ if [[ $os == "Linux" ]]; then
 	# Misc system helpers
 	alias open="gio open"
 
-	# Misc
-	alias fixwf="mv ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe.cpy ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/steamapps/common/Warframe/Tools/Launcher.exe"
+	# Open chrome in borderless window
+	chromeapp() {
+		chromium --app="$1"
+	}
 fi
 
 # MacOS specific commands
