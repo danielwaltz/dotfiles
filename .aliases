@@ -14,6 +14,11 @@ alias gitd="git diff"
 alias gitf="git fetch --all"
 alias gitl="tig"
 
+# Docker stuff
+alias dcom="docker-compose"
+alias dcprune="docker container prune"
+alias diprune="docker image prune"
+
 # Detect which ls flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU 'ls'
 	colorflag="--color"
