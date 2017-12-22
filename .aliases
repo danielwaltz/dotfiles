@@ -16,8 +16,6 @@ alias gitl="tig"
 
 # Docker stuff
 alias dcom="docker-compose"
-alias dcprune="docker container prune"
-alias diprune="docker image prune"
 
 # Prettier
 alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin/prettier.js --write --single-quote --trailing-comma es5"
