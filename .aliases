@@ -6,7 +6,6 @@ dbtunnel () { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
 
 # Quickly run gulp commands
 alias gw="gulp watch"
-alias gu="gulp uploadsync"
 
 # Git stuff
 alias gits="git status --short"
@@ -19,22 +18,6 @@ alias dcom="docker-compose"
 
 # Prettier
 alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin/prettier.js --write --single-quote --trailing-comma es5"
-
-# Detect which ls flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU 'ls'
-	colorflag="--color"
-else # OS X ls
-	colorflag="-G"
-fi
-
-# Always use color output for ls
-alias ls="command ls ${colorflag}"
-
-# List all files colorized in long format, including dot files
-alias la="ls -laF ${colorflag}"
-
-# List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
 # Arch linux specific commands
 if [[ $os == "Linux" ]]; then
@@ -60,9 +43,6 @@ if [[ $os == "Darwin" ]]; then
 
 	# Add dock separator
 	alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}'; killall Dock"
-
-	# Change directory to last open finder window
-	alias cdf="cd \"\`osascript -e 'tell app \"Finder\" to POSIX path of (insertion location as alias)'\`\""
 
 	# Recursively delete .DS_Store files
 	alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
