@@ -1,5 +1,5 @@
 # Edit dotfiles
-alias dotfiles="atom ~/.dotfiles"
+alias dotfiles="$EDITOR ~/.dotfiles"
 
 # Quick source profile
 alias src="source ~/.zshrc"
