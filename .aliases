@@ -23,7 +23,7 @@ alias dcom="docker-compose"
 alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin/prettier.js --write --single-quote --trailing-comma es5"
 
 # Arch linux specific commands
-if [[ $os == "Linux" ]]; then
+if [[ $OS == "Linux" ]]; then
 	# Update all the things
 	alias update="echo 'General & System Packages'; pacaur -Syu; echo 'Atom Packages'; apm update"
 
@@ -37,7 +37,7 @@ if [[ $os == "Linux" ]]; then
 fi
 
 # MacOS specific commands
-if [[ $os == "Darwin" ]]; then
+if [[ $OS == "Darwin" ]]; then
 	# Update all the things
 	alias update="echo 'Brew Formulas'; brew update; brew upgrade; echo 'Yarn Packages'; yarn global upgrade; echo 'Atom Packages'; apm update; echo 'Mac App Store'; mas upgrade"
 

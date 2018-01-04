@@ -1,8 +1,8 @@
 # Define operating system
-os="`uname`"
+OS="`uname`"
 
 # Powerline
-if [[ $os == "Linux" ]]; then
+if [[ $OS == "Linux" ]]; then
 	. /usr/lib/python3.6/site-packages/powerline/bindings/zsh/powerline.zsh
 fi
 
