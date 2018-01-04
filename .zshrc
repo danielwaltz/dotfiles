@@ -58,7 +58,7 @@ if [[ $os == "Linux" ]]; then
 	plugins=(git node npm yarn gulp docker systemd zsh-autosuggestions)
 fi
 if [[ $os == "Darwin" ]]; then
-	plugins=(git node npm yarn gulp brew brew-cask)
+	plugins=(git node npm yarn gulp brew brew-cask docker zsh-autosuggestions)
 fi
 
 # User configuration
