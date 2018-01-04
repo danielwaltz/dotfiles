@@ -63,10 +63,10 @@ ZSH_THEME="gitster"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-if [[ $os == "Linux" ]]; then
+if [[ $OS == "Linux" ]]; then
 	plugins=(common-aliases git tig node npm yarn tmux docker web-search zsh-autosuggestions systemd)
 fi
-if [[ $os == "Darwin" ]]; then
+if [[ $OS == "Darwin" ]]; then
 	plugins=(common-aliases git tig node npm yarn tmux docker web-search zsh-autosuggestions osx brew brew-cask)
 fi
 
