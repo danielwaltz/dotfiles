@@ -53,7 +53,7 @@ fi
 # MacOS specific commands
 if [[ $os == "Darwin" ]]; then
 	# Update all the things
-	alias update="echo 'Brew Formulas'; brew update; brew upgrade; echo 'Node Packages'; npm update -g; echo 'Atom Packages'; apm update; echo 'Mac App Store'; mas upgrade"
+	alias update="echo 'Brew Formulas'; brew update; brew upgrade; echo 'Yarn Packages'; yarn global upgrade; echo 'Atom Packages'; apm update; echo 'Mac App Store'; mas upgrade"
 
 	# Flush dns cache
 	alias flushcache="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo 'DNS Cache Cleared'"
