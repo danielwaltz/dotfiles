@@ -1,4 +1,5 @@
-# Define operating system
+# Define envvars
+EDITOR="code"
 OS="`uname`"
 
 # Powerline
