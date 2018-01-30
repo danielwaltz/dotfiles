@@ -41,6 +41,9 @@ if [[ $OS == "Darwin" ]]; then
 	# Add dock separator
 	alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}'; killall Dock"
 
+	# Start chrome with debugger
+	alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
+
 	# Recursively delete .DS_Store files
 	alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 fi
