@@ -14,7 +14,7 @@ alias gw="gulp watch"
 alias dcom="docker-compose"
 
 # Prettier
-alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin/prettier.js --write --single-quote --trailing-comma es5"
+alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin-prettier.js --write --single-quote --trailing-comma es5"
 
 # Arch linux specific commands
 if [[ $OS == "Linux" ]]; then
