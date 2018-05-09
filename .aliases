@@ -12,6 +12,7 @@ alias gw="gulp watch"
 
 # Docker stuff
 alias dcom="docker-compose"
+alias dprune="docker system prune --volumes -f"
 
 # Prettier
 alias prettyall="find ./src/**/*.js | xargs ./node_modules/prettier/bin-prettier.js --write"
