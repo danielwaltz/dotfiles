@@ -12,60 +12,62 @@ alias dcom="docker-compose"
 alias dprune="docker system prune --volumes -f"
 
 # Prettier
-alias prettyall="find ./src/**/*.js | xargs ./node_modules/.bin/prettier --write"
+prettyall() {
+    find -E ${1:-src/} -regex '.*\.(js|jsx|ts|vue|css|scss|json|md|yaml)' | xargs ./node_modules/.bin/prettier --write
+}
 
 # MacOS specific commands
 if [[ $OS == "Darwin" ]]; then
-	# Update all the things
-	update() {
-		echo 'Brew Formulas'
-		brew update && brew upgrade && brew cask upgrade
+    # Update all the things
+    update() {
+        echo 'Brew Formulas'
+        brew update && brew upgrade && brew cask upgrade
 
-		echo 'Yarn Packages'
-		yarn global upgrade --latest
+        echo 'Yarn Packages'
+        yarn global upgrade --latest
 
-		echo 'Mac App Store'
-		mas upgrade
-	}
+        echo 'Mac App Store'
+        mas upgrade
+    }
 
-	# Flush dns cache
-	flushcache() {
-		sudo dscacheutil -flushcache
-		sudo killall -HUP mDNSResponder
-		echo 'DNS Cache Cleared'
-	}
+    # Flush dns cache
+    flushcache() {
+        sudo dscacheutil -flushcache
+        sudo killall -HUP mDNSResponder
+        echo 'DNS Cache Cleared'
+    }
 
-	# Add dock separator
-	alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
+    # Add dock separator
+    alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
 
-	# Start chrome with debugger
-	alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
+    # Start chrome with debugger
+    alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
 
-	# Recursively delete .DS_Store files
-	alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
+    # Recursively delete .DS_Store files
+    alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 fi
 
 # Arch Linux specific commands
 if [[ $OS == "Linux" ]]; then
-	# Update all the things
-	update() {
-		echo 'General & System Packages'
-		pacaur -Syu
+    # Update all the things
+    update() {
+        echo 'General & System Packages'
+        pacaur -Syu
 
-		echo 'Atom Packages'
-		apm update
-	}
+        echo 'Atom Packages'
+        apm update
+    }
 
-	# Misc system helpers
-	alias open="gio open"
+    # Misc system helpers
+    alias open="gio open"
 
-	# Open chrome in borderless window
-	chromeapp() {
-		chromium --app="$1"
-	}
+    # Open chrome in borderless window
+    chromeapp() {
+        chromium --app="$1"
+    }
 fi
 
 # Get private aliases file if it exists
 if [ -f ~/.dotfiles/private/.aliases ]; then
-	source ~/.dotfiles/private/.aliases
+    source ~/.dotfiles/private/.aliases
 fi
