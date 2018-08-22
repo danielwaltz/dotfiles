@@ -5,10 +5,7 @@ alias dotfiles="$EDITOR ~/.dotfiles"
 alias src="source ~/.zshrc"
 
 # Quick port tunneling
-dbtunnel () { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
-
-# Gulp stuff
-alias gw="gulp watch"
+dbtunnel() { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
 
 # Docker stuff
 alias dcom="docker-compose"
@@ -17,10 +14,47 @@ alias dprune="docker system prune --volumes -f"
 # Prettier
 alias prettyall="find ./src/**/*.js | xargs ./node_modules/.bin/prettier --write"
 
-# Arch linux specific commands
+# MacOS specific commands
+if [[ $OS == "Darwin" ]]; then
+	# Update all the things
+	update() {
+		echo 'Brew Formulas'
+		brew update && brew upgrade && brew cask upgrade
+
+		echo 'Yarn Packages'
+		yarn global upgrade --latest
+
+		echo 'Mac App Store'
+		mas upgrade
+	}
+
+	# Flush dns cache
+	flushcache() {
+		sudo dscacheutil -flushcache
+		sudo killall -HUP mDNSResponder
+		echo 'DNS Cache Cleared'
+	}
+
+	# Add dock separator
+	alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
+
+	# Start chrome with debugger
+	alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
+
+	# Recursively delete .DS_Store files
+	alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
+fi
+
+# Arch Linux specific commands
 if [[ $OS == "Linux" ]]; then
 	# Update all the things
-	alias update="echo 'General & System Packages'; pacaur -Syu; echo 'Atom Packages'; apm update"
+	update() {
+		echo 'General & System Packages'
+		pacaur -Syu
+
+		echo 'Atom Packages'
+		apm update
+	}
 
 	# Misc system helpers
 	alias open="gio open"
@@ -29,24 +63,6 @@ if [[ $OS == "Linux" ]]; then
 	chromeapp() {
 		chromium --app="$1"
 	}
-fi
-
-# MacOS specific commands
-if [[ $OS == "Darwin" ]]; then
-	# Update all the things
-	alias update="echo 'Brew Formulas'; brew update; brew upgrade; brew cask upgrade; echo 'Yarn Packages'; yarn global upgrade; echo 'Atom Packages'; apm update; echo 'Mac App Store'; mas upgrade"
-
-	# Flush dns cache
-	alias flushcache="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; echo 'DNS Cache Cleared'"
-
-	# Add dock separator
-	alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}'; killall Dock"
-
-	# Start chrome with debugger
-	alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
-
-	# Recursively delete .DS_Store files
-	alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 fi
 
 # Get private aliases file if it exists
