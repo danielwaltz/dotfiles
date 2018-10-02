@@ -63,12 +63,25 @@ ZSH_THEME="gitster"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+# THEMES
+# gitster
+# https://github.com/shashankmehta/dotfiles/blob/master/thesetup/zsh/.oh-my-zsh/custom/themes/gitster.zsh-theme
+
+# PLUGINS
+# zsh-nvm
+# git clone https://github.com/lukechilds/zsh-nvm ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-nvm
+# zsh-autosuggestions
+# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
 if [[ $OS == "Darwin" ]]; then
-	plugins=(common-aliases git tig history nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions osx brew brew-cask)
+	plugins=(common-aliases git tig history zsh-nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions osx brew brew-cask)
 fi
 if [[ $OS == "Linux" ]]; then
-	plugins=(common-aliases git tig history nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions systemd)
+	plugins=(common-aliases git tig history zsh-nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions systemd)
 fi
+
+export NVM_AUTO_USE=true
 
 source $ZSH/oh-my-zsh.sh
 
