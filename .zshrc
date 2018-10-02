@@ -64,10 +64,10 @@ ZSH_THEME="gitster"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 if [[ $OS == "Darwin" ]]; then
-	plugins=(common-aliases git tig history node npm yarn tmux docker docker-compose web-search zsh-autosuggestions osx brew brew-cask)
+	plugins=(common-aliases git tig history nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions osx brew brew-cask)
 fi
 if [[ $OS == "Linux" ]]; then
-	plugins=(common-aliases git tig history node npm yarn tmux docker docker-compose web-search zsh-autosuggestions systemd)
+	plugins=(common-aliases git tig history nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions systemd)
 fi
 
 source $ZSH/oh-my-zsh.sh
