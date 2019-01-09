@@ -75,10 +75,10 @@ ZSH_THEME="gitster"
 # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 if [[ $OS == "Darwin" ]]; then
-	plugins=(common-aliases git tig history zsh-nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions osx brew brew-cask)
+	plugins=(common-aliases git git-auto-fetch yarn npm npx docker docker-compose zsh-autosuggestions zsh-nvm osx brew brew-cask)
 fi
 if [[ $OS == "Linux" ]]; then
-	plugins=(common-aliases git tig history zsh-nvm node yarn npm tmux docker docker-compose web-search zsh-autosuggestions systemd)
+	plugins=(common-aliases git git-auto-fetch yarn npm npx docker docker-compose zsh-autosuggestions zsh-nvm systemd)
 fi
 
 export NVM_AUTO_USE=true
