@@ -72,7 +72,7 @@ ZSH_THEME="gitster"
 # zsh-nvm
 # git clone https://github.com/lukechilds/zsh-nvm ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-nvm
 # zsh-autosuggestions
-# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+# brew install zsh-autosuggestions
 
 if [[ $OS == "Darwin" ]]; then
 	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose zsh-autosuggestions zsh-nvm osx brew brew-cask)
@@ -84,6 +84,8 @@ fi
 export NVM_AUTO_USE=true
 
 source $ZSH/oh-my-zsh.sh
+
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # User configuration
 
