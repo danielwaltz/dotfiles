@@ -23,7 +23,7 @@ if [[ $OS == "Darwin" ]]; then
         brew update && brew upgrade && brew cask upgrade
 
         echo '\e[32m✓ Node'
-        nvm install node && npm i -g yarn@latest
+        nvm install node && npm i -g npm@latest yarn@latest
 
         echo '\e[32m✓ Yarn'
         yarn global upgrade --latest
@@ -55,9 +55,6 @@ if [[ $OS == "Linux" ]]; then
     update() {
         echo 'General & System Packages'
         pacaur -Syu
-
-        echo 'Atom Packages'
-        apm update
     }
 
     # Misc system helpers
