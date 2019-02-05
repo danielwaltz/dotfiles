@@ -23,9 +23,11 @@ if [[ $OS == "Darwin" ]]; then
         brew update && brew upgrade && brew cask upgrade
 
         echo '\e[32m\ue71e Node'
-        nvm install node && npm i -g npm@latest yarn@latest && yarn global upgrade --latest
+        nvm install node &&
+        npm i -g npm@latest yarn@latest &&
+        yarn --silent global upgrade --latest
 
-        echo '\e[32m\ue711 MAS'
+        echo '\e[32m\ue713 MAS'
         mas upgrade
     }
 
