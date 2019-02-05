@@ -19,16 +19,13 @@ prettyall() {
 if [[ $OS == "Darwin" ]]; then
     # Update all the things
     update() {
-        echo '\e[32m✓ Brew'
+        echo '\e[32m\uf0fc Brew'
         brew update && brew upgrade && brew cask upgrade
 
-        echo '\e[32m✓ Node'
-        nvm install node && npm i -g npm@latest yarn@latest
+        echo '\e[32m\ue71e Node'
+        nvm install node && npm i -g npm@latest yarn@latest && yarn global upgrade --latest
 
-        echo '\e[32m✓ Yarn'
-        yarn global upgrade --latest
-
-        echo '\e[32m✓ MAS'
+        echo '\e[32m\ue711 MAS'
         mas upgrade
     }
 
