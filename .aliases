@@ -10,10 +10,16 @@ dbtunnel() { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
 # Docker stuff
 alias dprune="docker system prune --volumes -f"
 
+# Https server
+alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj '/CN=localhost' && npx http-server -S -p 5000 ."
+
 # Prettier
 prettyall() {
     find -E ${1:-src/} -regex '.*\.(js|jsx|ts|vue|css|scss|graphql|gql|json|md|yaml)' | xargs ./node_modules/.bin/prettier --write
 }
+
+# Quality of life
+alias c="clear"
 
 # MacOS specific commands
 if [[ $OS == "Darwin" ]]; then
