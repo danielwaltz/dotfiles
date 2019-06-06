@@ -12,7 +12,7 @@ alias dprune="docker system prune --volumes -f"
 
 # Prettier
 prettyall() {
-    find -E ${1:-src/} -regex '.*\.(js|jsx|ts|vue|css|scss|json|md|yaml)' | xargs ./node_modules/.bin/prettier --write
+    find -E ${1:-src/} -regex '.*\.(js|jsx|ts|vue|css|scss|graphql|gql|json|md|yaml)' | xargs ./node_modules/.bin/prettier --write
 }
 
 # MacOS specific commands
