@@ -15,7 +15,18 @@ alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -k
 
 # Prettier
 prettyall() {
-    find -E ${1:-src/} -regex '.*\.(js|jsx|ts|vue|css|scss|graphql|gql|json|md|yaml)' | xargs ./node_modules/.bin/prettier --write
+    DIR="${1:-.}"
+
+    EXCLUDE_DIRS="node_modules,vendor,build,dist,coverage"
+
+    # Prefer using local prettier bin if available
+    if [ -f ./node_modules/.bin/prettier ]; then
+        PRETTIER_BIN="./node_modules/.bin/prettier"
+    else
+        PRETTIER_BIN="prettier"
+    fi
+
+    $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
 }
 
 # Quality of life
