@@ -75,10 +75,10 @@ ZSH_THEME="gitster"
 # brew install zsh-autosuggestions
 
 if [[ $OS == "Darwin" ]]; then
-	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose zsh-autosuggestions zsh-nvm osx brew brew-cask)
+	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose osx brew)
 fi
 if [[ $OS == "Linux" ]]; then
-	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose zsh-autosuggestions zsh-nvm systemd)
+	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose systemd)
 fi
 
 export NVM_AUTO_USE=true
