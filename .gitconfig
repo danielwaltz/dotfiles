@@ -1,0 +1,7 @@
+[user]
+	name = Daniel Waltz
+	email = danielbwaltz@gmail.com
+[core]
+	editor = code --wait --new-window
+[fetch]
+	prune = true
