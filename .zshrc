@@ -1,7 +1,5 @@
 # Get main shared profile
-if [ -f ~/.profile ]; then
-	source ~/.profile
-fi
+[ -f ~/.profile ] && source ~/.profile
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
