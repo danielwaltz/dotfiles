@@ -69,10 +69,8 @@ ZSH_THEME="gitster"
 # https://github.com/shashankmehta/dotfiles/blob/master/thesetup/zsh/.oh-my-zsh/custom/themes/gitster.zsh-theme
 
 # PLUGINS
-# zsh-nvm
 # git clone https://github.com/lukechilds/zsh-nvm ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-nvm
-# zsh-autosuggestions
-# brew install zsh-autosuggestions
+# brew install zsh-autosuggestions zsh-syntax-highlighting
 
 if [[ $OS == "Darwin" ]]; then
 	plugins=(common-aliases git git-auto-fetch yarn npm docker docker-compose osx brew)
@@ -86,6 +84,7 @@ export NVM_AUTO_USE=true
 source $ZSH/oh-my-zsh.sh
 
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 
