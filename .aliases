@@ -13,6 +13,14 @@ alias dprune="docker system prune --volumes -f"
 # Https server
 alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj '/CN=localhost' && npx http-server -S -p 5000 ."
 
+# Preflight
+preflight() {
+    dco exec backend rspec
+    dco exec backend rubocop
+    dco exec frontend yarn lint
+    dco exec frontend yarn test:unit
+}
+
 # Prettier
 prettyall() {
     DIR="${1:-.}"
