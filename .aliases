@@ -15,10 +15,10 @@ alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -k
 
 # Preflight
 preflight() {
-    dco exec backend rspec
-    dco exec backend rubocop
-    dco exec frontend yarn lint
-    dco exec frontend yarn test:unit
+    docker-compose exec backend rspec
+    docker-compose exec backend rubocop
+    docker-compose exec frontend yarn lint
+    docker-compose exec frontend yarn test:unit
 }
 
 # Prettier
