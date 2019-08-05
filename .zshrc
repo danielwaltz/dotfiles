@@ -77,6 +77,7 @@ if [[ $OS == "Linux" ]]; then
 	plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose zsh-nvm systemd)
 fi
 
+export NVM_LAZY_LOAD=true
 export NVM_AUTO_USE=true
 
 source $ZSH/oh-my-zsh.sh
