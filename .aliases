@@ -50,7 +50,7 @@ if [[ $OS == "Darwin" ]]; then
         echo '\e[32m\ue71e Node'
         nvm install node &&
         npm i -g npm@latest yarn@latest &&
-        ygu --latest
+        yarn global upgrade --latest
 
         echo '\e[32m\ue713 Mac'
         mas upgrade
@@ -61,7 +61,7 @@ if [[ $OS == "Darwin" ]]; then
         brew cleanup
 
         echo '\e[32m\ue71e Node'
-        ycc
+        yarn cache clean
 
         echo '\e[32m\ue713 Mac'
         dsdestroy

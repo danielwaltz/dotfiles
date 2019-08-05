@@ -22,7 +22,7 @@ for file in ${files[@]}; do
 			if [[ $REPLY =~ ^[1]$ ]]; then
 				# Option 1
 				if [ -f ~/.dotfiles/$file ]; then
-		mv ~/$file ~/$file.old
+					mv ~/$file ~/$file.old
 					ln -s ~/.dotfiles/$file ~/$file
 					echo "$file renamed to $file.old and ~/.dotfiles/$file symlinked"
 				else
