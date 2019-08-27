@@ -24,6 +24,9 @@ fi
 export NVM_LAZY_LOAD=true
 export NVM_AUTO_USE=true
 
+DISABLE_UPDATE_PROMPT=true
+UPDATE_ZSH_DAYS=7
+
 source $ZSH/oh-my-zsh.sh
 
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
