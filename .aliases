@@ -56,6 +56,9 @@ if [[ $OS == "Darwin" ]]; then
         mas upgrade
     }
 
+    # Recursively delete .DS_Store files
+    alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
+
     clean() {
         echo '\e[32m\uf0fc Brew'
         brew cleanup
@@ -79,9 +82,6 @@ if [[ $OS == "Darwin" ]]; then
 
     # Start chrome with debugger
     alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
-
-    # Recursively delete .DS_Store files
-    alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 fi
 
 # Arch Linux specific commands
@@ -101,7 +101,4 @@ if [[ $OS == "Linux" ]]; then
     }
 fi
 
-# Get private aliases file if it exists
-if [ -f ~/.dotfiles/private/.aliases ]; then
-    source ~/.dotfiles/private/.aliases
-fi
+[ -f ~/.dotfiles/private/.aliases ] && source ~/.dotfiles/private/.aliases
