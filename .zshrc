@@ -14,11 +14,11 @@ export ZSH=~/.oh-my-zsh
 ZSH_THEME="gitster"
 
 if [[ $OS == "Darwin" ]]; then
-	plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose zsh-nvm osx brew)
+  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose zsh-nvm osx brew)
 fi
 
 if [[ $OS == "Linux" ]]; then
-	plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose zsh-nvm systemd)
+  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose zsh-nvm systemd)
 fi
 
 export NVM_LAZY_LOAD=true
