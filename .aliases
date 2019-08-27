@@ -15,26 +15,26 @@ alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -k
 
 # Preflight
 preflight() {
-    docker-compose exec backend rspec
-    docker-compose exec backend rubocop
-    docker-compose exec frontend yarn lint
-    docker-compose exec frontend yarn test:unit
+  docker-compose exec backend rspec
+  docker-compose exec backend rubocop
+  docker-compose exec frontend yarn lint
+  docker-compose exec frontend yarn test:unit
 }
 
 # Prettier
 prettyall() {
-    DIR="${1:-.}"
+  DIR="${1:-.}"
 
-    EXCLUDE_DIRS="node_modules,vendor,build,dist,coverage"
+  EXCLUDE_DIRS="node_modules,vendor,build,dist,coverage"
 
-    # Prefer using local prettier bin if available
-    if [ -f ./node_modules/.bin/prettier ]; then
-        PRETTIER_BIN="./node_modules/.bin/prettier"
-    else
-        PRETTIER_BIN="prettier"
-    fi
+  # Prefer using local prettier bin if available
+  if [ -f ./node_modules/.bin/prettier ]; then
+    PRETTIER_BIN="./node_modules/.bin/prettier"
+  else
+    PRETTIER_BIN="prettier"
+  fi
 
-    $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
+  $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
 }
 
 # Quality of life
@@ -42,63 +42,63 @@ alias c="clear"
 
 # MacOS specific commands
 if [[ $OS == "Darwin" ]]; then
-    # Update all the things
-    update() {
-        echo '\e[32m\uf0fc Brew'
-        brew update && brew upgrade && brew cask upgrade
+  # Update all the things
+  update() {
+    echo '\e[32m\uf0fc Brew'
+    brew update && brew upgrade && brew cask upgrade
 
-        echo '\e[32m\ue71e Node'
-        nvm install node &&
-        npm i -g npm@latest yarn@latest &&
-        yarn global upgrade --latest
+    echo '\e[32m\ue71e Node'
+    nvm install node &&
+    npm i -g npm@latest yarn@latest &&
+    yarn global upgrade --latest
 
-        echo '\e[32m\ue713 Mac'
-        mas upgrade
-    }
+    echo '\e[32m\ue713 Mac'
+    mas upgrade
+  }
 
-    # Recursively delete .DS_Store files
-    alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
+  # Recursively delete .DS_Store files
+  alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 
-    clean() {
-        echo '\e[32m\uf0fc Brew'
-        brew cleanup
+  clean() {
+    echo '\e[32m\uf0fc Brew'
+    brew cleanup
 
-        echo '\e[32m\ue71e Node'
-        yarn cache clean
+    echo '\e[32m\ue71e Node'
+    yarn cache clean
 
-        echo '\e[32m\ue713 Mac'
-        dsdestroy
-    }
+    echo '\e[32m\ue713 Mac'
+    dsdestroy
+  }
 
-    # Flush dns cache
-    flushcache() {
-        sudo dscacheutil -flushcache
-        sudo killall -HUP mDNSResponder
-        echo 'DNS Cache Cleared'
-    }
+  # Flush dns cache
+  flushcache() {
+    sudo dscacheutil -flushcache
+    sudo killall -HUP mDNSResponder
+    echo 'DNS Cache Cleared'
+  }
 
-    # Add dock separator
-    alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
+  # Add dock separator
+  alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
 
-    # Start chrome with debugger
-    alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
+  # Start chrome with debugger
+  alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
 fi
 
 # Arch Linux specific commands
 if [[ $OS == "Linux" ]]; then
-    # Update all the things
-    update() {
-        echo 'General & System Packages'
-        pacaur -Syu
-    }
+  # Update all the things
+  update() {
+    echo 'General & System Packages'
+    pacaur -Syu
+  }
 
-    # Misc system helpers
-    alias open="gio open"
+  # Misc system helpers
+  alias open="gio open"
 
-    # Open chrome in borderless window
-    chromeapp() {
-        chromium --app="$1"
-    }
+  # Open chrome in borderless window
+  chromeapp() {
+    chromium --app="$1"
+  }
 fi
 
 [ -f ~/.dotfiles/private/.aliases ] && source ~/.dotfiles/private/.aliases
