@@ -25,7 +25,7 @@ preflight() {
 prettyall() {
   DIR="${1:-.}"
 
-  EXCLUDE_DIRS="node_modules,vendor,build,dist,coverage"
+  EXCLUDE_DIRS="node_modules,vendor,build,dist,coverage,platforms,.nuxt,.next"
 
   # Prefer using local prettier bin if available
   if [ -f ./node_modules/.bin/prettier ]; then
@@ -48,8 +48,6 @@ if [[ $OS == "Darwin" ]]; then
     brew update && brew upgrade && brew cask upgrade
 
     echo '\e[32m\ue71e Node'
-    nvm install node &&
-    npm i -g npm@latest yarn@latest &&
     yarn global upgrade --latest
 
     echo '\e[32m\ue713 Mac'
