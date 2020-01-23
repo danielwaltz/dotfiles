@@ -3,9 +3,6 @@
 
 export ZSH=~/.oh-my-zsh
 
-# PLUGINS
-# brew install zsh-autosuggestions zsh-syntax-highlighting
-
 ZSH_THEME="gitster"
 
 if [[ $OS == "Darwin" ]]; then
@@ -16,13 +13,22 @@ if [[ $OS == "Linux" ]]; then
   plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose asdf systemd)
 fi
 
+# brew install zsh-autosuggestions zsh-syntax-highlighting
+
+if [[ $OS == "Darwin" ]]; then
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+if [[ $OS == "Linux" ]]; then
+  source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
 DISABLE_UPDATE_PROMPT=true
 UPDATE_ZSH_DAYS=7
 
 source $ZSH/oh-my-zsh.sh
-
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export ANDROID_HOME=/Users/daniel.waltz/Library/Android/sdk
 export ANDROID_SDK=/Users/daniel.waltz/Library/Android/sdk
