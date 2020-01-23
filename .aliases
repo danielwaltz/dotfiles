@@ -34,7 +34,7 @@ prettyall() {
     PRETTIER_BIN="prettier"
   fi
 
-  $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
+  $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,tsx,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
 }
 
 # Quality of life
