@@ -86,8 +86,14 @@ fi
 if [[ $OS == "Linux" ]]; then
   # Update all the things
   update() {
-    echo 'General & System Packages'
-    pacaur -Syu
+    echo 'System'
+    sudo apt-get update && sudo apt-get -y upgrade
+
+    echo '\e[32m\uf0fc Brew'
+    brew update && brew upgrade
+
+    echo '\e[32m\ue71e Node'
+    yarn global upgrade --latest
   }
 
   # Misc system helpers
