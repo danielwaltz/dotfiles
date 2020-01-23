@@ -5,22 +5,17 @@ export ZSH=~/.oh-my-zsh
 
 ZSH_THEME="gitster"
 
-if [[ $OS == "Darwin" ]]; then
-  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose asdf osx brew)
-fi
-
-if [[ $OS == "Linux" ]]; then
-  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose asdf systemd)
-fi
-
+# PLUGINS
 # brew install zsh-autosuggestions zsh-syntax-highlighting
 
 if [[ $OS == "Darwin" ]]; then
+  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose asdf osx brew)
   source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 if [[ $OS == "Linux" ]]; then
+  plugins=(common-aliases git git-auto-fetch yarn npm vscode docker docker-compose asdf systemd)
   source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
