@@ -44,10 +44,14 @@ alias c="clear"
 if [[ $OS == "Darwin" ]]; then
   # Update all the things
   update() {
+    echo '\e[32m\ue795 ZSH'
+    omz update
+
     echo '\e[32m\uf0fc Brew'
     brew update && brew upgrade && brew cask upgrade
 
     echo '\e[32m\ue71e Node'
+    asdf install nodejs latest
     yarn global upgrade --latest
 
     echo '\e[32m\ue713 Mac'
