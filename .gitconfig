@@ -5,3 +5,5 @@
 	editor = code --wait --new-window
 [fetch]
 	prune = true
+[pull]
+	ff = only
