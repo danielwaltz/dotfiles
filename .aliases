@@ -51,6 +51,7 @@ if [[ $OS == "Darwin" ]]; then
     brew update && brew upgrade && brew upgrade --cask
 
     echo '\e[32m\ue71e Node'
+    asdf plugin update --all
     asdf install nodejs latest
     yarn global upgrade --latest
 
