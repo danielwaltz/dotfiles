@@ -6,6 +6,7 @@ files=(
   .hushlogin
   .aliases
   .gitconfig
+  Brewfile
 )
 
 for file in ${files[@]}; do
