@@ -69,11 +69,11 @@ if [[ $OS == "Darwin" ]]; then
     brew cleanup
 
     echo '\e[32m\ue71e Node'
-    npm cache clean
+    npm cache clean --force
     yarn cache clean
 
     echo '\e[32m\uf308 Docker'
-    docker system prune
+    docker system prune --force
 
     echo '\e[32m\ue713 Mac'
     dsdestroy
