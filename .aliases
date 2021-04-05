@@ -53,9 +53,11 @@ if [[ $OS == "Darwin" ]]; then
 
     echo '\e[32m\ufa72 asdf'
     asdf plugin update --all
+    asdf install deno latest
     asdf install nodejs latest
-    asdf install yarn latest
+    asdf install python latest
     asdf install ruby latest
+    asdf install yarn latest
 
     echo '\e[32m\ue795 ZSH'
     omz update
