@@ -57,6 +57,7 @@ if [[ $OS == "Darwin" ]]; then
     asdf install nodejs latest
     asdf install python latest
     asdf install ruby latest
+    asdf install rust latest
     asdf install yarn latest
 
     echo '\e[32m\ue795 ZSH'
