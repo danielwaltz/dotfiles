@@ -9,13 +9,48 @@ ZSH_THEME="gitster"
 # brew install zsh-autosuggestions zsh-syntax-highlighting
 
 if [[ $OS == "Darwin" ]]; then
-  plugins=(asdf common-aliases docker docker-compose doctl git gitfast git-auto-fetch kubectl npm vscode yarn osx brew)
+  plugins=(
+    brew
+    osx
+
+    asdf
+    cargo
+    common-aliases
+    docker
+    docker-compose
+    doctl
+    git
+    git-auto-fetch
+    gitfast
+    kubectl
+    npm
+    rust
+    vscode
+    yarn
+  )
   source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 if [[ $OS == "Linux" ]]; then
-  plugins=(asdf common-aliases docker docker-compose doctl git gitfast git-auto-fetch kubectl npm vscode yarn systemd)
+  plugins=(
+    systemd
+
+    asdf
+    cargo
+    common-aliases
+    docker
+    docker-compose
+    doctl
+    git
+    git-auto-fetch
+    gitfast
+    kubectl
+    npm
+    rust
+    vscode
+    yarn
+  )
   source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
