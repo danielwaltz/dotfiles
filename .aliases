@@ -1,5 +1,5 @@
 alias c="clear"
-alias src="source ~/.profile"
+alias src="source ~/.zshrc"
 alias dotfiles="$EDITOR ~/.dotfiles"
 alias dprune="docker system prune"
 alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj '/CN=localhost' && npx http-server -S -p 5000 ."
