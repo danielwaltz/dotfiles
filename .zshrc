@@ -1,9 +1,11 @@
-# Get main shared profile
 [ -f ~/.profile ] && source ~/.profile
+[ -f ~/.aliases ] && source ~/.aliases
 
 export ZSH=~/.oh-my-zsh
 
 ZSH_THEME="gitster"
+DISABLE_UPDATE_PROMPT=true
+UPDATE_ZSH_DAYS=7
 
 # PLUGINS
 # brew install zsh-autosuggestions zsh-syntax-highlighting
@@ -54,9 +56,6 @@ if [[ $OS == "Linux" ]]; then
   source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
-
-DISABLE_UPDATE_PROMPT=true
-UPDATE_ZSH_DAYS=7
 
 source $ZSH/oh-my-zsh.sh
 

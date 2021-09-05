@@ -1,27 +1,9 @@
-# Edit dotfiles
+alias c="clear"
+alias src="source ~/.profile"
 alias dotfiles="$EDITOR ~/.dotfiles"
-
-# Quick source profile
-alias src="source ~/.zshrc"
-
-# Quick port tunneling
-dbtunnel() { ssh -L 33060:127.0.0.1:3306 $@ -f -N }
-
-# Docker stuff
 alias dprune="docker system prune"
-
-# Https server
 alias https-server="openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj '/CN=localhost' && npx http-server -S -p 5000 ."
 
-# Preflight
-preflight() {
-  docker-compose exec backend rspec
-  docker-compose exec backend rubocop
-  docker-compose exec frontend yarn lint
-  docker-compose exec frontend yarn test:unit
-}
-
-# Prettier
 prettyall() {
   DIR="${1:-.}"
 
@@ -37,12 +19,7 @@ prettyall() {
   $PRETTIER_BIN --write "$DIR/**/*.{js,jsx,ts,tsx,css,scss,sass,html,vue,graphql,gql,json,md,yaml}" "!$DIR/{$EXCLUDE_DIRS}/**/*"
 }
 
-# Quality of life
-alias c="clear"
-
-# MacOS specific commands
 if [[ $OS == "Darwin" ]]; then
-  # Update all the things
   update() {
     echo '\e[32m\uf0fc Brew'
     brew update && brew upgrade && brew upgrade --cask
@@ -64,7 +41,6 @@ if [[ $OS == "Darwin" ]]; then
     omz update
   }
 
-  # Recursively delete .DS_Store files
   alias dsdestroy="find . -name '*.DS_Store' -type f -ls -delete"
 
   clean() {
@@ -82,23 +58,16 @@ if [[ $OS == "Darwin" ]]; then
     dsdestroy
   }
 
-  # Flush dns cache
   flushcache() {
     sudo dscacheutil -flushcache
     sudo killall -HUP mDNSResponder
     echo 'DNS Cache Cleared'
   }
 
-  # Add dock separator
   alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
-
-  # Start chrome with debugger
-  alias chrome="open /Applications/Google\ Chrome.app/ --args --remote-debugging-port=9222"
 fi
 
-# Arch Linux specific commands
 if [[ $OS == "Linux" ]]; then
-  # Update all the things
   update() {
     echo 'System'
     sudo apt-get update && sudo apt-get -y upgrade
@@ -110,13 +79,7 @@ if [[ $OS == "Linux" ]]; then
     yarn global upgrade --latest
   }
 
-  # Misc system helpers
   alias open="gio open"
-
-  # Open chrome in borderless window
-  chromeapp() {
-    chromium --app="$1"
-  }
 fi
 
 [ -f ~/.dotfiles/private/.aliases ] && source ~/.dotfiles/private/.aliases

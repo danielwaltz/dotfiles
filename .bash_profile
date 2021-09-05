@@ -1,2 +1,1 @@
-# Pull from .bashrc instead
-[ -f ~/.bashrc ] && source ~/.bashrc
+[ -f ~/.profile ] && source ~/.profile
