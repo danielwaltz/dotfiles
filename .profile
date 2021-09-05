@@ -1,5 +1,6 @@
-# Define envvars
 EDITOR="code"
 OS="`uname`"
-[ -f ~/.aliases ] && source ~/.aliases
+
+export PATH="/usr/local/sbin:$PATH"
+
 [ -f ~/.dotfiles/private/.profile ] && source ~/.dotfiles/private/.profile

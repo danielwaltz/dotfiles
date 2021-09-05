@@ -1,2 +1,1 @@
-# Get main shared profile
-[ -f ~/.profile ] && source ~/.profile
+[ -f ~/.bash_profile ] && source ~/.bash_profile
