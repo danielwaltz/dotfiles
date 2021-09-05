@@ -60,12 +60,5 @@ UPDATE_ZSH_DAYS=7
 
 source $ZSH/oh-my-zsh.sh
 
-export PATH="/usr/local/sbin:$PATH"
-export PATH="$(yarn global bin):$PATH"
-export ANDROID_HOME=/Users/daniel.waltz/Library/Android/sdk
-export ANDROID_SDK=/Users/daniel.waltz/Library/Android/sdk
-export PATH=/Users/daniel.waltz/Library/Android/sdk/platform-tools:$PATH
-export PATH=/Users/daniel.waltz/Library/Android/sdk/emulator:$PATH
-
 export STARSHIP_CONFIG=~/.dotfiles/starship.toml
 eval "$(starship init zsh)"
