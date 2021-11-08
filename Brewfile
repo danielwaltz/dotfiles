@@ -9,6 +9,7 @@ tap "homebrew/core"
 tap "homebrew/services"
 brew "coreutils"
 brew "asdf"
+brew "bitwarden-cli"
 brew "brew-cask-completion"
 brew "glib"
 brew "pkg-config"
@@ -42,7 +43,6 @@ brew "watchman"
 brew "zsh"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
-cask "1password-beta"
 cask "adobe-creative-cloud"
 cask "alfred"
 cask "brave-browser"
@@ -65,7 +65,6 @@ cask "iterm2-beta"
 cask "kap"
 cask "lens"
 cask "logitech-camera-settings"
-cask "macupdater"
 cask "microsoft-auto-update"
 cask "microsoft-edge-dev"
 cask "microsoft-teams"
@@ -92,5 +91,4 @@ mas "Magnet", id: 441258766
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Spark", id: 1176895641
-mas "Valet Car Control", id: 1438609932
 mas "Xcode", id: 497799835
