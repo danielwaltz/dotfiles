@@ -13,7 +13,7 @@ UPDATE_ZSH_DAYS=7
 if [[ $OS == "Darwin" ]]; then
   plugins=(
     brew
-    osx
+    macos
 
     asdf
     cargo
