@@ -16,7 +16,6 @@ if [[ $OS == "Darwin" ]]; then
     macos
 
     asdf
-    cargo
     common-aliases
     docker
     docker-compose
@@ -30,6 +29,7 @@ if [[ $OS == "Darwin" ]]; then
     vscode
     yarn
   )
+
   source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
@@ -39,7 +39,6 @@ if [[ $OS == "Linux" ]]; then
     systemd
 
     asdf
-    cargo
     common-aliases
     docker
     docker-compose
