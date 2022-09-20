@@ -3,9 +3,14 @@
 	email = danielbwaltz@gmail.com
 [core]
 	editor = code --wait --new-window
+	fsmonitor = true
 [fetch]
 	prune = true
 [pull]
 	ff = only
 [init]
 	defaultBranch = main
+[merge]
+  tool = code
+[mergetool "code"]
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
