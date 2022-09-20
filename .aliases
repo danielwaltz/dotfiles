@@ -60,7 +60,8 @@ if [[ $OS == "Darwin" ]]; then
     echo 'DNS Cache Cleared'
   }
 
-  alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"spacer-tile\";}' && killall Dock"
+  alias spacer="defaults write com.apple.dock persistent-apps -array-add '{tile-type=\"spacer-tile\";}' && killall Dock"
+  alias minispacer="defaults write com.apple.dock persistent-apps -array-add '{tile-type=\"small-spacer-tile\";}' && killall Dock"
 fi
 
 if [[ $OS == "Linux" ]]; then
