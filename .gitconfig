@@ -11,6 +11,8 @@
 [init]
 	defaultBranch = main
 [merge]
-  tool = code
+	tool = code
 [mergetool "code"]
-  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+[push]
+	followTags = true
