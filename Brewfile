@@ -9,17 +9,22 @@ brew "cmatrix"
 brew "docker", link: false
 brew "doctl"
 brew "figlet"
+brew "gh"
 brew "git"
 brew "gnutls"
 brew "gnupg"
+brew "helm"
 brew "htop"
+brew "k9s"
 brew "libpq", link: true
 brew "mas"
 brew "pnpm"
 brew "starship"
 brew "subversion"
 brew "tig"
+brew "trash"
 brew "yarn"
+brew "z"
 brew "zsh"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
@@ -43,9 +48,7 @@ cask "lens"
 cask "megasync"
 cask "microsoft-auto-update"
 cask "microsoft-edge"
-cask "orion"
-cask "paw"
-cask "sizzy"
+cask "signal"
 cask "slack"
 cask "spotify"
 cask "steam"
@@ -55,6 +58,7 @@ cask "visual-studio-code"
 cask "zoom"
 mas "Bitwarden", id: 1352778147
 mas "GarageBand", id: 682658836
+mas "Gifski", id: 1351639930
 mas "Hidden Bar", id: 1452453066
 mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
