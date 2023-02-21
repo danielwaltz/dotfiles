@@ -1,8 +1,5 @@
 files=(
-  .profile
   .zshrc
-  .bashrc
-  .bash_profile
   .hushlogin
   .aliases
   .gitconfig
