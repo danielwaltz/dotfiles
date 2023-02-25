@@ -8,7 +8,7 @@ disabled = true
 [character]
 success_symbol = "[](bold cyan)"
 error_symbol = "[](bold red)"
-vicmd_symbol = "[](bold green)"
+vimcmd_symbol = "[](bold green)"
 
 [directory]
 style = "bold white"
