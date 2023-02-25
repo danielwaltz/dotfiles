@@ -15,7 +15,6 @@ if [[ $OS == "Darwin" ]]; then
     brew
     macos
 
-    asdf
     common-aliases
     docker
     docker-compose
@@ -39,7 +38,6 @@ if [[ $OS == "Linux" ]]; then
   plugins=(
     systemd
 
-    asdf
     common-aliases
     docker
     docker-compose
@@ -57,7 +55,11 @@ if [[ $OS == "Linux" ]]; then
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
+eval "$(rtx activate zsh)"
+
 source $ZSH/oh-my-zsh.sh
 
 export STARSHIP_CONFIG=~/.dotfiles/starship.toml
 eval "$(starship init zsh)"
+
+eval "$(rtx activate zsh)"

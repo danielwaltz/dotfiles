@@ -1,3 +1,4 @@
+alias asdf="rtx"
 alias c="clear"
 alias src="source ~/.zshrc"
 alias dotfiles="$EDITOR ~/.dotfiles"
