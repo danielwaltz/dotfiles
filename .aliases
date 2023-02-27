@@ -1,4 +1,3 @@
-alias asdf="rtx"
 alias c="clear"
 alias src="source ~/.zshrc"
 alias dotfiles="$EDITOR ~/.dotfiles"
@@ -29,10 +28,10 @@ if [[ $OS == "Darwin" ]]; then
     echo '\e[32m\ue713 Mac'
     mas upgrade
 
-    echo '\e[32m\ufa72 asdf'
-    asdf plugin update --all
-    asdf install nodejs latest
-    asdf install ruby latest
+    echo '\e[32m\ufa72 rtx'
+    rtx install nodejs@latest
+    rtx install bun@latest
+    rtx install ruby@latest
 
     echo '\e[32m\ue795 ZSH'
     omz update
