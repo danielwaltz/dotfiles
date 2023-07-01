@@ -8,7 +8,7 @@ DISABLE_UPDATE_PROMPT=true
 UPDATE_ZSH_DAYS=7
 
 # PLUGINS
-# brew install zsh-autosuggestions zsh-syntax-highlighting
+# brew install zsh-autosuggestions zsh-completions zsh-syntax-highlighting
 
 if [[ $OS == "Darwin" ]]; then
   plugins=(
@@ -28,6 +28,15 @@ if [[ $OS == "Darwin" ]]; then
     vscode
     yarn
   )
+
+  if type brew &>/dev/null
+  then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+    autoload -Uz compinit
+    compinit
+  fi
+
 
   source $(brew --prefix)/etc/profile.d/z.sh
   source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -51,6 +60,7 @@ if [[ $OS == "Linux" ]]; then
     vscode
     yarn
   )
+
   source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
