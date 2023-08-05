@@ -28,7 +28,7 @@ if [[ $OS == "Darwin" ]]; then
     echo '\e[32m\ue713 Mac'
     mas upgrade
 
-    echo '\e[32m\ufa72 rtx'
+    echo '\e[32m\uf1b2 rtx'
     rtx install bun@latest && rtx global bun@latest
     rtx install deno@latest && rtx global deno@latest
     rtx install nodejs@latest && rtx global nodejs@latest
@@ -36,7 +36,7 @@ if [[ $OS == "Darwin" ]]; then
     rtx install ruby@latest && rtx global ruby@latest
     rtx install yarn@latest && rtx global yarn@latest
 
-    echo '\e[32m\ue795 ZSH'
+    echo '\e[32m\ue795 zsh'
     omz update
   }
 
@@ -74,9 +74,6 @@ if [[ $OS == "Linux" ]]; then
 
     echo '\e[32m\uf0fc Brew'
     brew update && brew upgrade
-
-    echo '\e[32m\ue71e Node'
-    yarn global upgrade --latest
   }
 
   alias open="gio open"
