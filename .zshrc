@@ -65,7 +65,7 @@ if [[ $OS == "Linux" ]]; then
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-eval "$(rtx activate zsh)"
+eval "$(mise activate zsh)"
 
 source $ZSH/oh-my-zsh.sh
 

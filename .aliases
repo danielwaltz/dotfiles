@@ -28,13 +28,13 @@ if [[ $OS == "Darwin" ]]; then
     echo '\e[32m\ue713 Mac'
     mas upgrade
 
-    echo '\e[32m\uf1b2 rtx'
-    rtx install bun@latest && rtx global bun@latest
-    rtx install deno@latest && rtx global deno@latest
-    rtx install nodejs@latest && rtx global nodejs@latest
-    rtx install pnpm@latest && rtx global pnpm@latest
-    rtx install ruby@latest && rtx global ruby@latest
-    rtx install yarn@latest && rtx global yarn@latest
+    echo '\e[32m\uf1b2 mise'
+    mise install bun@latest && mise global bun@latest
+    mise install deno@latest && mise global deno@latest
+    mise install node@latest && mise global node@latest
+    mise install pnpm@latest && mise global pnpm@latest
+    mise install ruby@latest && mise global ruby@latest
+    mise install yarn@latest && mise global yarn@latest
 
     echo '\e[32m\ue795 zsh'
     omz update
