@@ -1,9 +1,7 @@
+touch ~/.hushlogin
+
 files=(
-  .zshrc
-  .hushlogin
-  .aliases
   .gitconfig
-  .asdfrc
   Brewfile
 )
 
