@@ -1,6 +1,7 @@
 touch ~/.hushlogin
 
 files=(
+  .zshrc
   .gitconfig
   Brewfile
 )
