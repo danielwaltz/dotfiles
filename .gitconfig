@@ -1,6 +1,6 @@
 [user]
 	name = Daniel Waltz
-	email = danielbwaltz@gmail.com
+	email = daniel.waltz@moserit.com
 [core]
 	editor = code --wait --new-window
 	fsmonitor = true
