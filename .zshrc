@@ -81,6 +81,7 @@ export STARSHIP_CONFIG=~/.dotfiles/starship.toml
 eval "$(starship init zsh)"
 export EDITOR="code"
 export OS="`uname`"
+export GPG_TTY=$(tty)
 PATH="$PATH:""$HOME"'/.cargo/bin:'"$PATH"
 eval "$(mise activate zsh)"
 
