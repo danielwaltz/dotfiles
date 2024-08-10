@@ -1,0 +1,5 @@
+[user]
+	email = daniel.waltz@moserit.com
+	signingKey = daniel.waltz@moserit.com
+[core]
+  sshCommand = ssh -i ~/.ssh/moser_rsa
