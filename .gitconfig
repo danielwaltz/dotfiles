@@ -1,6 +1,7 @@
 [user]
 	name = Daniel Waltz
 	email = daniel.waltz@moserit.com
+	signingKey = daniel.waltz@moserit.com
 [core]
 	editor = code --wait --new-window
 	fsmonitor = true
@@ -16,3 +17,5 @@
 	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [push]
 	followTags = true
+[commit]
+	gpgSign = true
