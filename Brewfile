@@ -65,7 +65,6 @@ cask "transmit"
 cask "visual-studio-code"
 cask "zed"
 cask "zoom"
-mas "Bitwarden", id: 1352778147
 mas "GarageBand", id: 682658836
 mas "Gifski", id: 1351639930
 mas "Hidden Bar", id: 1452453066
