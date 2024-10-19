@@ -10,6 +10,10 @@ success_symbol = "[](bold cyan)"
 error_symbol = "[](bold red)"
 vimcmd_symbol = "[](bold green)"
 
+[deno]
+style = "bold black"
+symbol = "󰯶 "
+
 [directory]
 style = "bold white"
 
@@ -21,3 +25,8 @@ style = "bold yellow"
 
 [line_break]
 disabled = true
+
+[nodejs]
+detect_extensions = []
+detect_files = [".node-version", ".nvmrc"]
+detect_folders = []
