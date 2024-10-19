@@ -22,5 +22,7 @@
 	gpgSign = true
 [tag]
 	gpgSign = true
+[gpg]
+	program = /opt/homebrew/bin/gpg
 [includeIf "gitdir:~/Projects/moser/"]
 	path = ./.dotfiles/.gitconfig-moser
