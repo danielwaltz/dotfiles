@@ -5,6 +5,9 @@ command_timeout = 5000
 [aws]
 disabled = true
 
+[bun]
+symbol = "󰯰 "
+
 [character]
 success_symbol = "[](bold cyan)"
 error_symbol = "[](bold red)"
