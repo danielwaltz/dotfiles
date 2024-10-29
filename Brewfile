@@ -66,11 +66,9 @@ cask "visual-studio-code"
 cask "zed"
 cask "zen-browser"
 cask "zoom"
-mas "GarageBand", id: 682658836
 mas "Gifski", id: 1351639930
 mas "Hidden Bar", id: 1452453066
 mas "Hue in the Menu", id: 1534707384
-mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
 mas "Numbers", id: 409203825
@@ -100,7 +98,6 @@ vscode "denoland.vscode-deno"
 vscode "eamodio.gitlens"
 vscode "editorconfig.editorconfig"
 vscode "esbenp.prettier-vscode"
-vscode "figma.figma-vscode-extension"
 vscode "firefox-devtools.vscode-firefox-debug"
 vscode "github.copilot"
 vscode "github.copilot-chat"
@@ -125,9 +122,9 @@ vscode "ms-vscode.remote-server"
 vscode "ms-vsliveshare.vsliveshare"
 vscode "naumovs.color-highlight"
 vscode "nicoespeon.abracadabra"
-vscode "nuxtr.nuxtr-vscode"
 vscode "orta.vscode-twoslash-queries"
 vscode "oven.bun-vscode"
+vscode "oxc.oxc-vscode"
 vscode "pkief.material-icon-theme"
 vscode "quicktype.quicktype"
 vscode "qwtel.sqlite-viewer"
@@ -143,11 +140,9 @@ vscode "svelte.svelte-vscode"
 vscode "tamasfe.even-better-toml"
 vscode "travisthetechie.write-good-linter"
 vscode "usernamehw.errorlens"
-vscode "visualstudioexptteam.intellicode-api-usage-examples"
 vscode "visualstudioexptteam.vscodeintellicode"
 vscode "vitest.explorer"
 vscode "vivaxy.vscode-conventional-commits"
-vscode "vscode-icons-team.vscode-icons"
 vscode "vue.volar"
 vscode "wenfangdu.snippet-generator"
 vscode "wengerk.highlight-bad-chars"
