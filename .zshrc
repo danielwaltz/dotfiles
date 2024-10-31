@@ -62,7 +62,6 @@ function update() {
   mise install node@latest && mise use -g node@latest
   mise install python@latest && mise use -g python@latest
   mise install ruby@latest && mise use -g ruby@latest
-  mise install usage@latest && mise use -g usage@latest
 
   echo '\e[32m\ue795 ZSH'
   omz update
