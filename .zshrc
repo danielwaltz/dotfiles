@@ -63,7 +63,10 @@ function update() {
   mise install python@latest && mise use -g python@latest
   mise install ruby@latest && mise use -g ruby@latest
 
-  echo '\e[32m\ue795 ZSH'
+  echo '\e[32m\ue7a8 Rust'
+  rustup update
+
+  echo '\e[32m\ue795 Zsh'
   omz update
 }
 alias -- dotfiles='$EDITOR ~/.dotfiles'
