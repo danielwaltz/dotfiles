@@ -74,7 +74,7 @@ alias -- spacer='defaults write com.apple.dock persistent-apps -array-add '"'"'{
 alias -- spacermini='defaults write com.apple.dock persistent-apps -array-add '"'"'{tile-type=\"small-spacer-tile\";}'"'"' && killall Dock'
 alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 alias -- bump='bunx taze@latest -rwiI'
-alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsdoc-plugin --vitest-plugin --react-perf-plugin --promise-plugin'
+alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsdoc-plugin --vitest-plugin --react-perf-plugin --promise-plugin --node-plugin --security-plugin'
 
 ### init
 export STARSHIP_CONFIG=~/.dotfiles/starship.toml
