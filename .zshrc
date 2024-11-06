@@ -76,6 +76,7 @@ alias -- spacer='defaults write com.apple.dock persistent-apps -array-add '"'"'{
 alias -- spacermini='defaults write com.apple.dock persistent-apps -array-add '"'"'{tile-type=\"small-spacer-tile\";}'"'"' && killall Dock'
 alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 alias -- bump='bunx taze@latest -rwiuI'
+alias -- bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update deps"'
 alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsdoc-plugin --vitest-plugin --react-perf-plugin --promise-plugin --node-plugin --security-plugin'
 
 ### init
