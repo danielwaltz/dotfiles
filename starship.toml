@@ -31,5 +31,5 @@ disabled = true
 
 [nodejs]
 detect_extensions = []
-detect_files = [".node-version", ".nvmrc"]
+detect_files = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml", ".node-version", ".nvmrc"]
 detect_folders = []
