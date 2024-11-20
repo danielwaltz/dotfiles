@@ -6,7 +6,7 @@ command_timeout = 5000
 disabled = true
 
 [bun]
-symbol = "󰯰 "
+symbol = " "
 
 [character]
 success_symbol = "[](bold cyan)"
@@ -15,7 +15,7 @@ vimcmd_symbol = "[](bold green)"
 
 [deno]
 style = "bold black"
-symbol = "󰯶 "
+symbol = " "
 
 [directory]
 style = "bold white"
