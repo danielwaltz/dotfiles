@@ -60,7 +60,6 @@ function update() {
   mise install bun@latest && mise use -g bun@latest
   mise install deno@latest && mise use -g deno@latest
   mise install node@latest && mise use -g node@latest
-  mise install python@latest && mise use -g python@latest
   mise install ruby@latest && mise use -g ruby@latest
 
   echo '\e[32m\ue7a8 Rust'
