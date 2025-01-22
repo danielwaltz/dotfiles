@@ -52,7 +52,7 @@ function update() {
   brew update && brew upgrade && brew upgrade --cask
   brew bundle dump --force
 
-  echo '\e[32m\ue713 Mac'
+  echo '\e[32m\ue711 Mac'
   mas upgrade
 
   echo '\e[32m\uf1b2 Mise'
