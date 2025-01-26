@@ -5,18 +5,20 @@
 plugins=(
   aliases
   brew
+  bun
   common-aliases
+  deno
   docker
   docker-compose
-  fig
   git
   git-auto-fetch
   gitfast
   iterm2
   kubectl
   macos
+  mise
   npm
-  yarn
+  ssh
 )
 if [ -d '/Users/danielwaltz/.local/share/fig/plugins/ohmyzsh' ]; then
 export ZSH="/Users/danielwaltz/.local/share/fig/plugins/ohmyzsh"
@@ -87,7 +89,6 @@ export EDITOR="code"
 export OS="`uname`"
 export GPG_TTY=$(tty)
 PATH="$PATH:""$HOME"'/.cargo/bin:'"$PATH"
-eval "$(mise activate zsh)"
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
