@@ -77,6 +77,7 @@ alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 alias -- bump='bunx taze@latest -rwiI'
 alias -- bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update deps"'
 alias -- rmlock='rm -rf **/node_modules(N) **/package-lock.json(N) **/yarn.lock(N) **/pnpm-lock.yaml(N) **/bun.lock(N) **/bun.lockb(N) **/deno.lock(N)'
+alias -- rmdist='rm -rf **/dist(N) **/.output(N) **/build(N) **/out(N)'
 alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsdoc-plugin --vitest-plugin --react-perf-plugin --promise-plugin --node-plugin'
 
 ### init
