@@ -6,21 +6,45 @@
 	editor = code --wait --new-window
 	fsmonitor = true
 	sshCommand = ssh -i ~/.ssh/personal_ed25519 -o IdentitiesOnly=yes
-[fetch]
-	prune = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+  sort = version:refname
+[init]
+	defaultBranch = main
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+[push]
+	default = simple
+	autoSetupRemote = true
+	followTags = true
 [pull]
 	ff = only
 [rebase]
 	autoSquash = true
-[init]
-	defaultBranch = main
+	autoStash = true
+	updateRefs = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
 [merge]
 	tool = code
+	conflictstyle = zdiff3
+[rerere]
+	enabled = true
+	autoupdate = true
 [mergetool "code"]
 	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-[push]
-	followTags = true
 [commit]
+	verbose = true
 	gpgSign = true
 [tag]
 	gpgSign = true
