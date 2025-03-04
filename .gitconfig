@@ -13,6 +13,7 @@
 	editor = code --wait --new-window
 	fsmonitor = true
 	sshCommand = ssh -i ~/.ssh/personal_ed25519 -o IdentitiesOnly=yes
+	untrackedCache = true
 [diff]
 	algorithm = histogram
 	colorMoved = plain
