@@ -5,7 +5,7 @@ brew "openssl@3"
 brew "readline"
 brew "awscli"
 brew "bison"
-brew "cloudflare-wrangler2"
+brew "cloudflare-wrangler"
 brew "cmatrix"
 brew "docker", link: false
 brew "figlet"
@@ -37,13 +37,10 @@ brew "trash", link: true
 brew "vercel-cli"
 brew "zsh"
 cask "amazon-q"
-cask "arc"
 cask "browserstacklocal"
 cask "choosy"
 cask "docker"
 cask "firefox"
-cask "firefox@developer-edition"
-cask "firefox@nightly"
 cask "font-jetbrains-mono"
 cask "font-jetbrains-mono-nerd-font"
 cask "google-chrome"
@@ -72,7 +69,7 @@ mas "Magnet", id: 441258766
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Proton Pass for Safari", id: 6502835663
-mas "Spark", id: 1176895641
+mas "Spark Desktop", id: 6445813049
 mas "Xcode", id: 497799835
 vscode "adpyke.codesnap"
 vscode "alefragnani.project-manager"
@@ -102,6 +99,7 @@ vscode "graphql.vscode-graphql"
 vscode "graphql.vscode-graphql-syntax"
 vscode "gruntfuggly.todo-tree"
 vscode "huytd.nord-light"
+vscode "hverlin.mise-vscode"
 vscode "jkjustjoshing.vscode-text-pastry"
 vscode "jock.svg"
 vscode "kimlimjustin.jsdoc-generator"
