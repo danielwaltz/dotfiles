@@ -1,58 +1,15 @@
 # Amazon Q pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 
-### ohmyzsh
-plugins=(
-  aliases
-  brew
-  bun
-  common-aliases
-  deno
-  docker
-  docker-compose
-  git
-  git-auto-fetch
-  gitfast
-  iterm2
-  kubectl
-  macos
-  mise
-  npm
-  ssh
-)
-if [ -d '/Users/danielwaltz/.local/share/fig/plugins/ohmyzsh' ]; then
-export ZSH="/Users/danielwaltz/.local/share/fig/plugins/ohmyzsh"
-zstyle ':omz:update' mode auto
-zstyle ':omz:update' mode
-source '/Users/danielwaltz/.local/share/fig/plugins/ohmyzsh/oh-my-zsh.sh'
-fi
-
-### zsh-autosuggestions
-if [ -d '/Users/danielwaltz/.local/share/fig/plugins/zsh-autosuggestions' ]; then
-source '/Users/danielwaltz/.local/share/fig/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh'
-fi
-
-### zsh-syntax-highlighting
-if [ -d '/Users/danielwaltz/.local/share/fig/plugins/zsh-syntax-highlighting' ]; then
-source '/Users/danielwaltz/.local/share/fig/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
-fi
-
-### zsh-completions
-if [ -d '/Users/danielwaltz/.local/share/fig/plugins/zsh-completions' ]; then
-source '/Users/danielwaltz/.local/share/fig/plugins/zsh-completions/zsh-completions.plugin.zsh'
-autoload -Uz compinit; compinit;
-fi
-
-### git-open
-if [ -d '/Users/danielwaltz/.local/share/fig/plugins/git-open' ]; then
-source '/Users/danielwaltz/.local/share/fig/plugins/git-open/git-open.plugin.zsh'
-fi
+### antidote
+source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+antidote load
 
 ### aliases
 function update() {
   echo '\e[32m\uf0fc Brew'
   brew update && brew upgrade && brew upgrade --cask
-  brew bundle dump --force
+  brew bundle dump --file=~/.dotfiles/Brewfile --force
 
   echo '\e[32m\ue711 Mac'
   mas upgrade
