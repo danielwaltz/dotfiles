@@ -23,6 +23,9 @@
 	all = true
 	prune = true
 	pruneTags = true
+[feature]
+  experimental = true
+	manyFiles = true
 [gpg]
 	program = /opt/homebrew/bin/gpg
 [help]
