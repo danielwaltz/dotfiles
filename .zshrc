@@ -27,7 +27,7 @@ function update() {
   echo '\e[32m\ue795 Zsh'
   omz update
 }
-alias -- dotfiles='$EDITOR ~/.dotfiles'
+alias -- dotfiles='code -n ~/.dotfiles'
 alias -- src='source ~/.zshrc'
 alias -- c='clear'
 alias -- spacer='defaults write com.apple.dock persistent-apps -array-add '"'"'{tile-type=\"spacer-tile\";}'"'"' && killall Dock'
@@ -42,7 +42,7 @@ alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsd
 ### init
 export STARSHIP_CONFIG=~/.dotfiles/starship.toml
 eval "$(starship init zsh)"
-export EDITOR="code"
+export EDITOR="code -nw"
 export OS="`uname`"
 export GPG_TTY=$(tty)
 PATH="$PATH:""$HOME"'/.cargo/bin:'"$PATH"
