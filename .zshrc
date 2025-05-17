@@ -38,6 +38,7 @@ alias -- bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update 
 alias -- rmlock='rm -rf **/node_modules(N) **/package-lock.json(N) **/yarn.lock(N) **/pnpm-lock.yaml(N) **/bun.lock(N) **/bun.lockb(N) **/deno.lock(N)'
 alias -- rmdist='rm -rf **/dist(N) **/.output(N) **/build(N) **/out(N)'
 alias -- lint='bunx oxlint@latest --tsconfig tsconfig.json --import-plugin --jsdoc-plugin --vitest-plugin --react-perf-plugin --promise-plugin --node-plugin'
+alias -- pretty='bunx prettier@latest --write --ignore-unknown -- "**/*" "!**/package-lock.json" "!**/yarn.lock" "!**/pnpm-lock.yaml" "!**/bun.lock" "!**/deno.lock" "!**/dist/**" "!**/.output/**" "!**/build/**" "!**/out/**"'
 
 ### init
 export STARSHIP_CONFIG=~/.dotfiles/starship.toml
