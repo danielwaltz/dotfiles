@@ -5,6 +5,10 @@
 source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
 antidote load
 
+if [[ -o interactive ]]; then
+  fastfetch
+fi
+
 ### aliases
 function update() {
   echo '\e[32m\uf0fc Brew'
