@@ -6,7 +6,7 @@ apt update && apt install -y {{ range .packages.shared }}{{ . | quote }} {{ end 
 {{ end -}}
 
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
-paru -Syu --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+paru -Syu --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
 {{ end -}}
 {{ end -}}
 
