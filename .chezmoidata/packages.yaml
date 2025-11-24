@@ -2,6 +2,7 @@ packages:
   shared:
     - "cbonsai"
     - "cmatrix"
+    - "eza"
     - "fastfetch"
     - "git"
     - "gnupg"
