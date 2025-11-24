@@ -1,0 +1,28 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+{{ if eq .chezmoi.osRelease.id "debian" }}
+apt update && apt install -y {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.debian }}{{ . | quote }} {{ end }}
+{{ end -}}
+
+{{ if eq .chezmoi.osRelease.id "cachyos" }}
+paru -Syu --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+{{ end -}}
+{{ end -}}
+
+
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+brew bundle --file=/dev/stdin <<EOF
+{{ range .packages.shared -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ range .packages.darwin.brews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ range .packages.darwin.casks -}}
+cask {{ . | quote }}
+{{ end -}}
+EOF
+{{ end -}}

@@ -1,0 +1,37 @@
+packages:
+  shared:
+    - "cbonsai"
+    - "cmatrix"
+    - "fastfetch"
+    - "git"
+    - "gnupg"
+    - "htop"
+    - "mise"
+    - "starship"
+    - "tig"
+    - "vim"
+    - "zsh"
+  darwin:
+    brews:
+      - "mas"
+      - "pinentry-mac"
+    casks:
+      - "docker-desktop"
+      - "font-jetbrains-mono-nerd-font"
+      - "ghostty"
+      - "google-chrome"
+      - "linearmouse"
+      - "localsend"
+      - "proton-pass"
+      - "raycast"
+      - "tailscale-app"
+      - "visual-studio-code"
+      - "zen"
+  linux:
+    pacman:
+      - "code"
+      - "ghostty"
+      - "proton-pass-bin"
+      - "tailscale"
+      - "ttf-jetbrains-mono-nerd"
+      - "zen-browser-bin"

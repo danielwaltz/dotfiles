@@ -26,8 +26,6 @@
 [feature]
   experimental = true
 	manyFiles = true
-[gpg]
-	program = /opt/homebrew/bin/gpg
 [help]
 	autocorrect = prompt
 [init]
@@ -52,6 +50,12 @@
 	enabled = true
 [tag]
 	gpgSign = true
-  sort = version:refname
+	sort = version:refname
+{{- if eq .chezmoi.os "darwin" }}
+[gpg]
+	program = /opt/homebrew/bin/gpg
+{{- end }}
+{{- if eq .chezmoi.hostname "themacbook" }}
 [includeIf "gitdir:~/Projects/moser/"]
-	path = ./.dotfiles/.gitconfig-moser
+	path = ~/.gitconfig-moser
+{{- end }}
