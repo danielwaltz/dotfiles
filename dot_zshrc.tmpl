@@ -21,6 +21,9 @@ alias -- rmlock='rm -rf **/node_modules(N) **/package-lock.json(N) **/yarn.lock(
 alias -- rmdist='rm -rf **/dist(N) **/.output(N) **/build(N) **/out(N)'
 alias -- src='source ~/.zshrc'
 function update() {
+  echo '\e[32m\ue5fc Dotfiles'
+  chezmoi update
+
   {{- if eq .chezmoi.os "linux" }}
   {{ if eq .chezmoi.osRelease.id "debian" }}
   echo '\e[32m\ue77d Debian'
