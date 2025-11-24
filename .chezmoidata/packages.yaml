@@ -28,7 +28,7 @@ packages:
       - "visual-studio-code"
       - "zen"
   linux:
-    pacman:
+    paru:
       - "code"
       - "ghostty"
       - "proton-pass-bin"
