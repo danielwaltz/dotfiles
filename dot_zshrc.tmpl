@@ -20,14 +20,24 @@ alias -- pretty='bunx prettier@latest --write --ignore-unknown -- "**/*" "!**/pa
 alias -- rmlock='rm -rf **/node_modules(N) **/package-lock.json(N) **/yarn.lock(N) **/pnpm-lock.yaml(N) **/bun.lock(N) **/bun.lockb(N) **/deno.lock(N)'
 alias -- rmdist='rm -rf **/dist(N) **/.output(N) **/build(N) **/out(N)'
 alias -- src='source ~/.zshrc'
-{{- if eq .chezmoi.os "darwin" }}
 function update() {
+  {{- if eq .chezmoi.os "linux" }}
+  {{ if eq .chezmoi.osRelease.id "debian" }}
+  sudo apt update && sudo apt upgrade
+  {{- end }}
+
+  {{ if eq .chezmoi.osRelease.id "cachyos" }}
+  sudo pacman -Syu
+  {{- end }}
+  {{- end }}
+
+  {{- if eq .chezmoi.os "darwin" }}
   echo '\e[32m\uf0fc Brew'
   brew update && brew upgrade && brew upgrade --cask
-  brew cleanup
 
   echo '\e[32m\ue711 Mac'
   mas upgrade
+  {{- end }}
 
   echo '\e[32m\uf1b2 Mise'
   mise plugins update
@@ -36,6 +46,7 @@ function update() {
   mise install node@latest && mise use -g node@latest
   mise install ruby@latest && mise use -g ruby@latest
 }
+{{- if eq .chezmoi.os "darwin" }}
 alias -- spacer='defaults write com.apple.dock persistent-apps -array-add '"'"'{tile-type=\"spacer-tile\";}'"'"' && killall Dock'
 alias -- spacermini='defaults write com.apple.dock persistent-apps -array-add '"'"'{tile-type=\"small-spacer-tile\";}'"'"' && killall Dock'
 alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
