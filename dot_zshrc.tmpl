@@ -91,7 +91,6 @@ export EDITOR="code -nw"
 export OS="`uname`"
 export GPG_TTY=$(tty)
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-PATH="$PATH:""$HOME"'/.cargo/bin:'"$PATH"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 
