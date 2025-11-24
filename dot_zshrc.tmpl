@@ -23,10 +23,12 @@ alias -- src='source ~/.zshrc'
 function update() {
   {{- if eq .chezmoi.os "linux" }}
   {{ if eq .chezmoi.osRelease.id "debian" }}
+  echo '\e[32m\ue77d Debian'
   sudo apt update && sudo apt upgrade
   {{- end }}
 
   {{ if eq .chezmoi.osRelease.id "cachyos" }}
+  echo '\e[32m\ue732 CachyOS'
   paru -Syu
   {{- end }}
   {{- end }}
