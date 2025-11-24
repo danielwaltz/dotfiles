@@ -4,7 +4,7 @@
 {{ if eq .chezmoi.osRelease.id "debian" }}
 sudo apt update
 for i in {{ range .packages.shared }}{{ . | quote }} {{ end }}; do
-  sudo apt install $i
+  sudo apt install -y $i
 done
 {{ end -}}
 
