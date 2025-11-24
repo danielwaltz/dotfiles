@@ -53,6 +53,7 @@ function cleanup() {
   {{- if eq .chezmoi.osRelease.id "cachyos" }}
   echo '\e[32m\ue732 CachyOS'
   paru -Rsn $(paru -Qtdq)
+  paccache -r
   {{- end }}
   {{- end }}
 
