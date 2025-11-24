@@ -43,6 +43,27 @@ function update() {
   mise install node@latest && mise use -g node@latest
   mise install ruby@latest && mise use -g ruby@latest
 }
+function cleanup() {
+  {{- if eq .chezmoi.os "linux" }}
+  {{- if eq .chezmoi.osRelease.id "debian" }}
+  echo '\e[32m\ue77d Debian'
+  sudo apt autoremove --purge
+  {{- end }}
+
+  {{- if eq .chezmoi.osRelease.id "cachyos" }}
+  echo '\e[32m\ue732 CachyOS'
+  paru -Rsn $(paru -Qtdq)
+  {{- end }}
+  {{- end }}
+
+  {{- if eq .chezmoi.os "darwin" }}
+  echo '\e[32m\uf0fc Brew'
+  brew cleanup
+  {{- end }}
+
+  echo '\e[32m\uf1b2 Mise'
+  mise prune
+}
 alias -- bump='bunx taze@latest -rwiI'
 alias -- bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update deps"'
 alias -- c='clear'
@@ -62,6 +83,7 @@ eval "$(starship init zsh)"
 export EDITOR="code -nw"
 export OS="`uname`"
 export GPG_TTY=$(tty)
+export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 PATH="$PATH:""$HOME"'/.cargo/bin:'"$PATH"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
