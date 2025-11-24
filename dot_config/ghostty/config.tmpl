@@ -1,0 +1,17 @@
+background-blur = true
+background-opacity = 0.9
+font-family = JetBrainsMono Nerd Font
+font-size = 16
+quick-terminal-autohide = false
+quick-terminal-size = 50%
+shell-integration-features = no-cursor,sudo,ssh-terminfo,ssh-env
+theme = dark:nord,light:nord-light
+window-width = 80
+window-height = 25
+window-padding-x = 8
+window-padding-y = 8
+{{- if eq .chezmoi.os "darwin" }}
+keybind = global:alt+space=toggle_quick_terminal
+macos-icon = xray
+macos-titlebar-style = hidden
+{{- end }}

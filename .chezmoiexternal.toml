@@ -1,0 +1,6 @@
+[".local/share/antidote"]
+    type = "archive"
+    url = "https://github.com/mattmc3/antidote/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
