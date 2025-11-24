@@ -2,7 +2,7 @@
 #!/bin/bash
 
 {{ if eq .chezmoi.osRelease.id "debian" }}
-apt update && apt install -y {{ range .packages.shared }}{{ . | quote }} {{ end }}
+sudo apt update && sudo apt install -y {{ range .packages.shared }}{{ . | quote }} {{ end }}
 {{ end -}}
 
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
