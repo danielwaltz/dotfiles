@@ -27,7 +27,7 @@ function update() {
   {{- end }}
 
   {{ if eq .chezmoi.osRelease.id "cachyos" }}
-  sudo pacman -Syu
+  paru -Syu
   {{- end }}
   {{- end }}
 
