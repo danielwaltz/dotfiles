@@ -39,9 +39,9 @@ function update() {
   echo '\e[32m\uf1b2 Mise'
   mise plugins update
   mise install bun@latest && mise use -g bun@latest
+  mise install chezmoi@latest && mise use -g chezmoi@latest
   mise install deno@latest && mise use -g deno@latest
   mise install node@latest && mise use -g node@latest
-  mise install ruby@latest && mise use -g ruby@latest
 }
 function cleanup() {
   {{- if eq .chezmoi.os "linux" }}

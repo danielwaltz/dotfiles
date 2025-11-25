@@ -1,9 +1,8 @@
 [tools]
 bun = "latest"
+chezmoi = "latest"
 deno = "latest"
 node = "latest"
-python = "latest"
-ruby = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["bun", "deno", "node", "ruby"]
