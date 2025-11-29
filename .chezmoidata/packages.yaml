@@ -4,6 +4,7 @@ packages:
     - "cmatrix"
     - "eza"
     - "fastfetch"
+    - "fzf"
     - "git"
     - "gnupg"
     - "htop"
