@@ -2,6 +2,7 @@ packages:
   global:
     - "cbonsai"
     - "cmatrix"
+    - "fzf"
     - "git"
     - "gnupg"
     - "htop"
