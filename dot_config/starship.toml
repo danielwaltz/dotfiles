@@ -26,6 +26,10 @@ disabled = false
 [git_branch]
 style = "bold yellow"
 
+[hostname]
+ssh_only = true
+format = "[$ssh_symbol$hostname]($style) "
+
 [mise]
 disabled = false
 
