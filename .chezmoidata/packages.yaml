@@ -1,17 +1,12 @@
 packages:
-  shared:
-    - "bat"
+  global:
     - "cbonsai"
     - "cmatrix"
-    - "eza"
-    - "fastfetch"
-    - "fzf"
     - "git"
     - "gnupg"
     - "htop"
     - "keychain"
     - "mise"
-    - "starship"
     - "tig"
     - "vim"
     - "zsh"

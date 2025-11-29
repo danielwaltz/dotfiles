@@ -1,8 +1,13 @@
 [tools]
+bat = "latest"
 bun = "latest"
 chezmoi = "latest"
 deno = "latest"
+eza = "latest"
+fastfetch = "latest"
+fzf = "latest"
 node = "latest"
+starship = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["bun", "deno", "node", "ruby"]

@@ -3,13 +3,13 @@
 
 {{ if eq .chezmoi.osRelease.id "debian" }}
 sudo apt-get update
-for i in {{ range .packages.shared }}{{ . | quote }} {{ end }}; do
+for i in {{ range .packages.global }}{{ . | quote }} {{ end }}; do
   sudo apt-get install -y $i
 done
 {{ end -}}
 
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
-paru -Syu --needed --noconfirm  {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+paru -Syu --needed --noconfirm  {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
 {{ end -}}
 {{ end -}}
 
@@ -18,7 +18,7 @@ paru -Syu --needed --noconfirm  {{ range .packages.shared }}{{ . | quote }} {{ e
 #!/bin/bash
 
 brew bundle --file=/dev/stdin <<EOF
-{{ range .packages.shared -}}
+{{ range .packages.global -}}
 brew {{ . | quote }}
 {{ end -}}
 {{ range .packages.darwin.brews -}}
