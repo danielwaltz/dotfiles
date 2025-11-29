@@ -1,6 +1,6 @@
-{{ if eq .chezmoi.os "linux" -}}
 #!/bin/bash
 
+{{ if eq .chezmoi.os "linux" -}}
 {{ if eq .chezmoi.osRelease.id "debian" }}
 sudo apt-get update
 for i in {{ range .packages.global }}{{ . | quote }} {{ end }}; do
@@ -11,13 +11,9 @@ done
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
 paru -Syu --needed --noconfirm  {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
 {{ end -}}
-
-mise install
 {{ end -}}
 
 {{ if eq .chezmoi.os "darwin" -}}
-#!/bin/bash
-
 brew bundle --file=/dev/stdin <<EOF
 {{ range .packages.global -}}
 brew {{ . | quote }}
@@ -29,6 +25,6 @@ brew {{ . | quote }}
 cask {{ . | quote }}
 {{ end -}}
 EOF
+{{ end -}}
 
 mise install
-{{ end -}}
