@@ -26,8 +26,8 @@ disabled = false
 [git_branch]
 style = "bold yellow"
 
-[line_break]
-disabled = true
+[mise]
+disabled = false
 
 [nodejs]
 detect_extensions = []
