@@ -9,7 +9,7 @@ done
 {{ end -}}
 
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
-paru -Syu --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+paru -Syu --needed --noconfirm  {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
 {{ end -}}
 {{ end -}}
 
