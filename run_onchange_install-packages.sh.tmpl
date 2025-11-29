@@ -2,9 +2,9 @@
 #!/bin/bash
 
 {{ if eq .chezmoi.osRelease.id "debian" }}
-sudo apt update
+sudo apt-get update
 for i in {{ range .packages.shared }}{{ . | quote }} {{ end }}; do
-  sudo apt install -y $i
+  sudo apt-get install -y $i
 done
 {{ end -}}
 
