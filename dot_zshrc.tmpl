@@ -87,6 +87,7 @@ alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 
 ### init
 eval "$(starship init zsh)"
+eval "$(keychain --eval --quiet)"
 export EDITOR="code -nw"
 export OS="`uname`"
 export GPG_TTY=$(tty)

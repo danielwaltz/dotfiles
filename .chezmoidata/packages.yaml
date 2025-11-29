@@ -9,6 +9,7 @@ packages:
     - "git"
     - "gnupg"
     - "htop"
+    - "keychain"
     - "mise"
     - "starship"
     - "tig"
