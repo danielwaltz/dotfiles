@@ -11,8 +11,9 @@ done
 {{ if eq .chezmoi.osRelease.id "cachyos" }}
 paru -Syu --needed --noconfirm  {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
 {{ end -}}
-{{ end -}}
 
+mise install
+{{ end -}}
 
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
@@ -28,4 +29,6 @@ brew {{ . | quote }}
 cask {{ . | quote }}
 {{ end -}}
 EOF
+
+mise install
 {{ end -}}
