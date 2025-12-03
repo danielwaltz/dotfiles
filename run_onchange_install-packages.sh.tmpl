@@ -9,7 +9,7 @@ if command -v apt-get &> /dev/null; then
 fi
 
 if command -v dnf &> /dev/null; then
-  sudo dnf install -y --best {{ range .packages.global }}{{ . | quote }} {{ end }}
+  sudo dnf install -y --best --skip-broken {{ range .packages.global }}{{ . | quote }} {{ end }}
 fi
 
 
