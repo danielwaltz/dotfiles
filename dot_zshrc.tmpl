@@ -13,53 +13,82 @@ fi
 
 ### aliases
 function update() {
-  echo '\e[32m\ue5fc Dotfiles'
+  echo '\e[32m\ue5fc chezmoi'
   chezmoi update
 
   {{- if eq .chezmoi.os "linux" }}
-  {{- if eq .chezmoi.osRelease.id "debian" }}
-  echo '\e[32m\ue77d Debian'
-  sudo apt update && sudo apt upgrade
-  {{- end }}
+  if command -v apt &> /dev/null; then
+    echo '\e[32m\ue77d apt'
+    sudo apt update && sudo apt upgrade
+  fi
 
-  {{- if eq .chezmoi.osRelease.id "cachyos" }}
-  echo '\e[32m\ue732 CachyOS'
-  paru -Syu
-  {{- end }}
+  if command -v dnf &> /dev/null; then
+    echo '\e[32m\ue7d9 dnf'
+    sudo dnf upgrade
+  fi
+
+  if command -v pacman &> /dev/null; then
+    if command -v paru &> /dev/null; then
+      echo '\e[32m\ue732 paru'
+      paru -Syu
+    else
+      echo '\e[32m\ue732 pacman'
+      sudo pacman -Syu
+    fi
+  fi
+
+  if command -v flatpak &> /dev/null; then
+    echo '\e[32m\uf1b2 flatpak'
+    flatpak update -y
+  fi
   {{- end }}
 
   {{- if eq .chezmoi.os "darwin" }}
-  echo '\e[32m\uf0fc Brew'
-  brew update && brew upgrade && brew upgrade --cask
+  if command -v brew &> /dev/null; then
+    echo '\e[32m\uf0fc brew'
+    brew update && brew upgrade && brew upgrade --cask
+  fi
 
-  echo '\e[32m\ue711 Mac'
-  mas upgrade
+  if command -v mas &> /dev/null; then
+    echo '\e[32m\ue711 mas'
+    mas upgrade
+  fi
   {{- end }}
 
-  echo '\e[32m\uf1b2 Mise'
-  mise plugins update
-  mise upgrade
+  echo '\e[32m\uf1b2 mise'
+  mise plugins update && mise upgrade
 }
 function cleanup() {
   {{- if eq .chezmoi.os "linux" }}
-  {{- if eq .chezmoi.osRelease.id "debian" }}
-  echo '\e[32m\ue77d Debian'
-  sudo apt autoremove --purge
-  {{- end }}
+  if command -v apt &> /dev/null; then
+    echo '\e[32m\ue77d apt'
+    sudo apt autoremove --purge
+  fi
 
-  {{- if eq .chezmoi.osRelease.id "cachyos" }}
-  echo '\e[32m\ue732 CachyOS'
-  paru -Rsn $(paru -Qtdq)
-  paccache -r
-  {{- end }}
+  if command -v dnf &> /dev/null; then
+    echo '\e[32m\uf308 dnf'
+    sudo dnf autoremove
+  fi
+
+  if command -v pacman &> /dev/null; then
+    if command -v paru &> /dev/null; then
+      echo '\e[32m\ue732 paru'
+      paru -Rsn $(paru -Qtdq)
+    else
+      echo '\e[32m\uf303 pacman'
+      sudo pacman -Rns $(pacman -Qtdq)
+    fi
+
+    paccache -r
+  fi
   {{- end }}
 
   {{- if eq .chezmoi.os "darwin" }}
-  echo '\e[32m\uf0fc Brew'
+  echo '\e[32m\uf0fc brew'
   brew cleanup
   {{- end }}
 
-  echo '\e[32m\uf1b2 Mise'
+  echo '\e[32m\uf1b2 mise'
   mise prune
 }
 alias -- bump='bunx taze@latest -rwiI'
