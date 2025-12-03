@@ -8,7 +8,6 @@ packages:
     - "htop"
     - "keychain"
     - "mise"
-    - "s-tui"
     - "tig"
     - "vim"
     - "zsh"
@@ -27,10 +26,16 @@ packages:
       - "visual-studio-code"
       - "zen"
   linux:
-    paru:
+    apt:
+      - "s-tui"
+    dnf:
+      - "s-tui"
+    pacman:
       - "code"
       - "ghostty"
-      - "proton-pass-bin"
+      - "s-tui"
       - "tailscale"
       - "ttf-jetbrains-mono-nerd"
+    paru:
+      - "proton-pass-bin"
       - "zen-browser-bin"

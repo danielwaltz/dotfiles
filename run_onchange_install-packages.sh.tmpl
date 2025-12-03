@@ -3,20 +3,20 @@
 {{ if eq .chezmoi.os "linux" -}}
 if command -v apt-get &> /dev/null; then
   sudo apt-get update
-  for i in {{ range .packages.global }}{{ . | quote }} {{ end }}; do
+  for i in {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.apt }}{{ . | quote }} {{ end }}; do
     sudo apt-get install -y $i
   done
 fi
 
 if command -v dnf &> /dev/null; then
-  sudo dnf install -y --best --skip-broken {{ range .packages.global }}{{ . | quote }} {{ end }}
+  sudo dnf install -y --best --skip-broken {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.dnf }}{{ . | quote }} {{ end }}
 fi
 
 if command -v pacman &> /dev/null; then
   if command -v paru &> /dev/null; then
-    paru -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+    paru -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
   else
-    sudo pacman -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}
+    sudo pacman -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}
   fi
 fi
 {{ end -}}
