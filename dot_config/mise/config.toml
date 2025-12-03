@@ -5,6 +5,7 @@ chezmoi = "latest"
 deno = "latest"
 eza = "latest"
 fastfetch = "latest"
+fzf = "latest"
 node = "latest"
 starship = "latest"
 
