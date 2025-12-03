@@ -84,11 +84,21 @@ function cleanup() {
 
     paccache -r
   fi
+
+  if command -v docker &> /dev/null; then
+    echo '\e[32m\ue7b0 docker'
+    sudo docker system prune -f
+  fi
   {{- end }}
 
   {{- if eq .chezmoi.os "darwin" }}
   echo '\e[32m\uf0fc brew'
   brew cleanup
+
+  if command -v docker &> /dev/null; then
+    echo '\e[32m\ue7b0 docker'
+    docker system prune -f
+  fi
   {{- end }}
 
   echo '\e[32m\uf1b2 mise'
