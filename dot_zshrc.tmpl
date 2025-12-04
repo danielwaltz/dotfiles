@@ -131,7 +131,11 @@ fi
 if command -v keychain &> /dev/null; then
   eval "$(keychain --eval --quiet)"
 fi
+{{- if eq .chezmoi.os "darwin" }}
 export EDITOR="code -nw"
+{{- else }}
+export EDITOR="vim"
+{{- end }}
 export OS="`uname`"
 export GPG_TTY=$(tty)
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
