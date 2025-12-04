@@ -4,7 +4,3 @@
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
-[".config/nvim"]
-    type = "git-repo"
-    url = "git@github.com:LazyVim/starter.git"
-    refreshPeriod = "168h"
