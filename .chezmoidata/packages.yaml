@@ -5,6 +5,7 @@ packages:
     - "fzf"
     - "git"
     - "gnupg"
+    - "helix"
     - "htop"
     - "keychain"
     - "mise"
