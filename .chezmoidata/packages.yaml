@@ -8,12 +8,12 @@ packages:
     - "htop"
     - "keychain"
     - "mise"
+    - "neovim"
     - "tig"
     - "vim"
     - "zsh"
   darwin:
     brews:
-      - "helix"
       - "mas"
       - "pinentry-mac"
     casks:
@@ -28,15 +28,12 @@ packages:
       - "zen"
   linux:
     apt:
-      - "hx"
       - "s-tui"
     dnf:
-      - "helix"
       - "s-tui"
     pacman:
       - "code"
       - "ghostty"
-      - "helix"
       - "s-tui"
       - "tailscale"
       - "ttf-jetbrains-mono-nerd"
