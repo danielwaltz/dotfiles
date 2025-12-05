@@ -1,11 +1,16 @@
 packages:
   global:
+    - "bluetui"
+    - "btop"
     - "cbonsai"
     - "cmatrix"
     - "fzf"
     - "git"
     - "gnupg"
     - "htop"
+    - "impala"
+    - "lazydocker"
+    - "lazygit"
     - "keychain"
     - "mise"
     - "neovim"
