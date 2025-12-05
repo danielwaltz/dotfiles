@@ -6,6 +6,7 @@ endif
 
 call plug#begin()
 
+Plug 'alker0/chezmoi.vim'
 Plug 'arcticicestudio/nord-vim'
 
 call plug#end()
