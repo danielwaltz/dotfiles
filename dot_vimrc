@@ -15,9 +15,12 @@ Plug 'ryanoasis/vim-devicons' |" Must load last
 
 call plug#end()
 
+command! PU PlugUpdate | PlugUpgrade
+
 colorscheme nord
 
+set number
 set list
-set listchars=space:·,tab:⇾\ ,trail:·
+set listchars=tab:⇾\ ,trail:·
 set shortmess+=I |" Hide splash text
 set tabstop=4
