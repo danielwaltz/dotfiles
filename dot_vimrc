@@ -9,6 +9,9 @@ call plug#begin()
 Plug 'alker0/chezmoi.vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'junegunn/fzf.vim'
+Plug 'preservim/nerdtree'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
 Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentline'
 Plug 'ryanoasis/vim-devicons' |" Must load last
