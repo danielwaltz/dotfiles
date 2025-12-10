@@ -8,6 +8,7 @@ fastfetch = "latest"
 fzf = "latest"
 node = "latest"
 starship = "latest"
+zoxide = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["bun", "deno", "node", "ruby"]
