@@ -142,6 +142,7 @@ export GPG_TTY=$(tty)
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
+export PATH="$HOME/.local/bin:$PATH"
 
 {{- if eq .chezmoi.os "darwin" }}
 # Kiro CLI post block. Keep at the bottom of this file.
