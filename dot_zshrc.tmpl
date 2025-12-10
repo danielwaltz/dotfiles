@@ -7,6 +7,10 @@
 source ~/.local/share/antidote/antidote.zsh
 antidote load
 
+### options
+zstyle ':omz:update' mode disabled
+
+### startup
 if [[ -o interactive ]]; then
   fastfetch
 fi
