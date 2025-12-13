@@ -138,9 +138,6 @@ export PATH="$HOME/.local/bin:$PATH"
 #   ps aux | grep pass-cli | grep -v "grep" >/dev/null || pass-cli ssh-agent start >/dev/null 2>&1 &
 #   export SSH_AUTH_SOCK="$HOME/.ssh/proton-pass-agent.sock"
 # fi
-if command -v starship &> /dev/null; then
-  eval "$(starship init zsh)"
-fi
 export EDITOR="vim"
 export VISUAL=$EDITOR
 export OS="`uname`"
