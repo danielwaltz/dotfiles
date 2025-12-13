@@ -14,9 +14,9 @@ fi
 
 if command -v pacman &> /dev/null; then
   if command -v paru &> /dev/null; then
-    paru -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+    paru -S --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
   else
-    sudo pacman -Syu --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}
+    sudo pacman -S --needed --noconfirm {{ range .packages.global }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}
   fi
 fi
 {{ end -}}
