@@ -48,3 +48,33 @@ fi
 if ! command -v pass-cli &> /dev/null; then
   curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
 fi
+
+if ! pass-cli test >/dev/null 2>&1; then
+  pass-cli login
+fi
+
+if pass-cli test >/dev/null 2>&1; then
+  # Personal SSH
+  pass-cli item view "pass://Personal/Personal SSH Key/public_key" > ~/.ssh/$(pass-cli item view "pass://Personal/Personal SSH Key/File").pub
+  pass-cli item view "pass://Personal/Personal SSH Key/private_key" > ~/.ssh/$(pass-cli item view "pass://Personal/Personal SSH Key/File")
+  chmod 600 ~/.ssh/$(pass-cli item view "pass://Personal/Personal SSH Key/File")
+  echo "Personal SSH Key added."
+
+  # Personal GPG
+  pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
+  pass-cli item view "pass://Personal/Personal GPG Key/private_key" | gpg --import
+  echo "Personal GPG Key added."
+
+  {{- if eq .chezmoi.hostname "themacbook" }}
+  # Moser SSH
+  pass-cli item view "pass://Moser Consulting/Moser SSH Key/public_key" > ~/.ssh/$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File").pub
+  pass-cli item view "pass://Moser Consulting/Moser SSH Key/private_key" > ~/.ssh/$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")
+  chmod 600 ~/.ssh/$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")
+  echo "Moser SSH Key added."
+
+  # Moser GPG
+  pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import
+  pass-cli item view "pass://Moser Consulting/Moser GPG Key/private_key" | gpg --import
+  echo "Moser GPG Key added."
+  {{- end }}
+fi

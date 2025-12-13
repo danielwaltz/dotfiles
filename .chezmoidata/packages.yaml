@@ -1,6 +1,5 @@
 packages:
   global:
-    - "bluetui"
     - "btop"
     - "cbonsai"
     - "cmatrix"
@@ -21,6 +20,7 @@ packages:
     brews:
       - "mas"
       - "pinentry-mac"
+      - "util-linux"
     casks:
       - "docker-desktop"
       - "font-jetbrains-mono-nerd-font"
