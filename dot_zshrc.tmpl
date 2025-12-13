@@ -8,7 +8,8 @@ source ~/.local/share/antidote/antidote.zsh
 antidote load
 
 ### options
-zstyle ':omz:update' mode disabled
+zstyle :omz:update mode disabled
+zstyle :omz:plugins:keychain agents gpg,ssh
 
 ### startup
 if [[ -o interactive ]]; then
@@ -129,20 +130,23 @@ alias -- dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 {{- end }}
 
 ### init
+export PATH="$HOME/.local/bin:$PATH"
+# TODO: use pass-cli ssh-agent integration when matured
+# if command -v pass-cli &> /dev/null; then
+#   pass-cli test >/dev/null 2>&1 || return
+#   eval "$(keychain --eval --quiet --stop all)"
+#   ps aux | grep pass-cli | grep -v "grep" >/dev/null || pass-cli ssh-agent start >/dev/null 2>&1 &
+#   export SSH_AUTH_SOCK="$HOME/.ssh/proton-pass-agent.sock"
+# fi
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
-fi
-if command -v keychain &> /dev/null; then
-  eval "$(keychain --eval --quiet)"
 fi
 export EDITOR="vim"
 export VISUAL=$EDITOR
 export OS="`uname`"
-export GPG_TTY=$(tty)
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-export PATH="$HOME/.local/bin:$PATH"
 
 {{- if eq .chezmoi.os "darwin" }}
 # Kiro CLI post block. Keep at the bottom of this file.
