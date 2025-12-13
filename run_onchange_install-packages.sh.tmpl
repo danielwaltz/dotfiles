@@ -63,6 +63,7 @@ if pass-cli test >/dev/null 2>&1; then
   # Personal GPG
   pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
   pass-cli item view "pass://Personal/Personal GPG Key/private_key" | gpg --import
+  echo -e "5\ny\n" | gpg --command-fd 0 --edit-key $(pass-cli item view "pass://Personal/Personal GPG Key/ID") trust quit
   echo "Personal GPG Key added."
 
   {{- if eq .chezmoi.hostname "themacbook" }}
@@ -75,6 +76,7 @@ if pass-cli test >/dev/null 2>&1; then
   # Moser GPG
   pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import
   pass-cli item view "pass://Moser Consulting/Moser GPG Key/private_key" | gpg --import
+  echo -e "5\ny\n" | gpg --command-fd 0 --edit-key $(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID") trust quit
   echo "Moser GPG Key added."
   {{- end }}
 fi
