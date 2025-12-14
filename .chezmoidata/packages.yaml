@@ -1,11 +1,6 @@
 packages:
-  base:
-    system:
-      - "curl"
-      - "git"
-      - "vim"
-      - "zsh"
-    user:
+  shared:
+    brews:
       - "bat"
       - "btop"
       - "cbonsai"
@@ -24,6 +19,13 @@ packages:
       - "starship"
       - "tig"
       - "zoxide"
+    casks:
+      - "font-jetbrains-mono-nerd-font"
+    system:
+      - "curl"
+      - "git"
+      - "vim"
+      - "zsh"
   darwin:
     brews:
       - "mas"
@@ -31,7 +33,6 @@ packages:
       - "util-linux"
     casks:
       - "docker-desktop"
-      - "font-jetbrains-mono-nerd-font"
       - "ghostty"
       - "linearmouse"
       - "proton-pass"
@@ -51,7 +52,6 @@ packages:
       - "ghostty"
       - "s-tui"
       - "tailscale"
-      - "ttf-jetbrains-mono-nerd"
     paru:
       - "proton-pass-bin"
       - "zen-browser-bin"
