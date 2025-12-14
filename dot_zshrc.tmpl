@@ -96,19 +96,10 @@ function cleanup() {
     brew cleanup
   fi
 
-  {{- if eq .chezmoi.os "linux" }}
-  if command -v docker &> /dev/null; then
-    echo '\e[32m\ue7b0 docker'
-    sudo docker system prune -f
-  fi
-  {{- end }}
-
-  {{- if eq .chezmoi.os "darwin" }}
   if command -v docker &> /dev/null; then
     echo '\e[32m\ue7b0 docker'
     docker system prune -f
   fi
-  {{- end }}
 
   echo '\e[32m\uf1b2 mise'
   mise prune
