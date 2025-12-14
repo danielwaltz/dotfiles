@@ -1,5 +1,9 @@
 Host *
   AddKeysToAgent yes
   IdentitiesOnly yes
+  {{- if eq .chezmoi.os "darwin" }}
   UseKeychain yes
+  {{- if eq .chezmoi.hostname "themacbook" }}
   IdentityFile ~/.ssh/moser_rsa
+  {{- end }}
+  {{- end }}
