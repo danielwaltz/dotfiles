@@ -3,14 +3,14 @@
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 {{- end }}
 
-### antidote
-source ~/.local/share/antidote/antidote.zsh
-antidote load
-
 ### options
 zstyle :omz:update mode disabled
 zstyle :omz:plugins:keychain agents gpg,ssh
 zstyle :omz:plugins:keychain options --quiet
+
+### antidote
+source ~/.local/share/antidote/antidote.zsh
+antidote load
 
 ### startup
 if [[ -o interactive ]]; then
