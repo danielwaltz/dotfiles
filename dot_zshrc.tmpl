@@ -25,7 +25,6 @@ function update() {
   echo '\e[32m\ue795 antidote'
   antidote update
 
-  {{- if eq .chezmoi.os "linux" }}
   if command -v apt &> /dev/null; then
     echo '\e[32m\ue77d apt'
     sudo apt update && sudo apt upgrade
@@ -50,9 +49,7 @@ function update() {
     echo '\e[32m\uf1b2 flatpak'
     flatpak update -y
   fi
-  {{- end }}
 
-  {{- if eq .chezmoi.os "darwin" }}
   if command -v brew &> /dev/null; then
     echo '\e[32m\uf0fc brew'
     brew update && brew upgrade && brew upgrade --cask
@@ -62,13 +59,11 @@ function update() {
     echo '\e[32m\ue711 mas'
     mas upgrade
   fi
-  {{- end }}
 
   echo '\e[32m\uf1b2 mise'
   mise plugins update && mise upgrade
 }
 function cleanup() {
-  {{- if eq .chezmoi.os "linux" }}
   if command -v apt &> /dev/null; then
     echo '\e[32m\ue77d apt'
     sudo apt autoremove --purge
@@ -91,6 +86,17 @@ function cleanup() {
     paccache -r
   fi
 
+  if command -v flatpak &> /dev/null; then
+    echo '\e[32m\uf1b2 flatpak'
+    flatpak uninstall --unused -y
+  fi
+
+  if command -v brew &> /dev/null; then
+    echo '\e[32m\uf0fc brew'
+    brew cleanup
+  fi
+
+  {{- if eq .chezmoi.os "linux" }}
   if command -v docker &> /dev/null; then
     echo '\e[32m\ue7b0 docker'
     sudo docker system prune -f
@@ -98,9 +104,6 @@ function cleanup() {
   {{- end }}
 
   {{- if eq .chezmoi.os "darwin" }}
-  echo '\e[32m\uf0fc brew'
-  brew cleanup
-
   if command -v docker &> /dev/null; then
     echo '\e[32m\ue7b0 docker'
     docker system prune -f
