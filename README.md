@@ -1,7 +1,9 @@
-Managed using [chezmoi](https://www.chezmoi.io/).
+# Dotfiles
 
-Install `mise` using the system's package manager then run the following command:
+These are my personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
-```shell
-mise exec chezmoi@latest -- chezmoi init --apply danielwaltz
-```
+## Installation
+
+1. Install [homebrew](https://brew.sh/)
+2. Install [chezmoi](https://www.chezmoi.io/) via `brew install chezmoi`
+3. Initialize dotfiles `chezmoi init --apply danielwaltz`
