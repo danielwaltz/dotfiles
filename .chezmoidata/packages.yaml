@@ -41,8 +41,10 @@ packages:
       - "zen"
   linux:
     apt:
+      - "tailscale"
       - "s-tui"
     dnf:
+      - "tailscale"
       - "s-tui"
     pacman:
       - "code"
