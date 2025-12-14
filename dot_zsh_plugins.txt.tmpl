@@ -1,6 +1,7 @@
 # Oh My ZSH
 getantidote/use-omz
 ohmyzsh/ohmyzsh path:lib
+ohmyzsh/ohmyzsh path:plugins/brew
 ohmyzsh/ohmyzsh path:plugins/mise
 ohmyzsh/ohmyzsh path:plugins/aliases
 ohmyzsh/ohmyzsh path:plugins/bun
@@ -21,7 +22,6 @@ ohmyzsh/ohmyzsh path:plugins/npm
 ohmyzsh/ohmyzsh path:plugins/ssh
 ohmyzsh/ohmyzsh path:plugins/starship
 {{- if eq .chezmoi.os "darwin" }}
-ohmyzsh/ohmyzsh path:plugins/brew
 ohmyzsh/ohmyzsh path:plugins/macos
 {{- if eq .chezmoi.hostname "themacbook" }}
 ohmyzsh/ohmyzsh path:plugins/kubectl
