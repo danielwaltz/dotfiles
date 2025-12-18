@@ -17,7 +17,7 @@ packages:
       - "lazygit"
       - "mise"
       - "neovim"
-      - "pass-cli"
+      - "protonpass/homebrew-tap/pass-cli"
       - "rg"
       - "starship"
       - "tig"
