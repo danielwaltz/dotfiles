@@ -57,7 +57,7 @@ if pass-cli test >/dev/null 2>&1; then
   chmod 700 "$HOME/.ssh"
 
   # Personal SSH
-  personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File" | tr -d '\r\n')"
+  personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
   personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
   if [ ! -f "$personal_ssh_key_path" ]; then
     echo "Personal SSH Key not found locally. Importing..."
@@ -68,7 +68,7 @@ if pass-cli test >/dev/null 2>&1; then
   fi
 
   # Personal GPG
-  personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID" | tr -d '\r\n')"
+  personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
   if ! gpg --list-keys "$personal_gpg_key_id" >/dev/null 2>&1; then
     echo "Personal GPG Key not found locally. Importing..."
     pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
@@ -79,7 +79,7 @@ if pass-cli test >/dev/null 2>&1; then
 
   {{- if eq .chezmoi.hostname "themacbook" }}
   # Moser SSH
-  moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File" | tr -d '\r\n')"
+  moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")"
   moser_ssh_key_path="$HOME/.ssh/$moser_ssh_key_file"
   if [ ! -f "$moser_ssh_key_path" ]; then
     echo "Moser SSH Key not found locally. Importing..."
@@ -90,7 +90,7 @@ if pass-cli test >/dev/null 2>&1; then
   fi
 
   # Moser GPG
-  moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID" | tr -d '\r\n')"
+  moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID")"
   if ! gpg --list-keys "$moser_gpg_key_id" >/dev/null 2>&1; then
     echo "Moser GPG Key not found locally. Importing..."
     pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import

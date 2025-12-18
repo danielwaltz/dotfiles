@@ -15,6 +15,20 @@ antidote load
 ### startup
 if [[ -o interactive ]]; then
   fastfetch
+
+  if ! ssh-add -l >/dev/null 2>&1; then
+    # Personal SSH
+    personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
+    personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
+    SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add "$personal_ssh_key_path" <<< "$(pass-cli item view "pass://Personal/Personal SSH Key/Passphrase")"
+
+    {{- if eq .chezmoi.os "darwin" }}
+    # Moser SSH
+    moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")"
+    moser_ssh_key_path="$HOME/.ssh/$moser_ssh_key_file"
+    SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add "$moser_ssh_key_path" <<< "$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/Passphrase")"
+    {{- end }}
+  fi
 fi
 
 ### aliases
