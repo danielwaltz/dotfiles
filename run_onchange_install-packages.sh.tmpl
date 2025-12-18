@@ -20,6 +20,7 @@ fi
 
 if command -v brew &> /dev/null; then
 brew bundle --file=/dev/stdin <<EOF
+tap "protonpass/homebrew-tap"
 {{ range .packages.shared.brews -}}
 brew {{ . | quote }}
 {{ end -}}
@@ -40,13 +41,7 @@ cask {{ . | quote }}
 EOF
 fi
 
-if command -v mise &> /dev/null; then
-  mise install
-fi
-
-if ! command -v pass-cli &> /dev/null; then
-  curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
-fi
+mise install
 
 if ! pass-cli test >/dev/null 2>&1; then
   pass-cli login
