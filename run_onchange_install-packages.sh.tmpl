@@ -1,44 +1,24 @@
 #!/bin/bash
 if command -v apt-get &> /dev/null; then
   sudo apt-get update
-  for i in {{ range .packages.shared.system }}{{ . | quote }} {{ end }}{{ range .packages.linux.apt }}{{ . | quote }} {{ end }}; do
+  for i in {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.apt }}{{ . | quote }} {{ end }}; do
     sudo apt-get install -y "$i"
   done
 fi
 
 if command -v dnf &> /dev/null; then
-  sudo dnf install -y --best --skip-broken {{ range .packages.shared.system }}{{ . | quote }} {{ end }}{{ range .packages.linux.dnf }}{{ . | quote }} {{ end }}
+  sudo dnf install -y --best --skip-broken {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.dnf }}{{ . | quote }} {{ end }}
 fi
 
 if command -v pacman &> /dev/null; then
   if command -v paru &> /dev/null; then
-    paru -S --needed --noconfirm {{ range .packages.shared.system }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}{{ range .packages.linux.paru }}{{ . | quote }} {{ end }}
+    paru -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}{{ range .packages.paru }}{{ . | quote }} {{ end }}
   else
-    sudo pacman -S --needed --noconfirm {{ range .packages.shared.system }}{{ . | quote }} {{ end }}{{ range .packages.linux.pacman }}{{ . | quote }} {{ end }}
+    sudo pacman -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}
   fi
 fi
 
-if command -v brew &> /dev/null; then
-brew bundle --file=/dev/stdin <<EOF
-{{ range .packages.shared.brews -}}
-brew {{ . | quote }}
-{{ end -}}
-{{ range .packages.shared.casks -}}
-cask {{ . | quote }}
-{{ end -}}
-{{- if eq .chezmoi.os "darwin" }}
-{{ range .packages.shared.system -}}
-brew {{ . | quote }}
-{{ end -}}
-{{ range .packages.darwin.brews -}}
-brew {{ . | quote }}
-{{ end -}}
-{{ range .packages.darwin.casks -}}
-cask {{ . | quote }}
-{{ end -}}
-{{- end }}
-EOF
-fi
+brew bundle
 
 mise install
 
