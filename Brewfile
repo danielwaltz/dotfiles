@@ -37,3 +37,6 @@ cask "raycast" if OS.mac?
 cask "tailscale-app" if OS.mac?
 cask "visual-studio-code" if OS.mac?
 cask "zen" if OS.mac?
+mas "Hidden Bar", id: 1452453066 if OS.mac?
+mas "Magnet", id: 441258766 if OS.mac?
+mas "Xcode", id: 497799835 if OS.mac?
