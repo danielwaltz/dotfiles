@@ -1,60 +1,17 @@
 packages:
   shared:
-    brews:
-      - "bat"
-      - "btop"
-      - "cbonsai"
-      - "chezmoi"
-      - "cmatrix"
-      - "eza"
-      - "fastfetch"
-      - "fd"
-      - "fzf"
-      - "gnupg"
-      - "jq"
-      - "keychain"
-      - "lazydocker"
-      - "lazygit"
-      - "mise"
-      - "neovim"
-      - "protonpass/homebrew-tap/pass-cli"
-      - "rg"
-      - "starship"
-      - "tig"
-      - "zoxide"
-    casks:
-      - "font-jetbrains-mono-nerd-font"
-    system:
-      - "curl"
-      - "git"
-      - "vim"
-      - "zsh"
-  darwin:
-    brews:
-      - "mas"
-      - "pinentry-mac"
-      - "util-linux"
-    casks:
-      - "docker-desktop"
-      - "ghostty"
-      - "linearmouse"
-      - "proton-pass"
-      - "raycast"
-      - "tailscale-app"
-      - "visual-studio-code"
-      - "zen"
-  linux:
-    apt:
-      - "tailscale"
-      - "s-tui"
-    dnf:
-      - "tailscale"
-      - "s-tui"
-    pacman:
-      - "code"
-      - "ghostty"
-      - "s-tui"
-      - "tailscale"
-    paru:
-      - "proton-pass-bin"
-      - "zen-browser-bin"
+    - "zsh"
+  apt:
+    - "tailscale"
+    - "s-tui"
+  dnf:
+    - "tailscale"
+    - "s-tui"
+  pacman:
+    - "code"
+    - "ghostty"
+    - "s-tui"
+    - "tailscale"
+  paru:
+    - "proton-pass-bin"
+    - "zen-browser-bin"

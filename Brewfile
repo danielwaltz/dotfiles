@@ -1,0 +1,39 @@
+# Global
+brew "bat"
+brew "btop"
+brew "cbonsai"
+brew "chezmoi"
+brew "cmatrix"
+brew "curl"
+brew "eza"
+brew "fastfetch"
+brew "fd"
+brew "fzf"
+brew "git"
+brew "gnupg"
+brew "jq"
+brew "keychain"
+brew "lazydocker"
+brew "lazygit"
+brew "mise"
+brew "neovim"
+brew "protonpass/homebrew-tap/pass-cli"
+brew "rg"
+brew "starship"
+brew "tig"
+brew "vim"
+brew "zoxide"
+cask "font-jetbrains-mono-nerd-font"
+
+# Darwin
+brew "mas" if OS.mac?
+brew "pinentry-mac" if OS.mac?
+brew "util-linux" if OS.mac?
+cask "docker-desktop" if OS.mac?
+cask "ghostty" if OS.mac?
+cask "linearmouse" if OS.mac?
+cask "proton-pass", greedy: true if OS.mac?
+cask "raycast" if OS.mac?
+cask "tailscale-app" if OS.mac?
+cask "visual-studio-code" if OS.mac?
+cask "zen" if OS.mac?
