@@ -27,6 +27,10 @@ brew "wakeonlan"
 brew "zoxide"
 cask "font-jetbrains-mono-nerd-font"
 
+# Linux
+flatpak "app.zen_browser.zen" if OS.linux?
+flatpak "me.proton.Pass" if OS.linux?
+
 # Darwin
 brew "mas" if OS.mac?
 brew "pinentry-mac" if OS.mac?

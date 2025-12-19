@@ -12,6 +12,3 @@ packages:
     - "ghostty"
     - "s-tui"
     - "tailscale"
-  paru:
-    - "proton-pass-bin"
-    - "zen-browser-bin"

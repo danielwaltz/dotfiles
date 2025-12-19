@@ -11,14 +11,10 @@ if command -v dnf &> /dev/null; then
 fi
 
 if command -v pacman &> /dev/null; then
-  if command -v paru &> /dev/null; then
-    paru -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}{{ range .packages.paru }}{{ . | quote }} {{ end }}
-  else
-    sudo pacman -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}
-  fi
+  sudo pacman -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}
 fi
 
-brew bundle
+brew bundle --file="$HOME/.Brewfile"
 
 mise install
 
