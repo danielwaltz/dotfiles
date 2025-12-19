@@ -8,6 +8,7 @@ brew "curl"
 brew "eza"
 brew "fastfetch"
 brew "fd"
+brew "figlet"
 brew "fzf"
 brew "git"
 brew "gnupg"
@@ -22,6 +23,7 @@ brew "rg"
 brew "starship"
 brew "tig"
 brew "vim"
+brew "wakeonlan"
 brew "zoxide"
 cask "font-jetbrains-mono-nerd-font"
 
@@ -29,8 +31,10 @@ cask "font-jetbrains-mono-nerd-font"
 brew "mas" if OS.mac?
 brew "pinentry-mac" if OS.mac?
 brew "util-linux" if OS.mac?
+cask "choosy" if OS.mac?
 cask "docker-desktop" if OS.mac?
 cask "ghostty" if OS.mac?
+cask "kiro-cli" if OS.mac?
 cask "linearmouse" if OS.mac?
 cask "proton-pass", greedy: true if OS.mac?
 cask "raycast" if OS.mac?
