@@ -17,6 +17,10 @@ if [[ -o interactive ]]; then
   fastfetch
 
   if ! ssh-add -l >/dev/null 2>&1; then
+    if ! pass-cli test >/dev/null 2>&1; then
+      pass-cli login
+    fi
+
     # Personal SSH
     personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
     personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
