@@ -12,6 +12,9 @@ zstyle :omz:plugins:keychain options --quiet
 source ~/.local/share/antidote/antidote.zsh
 antidote load
 
+### path
+export PATH="$HOME/.local/bin:$PATH"
+
 ### startup
 if [[ -o interactive ]]; then
   fastfetch
@@ -139,7 +142,6 @@ alias dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 {{- end }}
 
 ### init
-export PATH="$HOME/.local/bin:$PATH"
 # TODO: use pass-cli ssh-agent integration when matured
 # if command -v pass-cli &> /dev/null; then
 #   pass-cli test >/dev/null 2>&1 || return
