@@ -22,6 +22,9 @@ command! PU PlugUpdate | PlugUpgrade
 
 colorscheme nord
 
+let g:netrw_list_hide=0
+let NERDTreeShowHidden=1
+
 set number
 set list
 set listchars=tab:⇾\ ,trail:·
