@@ -27,11 +27,18 @@ function auth() {
   fi
 
   if ! ssh-add -l >/dev/null 2>&1; then
-    mkdir -p "$HOME/.ssh"
-    chmod 700 "$HOME/.ssh"
+    if [ ! -d "$HOME/.ssh" ]; then
+      echo "SSH directory not found. Creating..."
+      mkdir -p "$HOME/.ssh"
+      chmod 700 "$HOME/.ssh"
+    fi
 
     # Personal SSH
     personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
+    if [ -z "$personal_ssh_key_file" ]; then
+      echo "Personal SSH Key file name not found in password store."
+      return 1
+    fi
     personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
     if [ ! -f "$personal_ssh_key_path" ]; then
       echo "Personal SSH Key not found locally. Importing..."
@@ -45,6 +52,10 @@ function auth() {
     {{- if eq .chezmoi.os "darwin" }}
     # Moser SSH
     moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")"
+    if [ -z "$moser_ssh_key_file" ]; then
+      echo "Moser SSH Key file name not found in password store."
+      return 1
+    fi
     moser_ssh_key_path="$HOME/.ssh/$moser_ssh_key_file"
     if [ ! -f "$moser_ssh_key_path" ]; then
       echo "Moser SSH Key not found locally. Importing..."
@@ -59,6 +70,10 @@ function auth() {
 
   # Personal GPG
   personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
+  if [ -z "$personal_gpg_key_id" ]; then
+    echo "Personal GPG Key ID not found in password store."
+    return 1
+  fi
   if ! gpg --list-keys "$personal_gpg_key_id" >/dev/null 2>&1; then
     echo "Personal GPG Key not found locally. Importing..."
     pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
@@ -70,6 +85,10 @@ function auth() {
   {{- if eq .chezmoi.hostname "themacbook" }}
   # Moser GPG
   moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID")"
+  if [ -z "$moser_gpg_key_id" ]; then
+    echo "Moser GPG Key ID not found in password store."
+    return 1
+  fi
   if ! gpg --list-keys "$moser_gpg_key_id" >/dev/null 2>&1; then
     echo "Moser GPG Key not found locally. Importing..."
     pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import
