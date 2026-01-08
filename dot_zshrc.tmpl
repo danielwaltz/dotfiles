@@ -18,27 +18,67 @@ export PATH="$HOME/.local/bin:$PATH"
 ### startup
 if [[ -o interactive ]]; then
   fastfetch
+fi
+
+### aliases
+function auth() {
+  if ! pass-cli test >/dev/null 2>&1; then
+    pass-cli login
+  fi
 
   if ! ssh-add -l >/dev/null 2>&1; then
-    if ! pass-cli test >/dev/null 2>&1; then
-      pass-cli login
-    fi
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
 
     # Personal SSH
     personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
     personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
+    if [ ! -f "$personal_ssh_key_path" ]; then
+      echo "Personal SSH Key not found locally. Importing..."
+      pass-cli item view "pass://Personal/Personal SSH Key/public_key" > "$personal_ssh_key_path.pub"
+      pass-cli item view "pass://Personal/Personal SSH Key/private_key" > "$personal_ssh_key_path"
+      chmod 600 "$personal_ssh_key_path"
+      echo "Personal SSH Key added."
+    fi
     SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add -q "$personal_ssh_key_path" <<< "$(pass-cli item view "pass://Personal/Personal SSH Key/Passphrase")"
 
     {{- if eq .chezmoi.os "darwin" }}
     # Moser SSH
     moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")"
     moser_ssh_key_path="$HOME/.ssh/$moser_ssh_key_file"
+    if [ ! -f "$moser_ssh_key_path" ]; then
+      echo "Moser SSH Key not found locally. Importing..."
+      pass-cli item view "pass://Moser Consulting/Moser SSH Key/public_key" > "$moser_ssh_key_path.pub"
+      pass-cli item view "pass://Moser Consulting/Moser SSH Key/private_key" > "$moser_ssh_key_path"
+      chmod 600 "$moser_ssh_key_path"
+      echo "Moser SSH Key added."
+    fi
     SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add -q "$moser_ssh_key_path" <<< "$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/Passphrase")"
     {{- end }}
   fi
-fi
 
-### aliases
+  # Personal GPG
+  personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
+  if ! gpg --list-keys "$personal_gpg_key_id" >/dev/null 2>&1; then
+    echo "Personal GPG Key not found locally. Importing..."
+    pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
+    pass-cli item view "pass://Personal/Personal GPG Key/private_key" | gpg --import
+    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$personal_gpg_key_id" trust quit
+    echo "Personal GPG Key added."
+  fi
+
+  {{- if eq .chezmoi.hostname "themacbook" }}
+  # Moser GPG
+  moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID")"
+  if ! gpg --list-keys "$moser_gpg_key_id" >/dev/null 2>&1; then
+    echo "Moser GPG Key not found locally. Importing..."
+    pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import
+    pass-cli item view "pass://Moser Consulting/Moser GPG Key/private_key" | gpg --import
+    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$moser_gpg_key_id" trust quit
+    echo "Moser GPG Key added."
+  fi
+  {{- end }}
+}
 function update() {
   echo '\e[32m\ue5fc chezmoi'
   chezmoi update --apply
