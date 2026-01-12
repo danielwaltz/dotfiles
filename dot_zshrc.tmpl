@@ -27,45 +27,7 @@ function auth() {
   fi
 
   if ! ssh-add -l >/dev/null 2>&1; then
-    if [ ! -d "$HOME/.ssh" ]; then
-      echo "SSH directory not found. Creating..."
-      mkdir -p "$HOME/.ssh"
-      chmod 700 "$HOME/.ssh"
-    fi
-
-    # Personal SSH
-    personal_ssh_key_file="$(pass-cli item view "pass://Personal/Personal SSH Key/File")"
-    if [ -z "$personal_ssh_key_file" ]; then
-      echo "Personal SSH Key file name not found in password store."
-      return 1
-    fi
-    personal_ssh_key_path="$HOME/.ssh/$personal_ssh_key_file"
-    if [ ! -f "$personal_ssh_key_path" ]; then
-      echo "Personal SSH Key not found locally. Importing..."
-      pass-cli item view "pass://Personal/Personal SSH Key/public_key" > "$personal_ssh_key_path.pub"
-      pass-cli item view "pass://Personal/Personal SSH Key/private_key" > "$personal_ssh_key_path"
-      chmod 600 "$personal_ssh_key_path"
-      echo "Personal SSH Key added."
-    fi
-    SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add -q "$personal_ssh_key_path" <<< "$(pass-cli item view "pass://Personal/Personal SSH Key/Passphrase")"
-
-    {{- if eq .chezmoi.os "darwin" }}
-    # Moser SSH
-    moser_ssh_key_file="$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/File")"
-    if [ -z "$moser_ssh_key_file" ]; then
-      echo "Moser SSH Key file name not found in password store."
-      return 1
-    fi
-    moser_ssh_key_path="$HOME/.ssh/$moser_ssh_key_file"
-    if [ ! -f "$moser_ssh_key_path" ]; then
-      echo "Moser SSH Key not found locally. Importing..."
-      pass-cli item view "pass://Moser Consulting/Moser SSH Key/public_key" > "$moser_ssh_key_path.pub"
-      pass-cli item view "pass://Moser Consulting/Moser SSH Key/private_key" > "$moser_ssh_key_path"
-      chmod 600 "$moser_ssh_key_path"
-      echo "Moser SSH Key added."
-    fi
-    SSH_ASKPASS=~/.ssh/ssh-askpass-stdout.sh SSH_ASKPASS_REQUIRE=force ssh-add -q "$moser_ssh_key_path" <<< "$(pass-cli item view "pass://Moser Consulting/Moser SSH Key/Passphrase")"
-    {{- end }}
+    pass-cli ssh-agent load
   fi
 
   # Personal GPG
