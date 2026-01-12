@@ -27,10 +27,10 @@ function auth() {
   fi
 
   if ! ssh-add -l >/dev/null 2>&1; then
-    pass-cli ssh-agent load --vault-name "Personal"
     {{- if eq .chezmoi.hostname "themacbook" }}
     pass-cli ssh-agent load --vault-name "Moser Consulting"
     {{- end }}
+    pass-cli ssh-agent load --vault-name "Personal"
   fi
 
   personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
