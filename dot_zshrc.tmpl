@@ -27,10 +27,12 @@ function auth() {
   fi
 
   if ! ssh-add -l >/dev/null 2>&1; then
-    pass-cli ssh-agent load
+    pass-cli ssh-agent load --vault-name "Personal"
+    {{- if eq .chezmoi.hostname "themacbook" }}
+    pass-cli ssh-agent load --vault-name "Moser Consulting"
+    {{- end }}
   fi
 
-  # Personal GPG
   personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
   if [ -z "$personal_gpg_key_id" ]; then
     echo "Personal GPG Key ID not found in password store."
@@ -45,7 +47,6 @@ function auth() {
   fi
 
   {{- if eq .chezmoi.hostname "themacbook" }}
-  # Moser GPG
   moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID")"
   if [ -z "$moser_gpg_key_id" ]; then
     echo "Moser GPG Key ID not found in password store."
