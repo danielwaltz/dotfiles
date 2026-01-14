@@ -14,6 +14,7 @@ if command -v pacman &> /dev/null; then
   sudo pacman -S --needed --noconfirm {{ range .packages.shared }}{{ . | quote }} {{ end }}{{ range .packages.pacman }}{{ . | quote }} {{ end }}
 fi
 
+# Include Brewfile hash to run when file changes {{ include "dot_Brewfile.tmpl" | sha256sum }}
 brew bundle --file="$HOME/.Brewfile"
 
 mise install
