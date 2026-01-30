@@ -18,13 +18,20 @@ Plug 'ryanoasis/vim-devicons' |" Must load last
 
 call plug#end()
 
+" Start NERDTree when Vim starts with a directory argument.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+    \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+
 command! PU PlugUpdate | PlugUpgrade
 
 colorscheme nord
 
+let g:airline_powerline_fonts=1
 let g:netrw_list_hide=0
 let NERDTreeShowHidden=1
 
+set encoding=UTF-8
 set number
 set list
 set listchars=tab:⇾\ ,trail:·
