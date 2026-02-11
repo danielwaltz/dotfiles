@@ -102,7 +102,7 @@ function update() {
   brew update && brew upgrade && brew upgrade --cask
 
   echo '\e[32m\uf1b2 mise'
-  mise upgrade
+  mise upgrade && mise prune -y
 }
 function cleanup() {
   if command -v apt &> /dev/null; then
@@ -141,7 +141,7 @@ function cleanup() {
   brew cleanup
 
   echo '\e[32m\uf1b2 mise'
-  mise prune
+  mise prune -y
 }
 alias bump='bunx taze@latest -rwiI'
 alias bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update deps"'
