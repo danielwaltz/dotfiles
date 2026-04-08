@@ -7,7 +7,6 @@ endif
 call plug#begin()
 
 Plug 'alker0/chezmoi.vim'
-Plug 'arcticicestudio/nord-vim'
 Plug 'junegunn/fzf.vim'
 Plug 'preservim/nerdtree'
 Plug 'prabirshrestha/vim-lsp'
@@ -31,9 +30,10 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 
 command! PU PlugUpdate | PlugUpgrade
 
-colorscheme nord
+colorscheme ice-ice-oled
 
 let g:airline_powerline_fonts=1
+let g:airline_theme='ice_ice_oled'
 let g:netrw_list_hide=0
 let NERDTreeShowHidden=1
 
