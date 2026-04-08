@@ -61,6 +61,24 @@ function auth() {
   fi
   {{- end }}
 }
+function findpkg() {
+  local dir
+  dir=$(realpath "${2:-.}")
+  grep -rn "\"$1\"" --include="package.json" \
+    --exclude-dir=node_modules \
+    --exclude-dir=dist \
+    --exclude-dir=.next \
+    --exclude-dir=.nuxt \
+    --exclude-dir=.output \
+    --exclude-dir=build \
+    --exclude-dir=out \
+    "$dir" \
+    | sed -E 's|(.+):.*"([^"]+)": *"([^"]+)".*|\1\t\2\t\3|' \
+    | sort \
+    | while IFS=$'\t' read -r file_path pkg ver; do
+      echo -e "\033[36m$file_path\033[0m → \033[32m$pkg\033[0m@\033[33m$ver\033[0m"
+      done
+}
 function update() {
   echo '\e[32m\ue5fc chezmoi'
   chezmoi update --apply
