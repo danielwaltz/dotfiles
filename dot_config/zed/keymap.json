@@ -1,0 +1,37 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-shift-g": "git_panel::ToggleFocus",
+      "cmd-alt-p": "projects::OpenRecent",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      // "j k": ["workspace::SendKeystrokes", "escape"]
+    },
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-shift-tab": "pane::ActivatePreviousItem",
+      "ctrl-tab": "pane::ActivateNextItem",
+    },
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-`": "workspace::ToggleRightDock",
+      "cmd-\\": "pane::SplitDown",
+      "cmd-shift-\\": "pane::SplitRight",
+    },
+  },
+]
