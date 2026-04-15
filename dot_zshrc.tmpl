@@ -108,7 +108,7 @@ function update() {
 
   if command -v flatpak &> /dev/null; then
     echo '\e[32m\uf1b2 flatpak'
-    flatpak update -y
+    sudo flatpak update --system -y && flatpak update --user -y
   fi
 
   if command -v mas &> /dev/null; then
