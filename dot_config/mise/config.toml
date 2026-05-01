@@ -2,7 +2,8 @@
 bun = "latest"
 deno = "latest"
 node = "latest"
+pnpm = "latest"
 
 [settings]
-idiomatic_version_file_enable_tools = ["bun", "deno", "node", "ruby"]
+idiomatic_version_file_enable_tools = ["bun", "deno", "node", "npm", "pnpm", "ruby"]
 
