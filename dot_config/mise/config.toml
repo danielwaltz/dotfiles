@@ -1,4 +1,5 @@
 [tools]
+aube = "latest"
 bun = "latest"
 deno = "latest"
 node = "latest"
