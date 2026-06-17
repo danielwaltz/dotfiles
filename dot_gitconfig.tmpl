@@ -51,8 +51,6 @@
 {{- if eq .chezmoi.os "darwin" }}
 [gpg]
 	program = /opt/homebrew/bin/gpg
-{{- end }}
-{{- if eq .chezmoi.hostname "themacbook" }}
 [includeIf "gitdir:~/Projects/moser/"]
 	path = ~/.gitconfig-moser
 [includeIf "gitdir:~/Projects/fssa/"]
