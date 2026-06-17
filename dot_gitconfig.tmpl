@@ -55,4 +55,6 @@
 {{- if eq .chezmoi.hostname "themacbook" }}
 [includeIf "gitdir:~/Projects/moser/"]
 	path = ~/.gitconfig-moser
+[includeIf "gitdir:~/Projects/fssa/"]
+	path = ~/.gitconfig-fssa
 {{- end }}
