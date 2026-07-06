@@ -174,8 +174,8 @@ function cleanup() {
   echo '\e[32m\uf1b2 mise'
   mise prune -y
 }
-alias bump='bunx taze@latest -rwiI'
-alias bumpall='bunx taze@latest major -rwiu && git commit -am "chore: update deps"'
+alias bump='bunx taze@latest -rwiI --exclude pnpm'
+alias bumpall='bunx taze@latest major -rwiu --exclude pnpm && git commit -am "chore: update deps"'
 alias c='clear'
 alias dotfiles='chezmoi edit'
 alias ls='eza -al --color=always --group-directories-first --icons=always' # preferred listing
