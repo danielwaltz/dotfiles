@@ -130,7 +130,7 @@ function update() {
   fi
 
   echo '\e[32m\uf0fc brew'
-  brew update && brew upgrade && brew upgrade --cask
+  brew update && brew upgrade -y && brew upgrade -y --cask
 
   echo '\e[32m\uf1b2 mise'
   mise upgrade && mise prune -y
