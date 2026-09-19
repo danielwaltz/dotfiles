@@ -21,7 +21,44 @@ if [[ -o interactive ]]; then
 fi
 
 ### aliases
+function _auth_load_gpg_key() {
+  local vault_name="$1"
+  local key_name="$2"
+  local key_id
+
+  key_id="$(pass-cli item view "pass://${vault_name}/${key_name}/ID")"
+  if [ -z "$key_id" ]; then
+    echo "${key_name} ID not found in password store."
+    return 1
+  fi
+
+  if ! gpg --list-keys "$key_id" >/dev/null 2>&1; then
+    echo "${key_name} not found locally. Importing..."
+    pass-cli item view "pass://${vault_name}/${key_name}/public_key" | gpg --import
+    pass-cli item view "pass://${vault_name}/${key_name}/private_key" | gpg --import
+    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$key_id" trust quit
+    echo "${key_name} added."
+  fi
+}
+
 function auth() {
+  local key_type="${1:-personal}"
+  local result=0
+
+  if (( $# > 1 )); then
+    echo "Usage: auth [personal|moser|fssa|iga]"
+    return 2
+  fi
+
+  case "$key_type" in
+    personal|moser|fssa|iga) ;;
+    *)
+      echo "Unknown key type: $key_type"
+      echo "Usage: auth [personal|moser|fssa|iga]"
+      return 2
+      ;;
+  esac
+
   if ! pass-cli info >/dev/null 2>&1; then
     pass-cli login
   fi
@@ -32,55 +69,30 @@ function auth() {
 
   pass-cli session unlock
 
-  if ! ssh-add -l >/dev/null 2>&1; then
-    {{- if eq .chezmoi.os "darwin" }}
-    pass-cli ssh-agent load --vault-name "Moser Consulting"
-    {{- end }}
-    pass-cli ssh-agent load --vault-name "Personal"
+  if [[ "$key_type" == personal ]]; then
+    pass-cli ssh-agent load --vault-name "Personal" || result=1
+    _auth_load_gpg_key "Personal" "Personal GPG Key" || result=1
   fi
 
-  personal_gpg_key_id="$(pass-cli item view "pass://Personal/Personal GPG Key/ID")"
-  if [ -z "$personal_gpg_key_id" ]; then
-    echo "Personal GPG Key ID not found in password store."
-    return 1
-  fi
-  if ! gpg --list-keys "$personal_gpg_key_id" >/dev/null 2>&1; then
-    echo "Personal GPG Key not found locally. Importing..."
-    pass-cli item view "pass://Personal/Personal GPG Key/public_key" | gpg --import
-    pass-cli item view "pass://Personal/Personal GPG Key/private_key" | gpg --import
-    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$personal_gpg_key_id" trust quit
-    echo "Personal GPG Key added."
+  if [[ "$key_type" == moser || "$key_type" == fssa || "$key_type" == iga ]]; then
+    pass-cli ssh-agent load --vault-name "Moser Consulting" || result=1
   fi
 
-  {{- if eq .chezmoi.os "darwin" }}
-  moser_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/Moser GPG Key/ID")"
-  if [ -z "$moser_gpg_key_id" ]; then
-    echo "Moser GPG Key ID not found in password store."
-    return 1
-  fi
-  if ! gpg --list-keys "$moser_gpg_key_id" >/dev/null 2>&1; then
-    echo "Moser GPG Key not found locally. Importing..."
-    pass-cli item view "pass://Moser Consulting/Moser GPG Key/public_key" | gpg --import
-    pass-cli item view "pass://Moser Consulting/Moser GPG Key/private_key" | gpg --import
-    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$moser_gpg_key_id" trust quit
-    echo "Moser GPG Key added."
+  if [[ "$key_type" == moser ]]; then
+    _auth_load_gpg_key "Moser Consulting" "Moser GPG Key" || result=1
   fi
 
-  fssa_gpg_key_id="$(pass-cli item view "pass://Moser Consulting/FSSA GPG Key/ID")"
-  if [ -z "$fssa_gpg_key_id" ]; then
-    echo "FSSA GPG Key ID not found in password store."
-    return 1
+  if [[ "$key_type" == fssa ]]; then
+    _auth_load_gpg_key "Moser Consulting" "FSSA GPG Key" || result=1
   fi
-  if ! gpg --list-keys "$fssa_gpg_key_id" >/dev/null 2>&1; then
-    echo "FSSA GPG Key not found locally. Importing..."
-    pass-cli item view "pass://Moser Consulting/FSSA GPG Key/public_key" | gpg --import
-    pass-cli item view "pass://Moser Consulting/FSSA GPG Key/private_key" | gpg --import
-    printf '5\ny\n' | gpg --command-fd 0 --edit-key "$fssa_gpg_key_id" trust quit
-    echo "FSSA GPG Key added."
+
+  if [[ "$key_type" == iga ]]; then
+    _auth_load_gpg_key "Moser Consulting" "IGA GPG Key" || result=1
   fi
-  {{- end }}
 
   pass-cli session lock
+
+  return $result
 }
 function findpkg() {
   local dir
