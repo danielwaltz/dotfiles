@@ -22,9 +22,15 @@ fi
 
 ### aliases
 function auth() {
-  if ! pass-cli test >/dev/null 2>&1; then
+  if ! pass-cli info >/dev/null 2>&1; then
     pass-cli login
   fi
+
+  if ! pass-cli session lock >/dev/null 2>&1; then
+    pass-cli session create-lock
+  fi
+
+  pass-cli session unlock
 
   if ! ssh-add -l >/dev/null 2>&1; then
     {{- if eq .chezmoi.os "darwin" }}
@@ -73,6 +79,8 @@ function auth() {
     echo "FSSA GPG Key added."
   fi
   {{- end }}
+
+  pass-cli session lock
 }
 function findpkg() {
   local dir
