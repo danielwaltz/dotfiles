@@ -4,12 +4,11 @@ These are my personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Installation
 
-1. Install [homebrew](https://brew.sh/)
+1. Install [homebrew](https://brew.sh/) and initial packages:
     - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-1. Install and configure [zsh](https://www.zsh.org/)
-    - `brew install zsh`
+    - `brew install chezmoi zsh`
+1. Configure [zsh](https://www.zsh.org/) and set default shell:
     - `echo $(which zsh) | sudo tee -a /etc/shells`
     - `chsh -s $(which zsh)`
-1. Install and initialize [chezmoi](https://www.chezmoi.io/)
-    - `brew install chezmoi`
+1. Initialize [chezmoi](https://www.chezmoi.io/):
     - `chezmoi init --apply danielwaltz`
