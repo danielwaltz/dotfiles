@@ -48,11 +48,13 @@
 [tag]
 	gpgSign = true
 	sort = version:refname
-{{- if eq .chezmoi.os "darwin" }}
 [gpg]
+{{- if eq .chezmoi.os "darwin" }}
 	program = /opt/homebrew/bin/gpg
+{{- end }}
 [includeIf "gitdir:~/Projects/moser/"]
 	path = ~/.gitconfig-moser
 [includeIf "gitdir:~/Projects/fssa/"]
 	path = ~/.gitconfig-fssa
-{{- end }}
+[includeIf "gitdir:~/Projects/iga/"]
+	path = ~/.gitconfig-iga
