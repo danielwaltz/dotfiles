@@ -49,9 +49,7 @@
 	gpgSign = true
 	sort = version:refname
 [gpg]
-{{- if eq .chezmoi.os "darwin" }}
-	program = /opt/homebrew/bin/gpg
-{{- end }}
+	program = gpg
 [includeIf "gitdir:~/Projects/moser/"]
 	path = ~/.gitconfig-moser
 [includeIf "gitdir:~/Projects/fssa/"]
