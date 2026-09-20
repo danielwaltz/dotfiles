@@ -1,0 +1,213 @@
+#!/bin/sh
+
+# A pinentry proxy that resolves mapped GPG passphrases from Proton Pass and
+# delegates every other operation to the platform's normal pinentry program.
+
+config_home=${XDG_CONFIG_HOME:-"$HOME/.config"}
+mapping_file=${PINENTRY_PASS_CLI_MAP:-"$config_home/pinentry-pass-cli/keys"}
+keyinfo=
+fallback_available=false
+fallback_pid=
+fallback_dir=
+
+cleanup() {
+  if [ "$fallback_available" = true ]; then
+    exec 3>&- 4<&-
+  fi
+  [ -z "$fallback_pid" ] || kill "$fallback_pid" 2>/dev/null || true
+  [ -z "$fallback_dir" ] || {
+    rm -f "$fallback_dir/input" "$fallback_dir/output"
+    rmdir "$fallback_dir" 2>/dev/null || true
+  }
+}
+
+trap cleanup EXIT
+trap 'exit 1' HUP INT TERM
+
+find_pass_cli() {
+  if [ -n "${PINENTRY_PASS_CLI_COMMAND:-}" ] && [ -x "$PINENTRY_PASS_CLI_COMMAND" ]; then
+    printf '%s\n' "$PINENTRY_PASS_CLI_COMMAND"
+    return 0
+  fi
+
+  if command -v pass-cli >/dev/null 2>&1; then
+    command -v pass-cli
+    return 0
+  fi
+
+  for candidate in \
+    /opt/homebrew/bin/pass-cli \
+    /home/linuxbrew/.linuxbrew/bin/pass-cli \
+    /usr/local/bin/pass-cli \
+    "$HOME/.local/bin/pass-cli"
+  do
+    if [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+find_fallback() {
+  if [ -n "${PINENTRY_PASS_CLI_FALLBACK:-}" ] && [ -x "$PINENTRY_PASS_CLI_FALLBACK" ]; then
+    printf '%s\n' "$PINENTRY_PASS_CLI_FALLBACK"
+    return 0
+  fi
+
+  for candidate in \
+    /opt/homebrew/bin/pinentry-mac \
+    /usr/local/bin/pinentry-mac \
+    pinentry \
+    pinentry-gnome3 \
+    pinentry-qt \
+    pinentry-curses \
+    pinentry-tty
+  do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      command -v "$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+start_fallback() {
+  fallback=$(find_fallback) || return 1
+  fallback_dir=$(mktemp -d "${TMPDIR:-/tmp}/pinentry-pass-cli.XXXXXX") || return 1
+  mkfifo "$fallback_dir/input" "$fallback_dir/output" || return 1
+
+  "$fallback" < "$fallback_dir/input" > "$fallback_dir/output" &
+  fallback_pid=$!
+  exec 3> "$fallback_dir/input"
+  exec 4< "$fallback_dir/output"
+
+  IFS= read -r greeting <&4 || return 1
+  printf '%s\n' "$greeting"
+  fallback_available=true
+}
+
+forward_to_fallback() {
+  printf '%s\n' "$1" >&3 || return 1
+
+  while IFS= read -r response <&4; do
+    printf '%s\n' "$response"
+    case "$response" in
+      OK|OK\ *|ERR|ERR\ *) return 0 ;;
+    esac
+  done
+
+  return 1
+}
+
+find_item_uri() {
+  wanted_keygrip=${keyinfo#n/}
+  [ -n "$wanted_keygrip" ] && [ -r "$mapping_file" ] || return 1
+
+  awk -F '\t' -v keygrip="$wanted_keygrip" \
+    '$1 == keygrip { print $2; exit }' "$mapping_file"
+}
+
+# Assuan data lines escape percent, line-feed, and carriage-return bytes.
+assuan_escape() {
+  printf '%s' "$1" | awk '
+    BEGIN { ORS = "" }
+    {
+      if (NR > 1) printf "%%0A"
+      gsub(/%/, "%25")
+      gsub(/\r/, "%0D")
+      printf "%s", $0
+    }
+  '
+}
+
+get_passphrase() {
+  item_uri=$(find_item_uri) || return 1
+  [ -n "$item_uri" ] || return 1
+
+  pass_cli=$(find_pass_cli) || return 1
+  passphrase=$("$pass_cli" item view "${item_uri}/passphrase" 2>/dev/null) ||
+    passphrase=$("$pass_cli" item view "${item_uri}/password" 2>/dev/null) || return 1
+
+  [ -n "$passphrase" ] || return 1
+  assuan_escape "$passphrase"
+}
+
+if ! start_fallback; then
+  printf 'OK Proton Pass pinentry ready\n'
+fi
+
+while IFS= read -r request; do
+  command=${request%% *}
+  argument=${request#"$command"}
+  argument=${argument# }
+
+  case "$command" in
+    SETKEYINFO)
+      if [ "$argument" = "--clear" ]; then
+        keyinfo=
+      else
+        keyinfo=$argument
+      fi
+      if [ "$fallback_available" = true ]; then
+        forward_to_fallback "$request"
+      else
+        printf 'OK\n'
+      fi
+      ;;
+    GETPIN)
+      if passphrase=$(get_passphrase); then
+        printf 'D %s\nOK\n' "$passphrase"
+        passphrase=
+      elif [ "$fallback_available" = true ]; then
+        forward_to_fallback "$request"
+      else
+        printf 'ERR 67109139 No passphrase available; run auth for this key first\n'
+      fi
+      ;;
+    RESET)
+      keyinfo=
+      if [ "$fallback_available" = true ]; then
+        forward_to_fallback "$request"
+      else
+        printf 'OK\n'
+      fi
+      ;;
+    BYE)
+      if [ "$fallback_available" = true ]; then
+        forward_to_fallback "$request"
+      else
+        printf 'OK closing connection\n'
+      fi
+      exit 0
+      ;;
+    *)
+      if [ "$fallback_available" = true ]; then
+        forward_to_fallback "$request"
+        continue
+      fi
+
+      case "$command" in
+      GETINFO)
+      case "$argument" in
+        pid) printf 'D %s\nOK\n' "$$" ;;
+        version) printf 'D 1.0\nOK\n' ;;
+        flavor) printf 'D pass-cli\nOK\n' ;;
+        *) printf 'ERR 67109144 Unknown inquiry\n' ;;
+      esac
+      ;;
+      OPTION|SETDESC|SETPROMPT|SETTITLE|SETOK|SETCANCEL|SETERROR|SETQUALITYBAR|SETQUALITYBAR_TT)
+      printf 'OK\n'
+      ;;
+      CONFIRM|MESSAGE)
+      printf 'ERR 67109139 Operation not supported by non-interactive pinentry\n'
+      ;;
+      *)
+      printf 'ERR 67109144 Unknown command\n'
+      ;;
+      esac
+      ;;
+  esac
+done

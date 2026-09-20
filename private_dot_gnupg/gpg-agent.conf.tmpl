@@ -1,3 +1,1 @@
-{{- if eq .chezmoi.os "darwin" }}
-pinentry-program /opt/homebrew/bin/pinentry-mac
-{{- end }}
+pinentry-program {{ .chezmoi.homeDir }}/.local/bin/pinentry-pass-cli
