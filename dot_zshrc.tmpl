@@ -145,11 +145,11 @@ function findpkg() {
       done
 }
 function update() {
-  echo '\e[32m\ue5fc chezmoi'
-  chezmoi update --apply
-
   echo '\e[32m\ue795 antidote'
   antidote update
+
+  echo '\e[32m\ue5fc chezmoi'
+  chezmoi update --apply
 
   if command -v apt &> /dev/null; then
     echo '\e[32m\ue77d apt'
