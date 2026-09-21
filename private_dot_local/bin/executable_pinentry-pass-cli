@@ -124,12 +124,9 @@ assuan_escape() {
 }
 
 get_passphrase() {
-  item_uri=$(find_item_uri) || return 1
-  [ -n "$item_uri" ] || return 1
-
+  item_uri=$1
   pass_cli=$(find_pass_cli) || return 1
-  passphrase=$("$pass_cli" item view "${item_uri}/passphrase" 2>/dev/null) ||
-    passphrase=$("$pass_cli" item view "${item_uri}/password" 2>/dev/null) || return 1
+  passphrase=$("$pass_cli" item view "${item_uri}/passphrase" </dev/null 2>/dev/null) || return 1
 
   [ -n "$passphrase" ] || return 1
   assuan_escape "$passphrase"
@@ -158,9 +155,13 @@ while IFS= read -r request; do
       fi
       ;;
     GETPIN)
-      if passphrase=$(get_passphrase); then
-        printf 'D %s\nOK\n' "$passphrase"
-        passphrase=
+      if item_uri=$(find_item_uri) && [ -n "$item_uri" ]; then
+        if passphrase=$(get_passphrase "$item_uri"); then
+          printf 'D %s\nOK\n' "$passphrase"
+          passphrase=
+        else
+          printf 'ERR 67109139 Proton Pass lookup failed; run auth to restore access\n'
+        fi
       elif [ "$fallback_available" = true ]; then
         forward_to_fallback "$request"
       else
