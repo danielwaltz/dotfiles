@@ -146,7 +146,7 @@ function findpkg() {
 }
 function update() {
   echo '\e[32m\ue5fc chezmoi'
-  chezmoi update --apply
+  chezmoi update --apply --no-tty
 
   echo '\e[32m\ue795 antidote'
   antidote update
