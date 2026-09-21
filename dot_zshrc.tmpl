@@ -53,12 +53,45 @@ function _auth_register_gpg_key() {
   command mv -f "$temp_file" "$mapping_file"
 }
 
+function _auth_cache_gpg_key() {
+  setopt local_options pipe_fail
+
+  local key_id="$1"
+  local item_uri="$2"
+  local preset_passphrase
+  local keygrip
+  local -a keygrips
+
+  preset_passphrase="$(gpgconf --list-dirs libexecdir)/gpg-preset-passphrase"
+  if [[ ! -x "$preset_passphrase" ]]; then
+    echo "gpg-preset-passphrase not found at ${preset_passphrase}."
+    return 1
+  fi
+
+  keygrips=("${(@f)$(
+    gpg --batch --with-colons --with-keygrip --list-secret-keys "$key_id" 2>/dev/null \
+      | awk -F: '$1 == "grp" { print $10 }'
+  )}")
+  if (( ${#keygrips} == 0 )); then
+    echo "No secret keygrip found for ${key_id}."
+    return 1
+  fi
+
+  for keygrip in "${keygrips[@]}"; do
+    if ! pass-cli item view "${item_uri}/passphrase" \
+      | "$preset_passphrase" --preset "$keygrip"; then
+      return 1
+    fi
+  done
+}
+
 function _auth_load_gpg_key() {
   local vault_name="$1"
   local key_name="$2"
   local key_id
+  local item_uri="pass://${vault_name}/${key_name}"
 
-  key_id="$(pass-cli item view "pass://${vault_name}/${key_name}/ID")"
+  key_id="$(pass-cli item view "${item_uri}/ID")"
   if [ -z "$key_id" ]; then
     echo "${key_name} ID not found in password store."
     return 1
@@ -66,13 +99,14 @@ function _auth_load_gpg_key() {
 
   if ! gpg --list-keys "$key_id" >/dev/null 2>&1; then
     echo "${key_name} not found locally. Importing..."
-    pass-cli item view "pass://${vault_name}/${key_name}/public_key" | gpg --import
-    pass-cli item view "pass://${vault_name}/${key_name}/private_key" | gpg --import
+    pass-cli item view "${item_uri}/public_key" | gpg --import
+    pass-cli item view "${item_uri}/private_key" | gpg --import
     printf '5\ny\n' | gpg --command-fd 0 --edit-key "$key_id" trust quit
     echo "${key_name} added."
   fi
 
-  _auth_register_gpg_key "$key_id" "pass://${vault_name}/${key_name}"
+  _auth_register_gpg_key "$key_id" "$item_uri" || return 1
+  _auth_cache_gpg_key "$key_id" "$item_uri"
 }
 
 function auth() {
@@ -98,34 +132,40 @@ function auth() {
   fi
 
   if ! pass-cli session lock >/dev/null 2>&1; then
-    pass-cli session create-lock
+    pass-cli session create-lock \
+      2> >(grep -Fvx 'Error: Session already has a lock' >&2) || true
   fi
 
-  pass-cli session unlock
+  pass-cli session unlock || return 1
 
-  if [[ "$key_type" == personal ]]; then
-    pass-cli ssh-agent load --vault-name "Personal" || result=1
-    _auth_load_gpg_key "Personal" "Personal GPG Key" || result=1
-  fi
+  {
+    if [[ "$key_type" == personal ]]; then
+      pass-cli ssh-agent load --vault-name "Personal" || result=1
+      _auth_load_gpg_key "Personal" "Personal GPG Key" || result=1
+    fi
 
-  if [[ "$key_type" == moser || "$key_type" == fssa || "$key_type" == iga ]]; then
-    pass-cli ssh-agent load --vault-name "Moser Consulting" || result=1
-  fi
+    if [[ "$key_type" == moser || "$key_type" == fssa || "$key_type" == iga ]]; then
+      pass-cli ssh-agent load --vault-name "Moser Consulting" || result=1
+    fi
 
-  if [[ "$key_type" == moser ]]; then
-    _auth_load_gpg_key "Moser Consulting" "Moser GPG Key" || result=1
-  fi
+    if [[ "$key_type" == moser ]]; then
+      _auth_load_gpg_key "Moser Consulting" "Moser GPG Key" || result=1
+    fi
 
-  if [[ "$key_type" == fssa ]]; then
-    _auth_load_gpg_key "Moser Consulting" "FSSA GPG Key" || result=1
-  fi
+    if [[ "$key_type" == fssa ]]; then
+      _auth_load_gpg_key "Moser Consulting" "FSSA GPG Key" || result=1
+    fi
 
-  if [[ "$key_type" == iga ]]; then
-    _auth_load_gpg_key "Moser Consulting" "IGA GPG Key" || result=1
-  fi
+    if [[ "$key_type" == iga ]]; then
+      _auth_load_gpg_key "Moser Consulting" "IGA GPG Key" || result=1
+    fi
+  } always {
+    pass-cli session lock || result=1
+  }
 
   return $result
 }
+
 function findpkg() {
   local dir
   dir=$(realpath "${2:-.}")
@@ -144,6 +184,7 @@ function findpkg() {
       echo -e "\033[36m$file_path\033[0m → \033[32m$pkg\033[0m@\033[33m$ver\033[0m"
       done
 }
+
 function update() {
   echo '\e[32m\ue5fc chezmoi'
   chezmoi update --apply --no-tty
@@ -187,6 +228,7 @@ function update() {
   echo '\e[32m\uf1b2 mise'
   mise upgrade && mise prune -y
 }
+
 function cleanup() {
   if command -v apt &> /dev/null; then
     echo '\e[32m\ue77d apt'
@@ -226,6 +268,7 @@ function cleanup() {
   echo '\e[32m\uf1b2 mise'
   mise prune -y
 }
+
 alias bump='bunx taze@latest -rwiI --exclude node,pnpm'
 alias bumpall='bunx taze@latest major -rwilI'
 alias c='clear'
