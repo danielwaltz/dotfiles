@@ -1,28 +1,10 @@
 #!/bin/sh
 
-# A pinentry proxy that resolves mapped GPG passphrases from Proton Pass and
-# delegates every other operation to the platform's normal pinentry program.
+# A pinentry proxy that resolves mapped GPG passphrases from Proton Pass.
 
 config_home=${XDG_CONFIG_HOME:-"$HOME/.config"}
 mapping_file=${PINENTRY_PASS_CLI_MAP:-"$config_home/pinentry-pass-cli/keys"}
 keyinfo=
-fallback_available=false
-fallback_pid=
-fallback_dir=
-
-cleanup() {
-  if [ "$fallback_available" = true ]; then
-    exec 3>&- 4<&-
-  fi
-  [ -z "$fallback_pid" ] || kill "$fallback_pid" 2>/dev/null || true
-  [ -z "$fallback_dir" ] || {
-    rm -f "$fallback_dir/input" "$fallback_dir/output"
-    rmdir "$fallback_dir" 2>/dev/null || true
-  }
-}
-
-trap cleanup EXIT
-trap 'exit 1' HUP INT TERM
 
 find_pass_cli() {
   if [ -n "${PINENTRY_PASS_CLI_COMMAND:-}" ] && [ -x "$PINENTRY_PASS_CLI_COMMAND" ]; then
@@ -45,58 +27,6 @@ find_pass_cli() {
       printf '%s\n' "$candidate"
       return 0
     fi
-  done
-
-  return 1
-}
-
-find_fallback() {
-  if [ -n "${PINENTRY_PASS_CLI_FALLBACK:-}" ] && [ -x "$PINENTRY_PASS_CLI_FALLBACK" ]; then
-    printf '%s\n' "$PINENTRY_PASS_CLI_FALLBACK"
-    return 0
-  fi
-
-  for candidate in \
-    /opt/homebrew/bin/pinentry-mac \
-    /usr/local/bin/pinentry-mac \
-    pinentry \
-    pinentry-gnome3 \
-    pinentry-qt \
-    pinentry-curses \
-    pinentry-tty
-  do
-    if command -v "$candidate" >/dev/null 2>&1; then
-      command -v "$candidate"
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-start_fallback() {
-  fallback=$(find_fallback) || return 1
-  fallback_dir=$(mktemp -d "${TMPDIR:-/tmp}/pinentry-pass-cli.XXXXXX") || return 1
-  mkfifo "$fallback_dir/input" "$fallback_dir/output" || return 1
-
-  "$fallback" < "$fallback_dir/input" > "$fallback_dir/output" &
-  fallback_pid=$!
-  exec 3> "$fallback_dir/input"
-  exec 4< "$fallback_dir/output"
-
-  IFS= read -r greeting <&4 || return 1
-  printf '%s\n' "$greeting"
-  fallback_available=true
-}
-
-forward_to_fallback() {
-  printf '%s\n' "$1" >&3 || return 1
-
-  while IFS= read -r response <&4; do
-    printf '%s\n' "$response"
-    case "$response" in
-      OK|OK\ *|ERR|ERR\ *) return 0 ;;
-    esac
   done
 
   return 1
@@ -132,9 +62,7 @@ get_passphrase() {
   assuan_escape "$passphrase"
 }
 
-if ! start_fallback; then
-  printf 'OK Proton Pass pinentry ready\n'
-fi
+printf 'OK Proton Pass pinentry ready\n'
 
 while IFS= read -r request; do
   command=${request%% *}
@@ -148,11 +76,7 @@ while IFS= read -r request; do
       else
         keyinfo=$argument
       fi
-      if [ "$fallback_available" = true ]; then
-        forward_to_fallback "$request"
-      else
-        printf 'OK\n'
-      fi
+      printf 'OK\n'
       ;;
     GETPIN)
       if item_uri=$(find_item_uri) && [ -n "$item_uri" ]; then
@@ -162,36 +86,19 @@ while IFS= read -r request; do
         else
           printf 'ERR 67109139 Proton Pass lookup failed; run auth to restore access\n'
         fi
-      elif [ "$fallback_available" = true ]; then
-        forward_to_fallback "$request"
       else
         printf 'ERR 67109139 No passphrase available; run auth for this key first\n'
       fi
       ;;
     RESET)
       keyinfo=
-      if [ "$fallback_available" = true ]; then
-        forward_to_fallback "$request"
-      else
-        printf 'OK\n'
-      fi
+      printf 'OK\n'
       ;;
     BYE)
-      if [ "$fallback_available" = true ]; then
-        forward_to_fallback "$request"
-      else
-        printf 'OK closing connection\n'
-      fi
+      printf 'OK closing connection\n'
       exit 0
       ;;
-    *)
-      if [ "$fallback_available" = true ]; then
-        forward_to_fallback "$request"
-        continue
-      fi
-
-      case "$command" in
-      GETINFO)
+    GETINFO)
       case "$argument" in
         pid) printf 'D %s\nOK\n' "$$" ;;
         version) printf 'D 1.0\nOK\n' ;;
@@ -199,16 +106,14 @@ while IFS= read -r request; do
         *) printf 'ERR 67109144 Unknown inquiry\n' ;;
       esac
       ;;
-      OPTION|SETDESC|SETPROMPT|SETTITLE|SETOK|SETCANCEL|SETERROR|SETQUALITYBAR|SETQUALITYBAR_TT)
+    OPTION|SETDESC|SETPROMPT|SETTITLE|SETOK|SETCANCEL|SETERROR|SETQUALITYBAR|SETQUALITYBAR_TT)
       printf 'OK\n'
       ;;
-      CONFIRM|MESSAGE)
+    CONFIRM|MESSAGE)
       printf 'ERR 67109139 Operation not supported by non-interactive pinentry\n'
       ;;
-      *)
+    *)
       printf 'ERR 67109144 Unknown command\n'
-      ;;
-      esac
       ;;
   esac
 done
