@@ -62,6 +62,11 @@ get_passphrase() {
   assuan_escape "$passphrase"
 }
 
+cancel() {
+  # GPG_ERR_SOURCE_PINENTRY (5), GPG_ERR_CANCELED (99).
+  printf 'ERR 83886179 %s <Pinentry>\n' "$1"
+}
+
 printf 'OK Proton Pass pinentry ready\n'
 
 while IFS= read -r request; do
@@ -84,10 +89,10 @@ while IFS= read -r request; do
           printf 'D %s\nOK\n' "$passphrase"
           passphrase=
         else
-          printf 'ERR 67109139 Proton Pass lookup failed; run auth to restore access\n'
+          cancel 'Proton Pass lookup failed; run auth to restore access'
         fi
       else
-        printf 'ERR 67109139 No passphrase available; run auth for this key first\n'
+        cancel 'No passphrase available; run auth for this key first'
       fi
       ;;
     RESET)
@@ -103,17 +108,17 @@ while IFS= read -r request; do
         pid) printf 'D %s\nOK\n' "$$" ;;
         version) printf 'D 1.0\nOK\n' ;;
         flavor) printf 'D pass-cli\nOK\n' ;;
-        *) printf 'ERR 67109144 Unknown inquiry\n' ;;
+        *) printf 'ERR 83886360 Unknown inquiry <Pinentry>\n' ;;
       esac
       ;;
-    OPTION|SETDESC|SETPROMPT|SETTITLE|SETOK|SETCANCEL|SETERROR|SETQUALITYBAR|SETQUALITYBAR_TT)
+    OPTION|SETDESC|SETPROMPT|SETTITLE|SETOK|SETNOTOK|SETCANCEL|SETERROR|SETREPEAT|SETREPEATERROR|SETQUALITYBAR|SETQUALITYBAR_TT|SETTIMEOUT|CLEARPASSPHRASE)
       printf 'OK\n'
       ;;
     CONFIRM|MESSAGE)
-      printf 'ERR 67109139 Operation not supported by non-interactive pinentry\n'
+      cancel 'Operation not supported by non-interactive pinentry'
       ;;
     *)
-      printf 'ERR 67109144 Unknown command\n'
+      printf 'ERR 83886355 Unknown command <Pinentry>\n'
       ;;
   esac
 done
