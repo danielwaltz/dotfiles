@@ -1,2 +1,6 @@
 # Retired Proton-only pinentry. GnuPG now uses Homebrew's pinentry-curses.
 .local/bin/pinentry-pass-cli
+# Client identities are now generated from .chezmoidata/profiles.toml.
+.gitconfig-moser
+.gitconfig-fssa
+.gitconfig-iga

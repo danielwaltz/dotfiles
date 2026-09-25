@@ -1,0 +1,23 @@
+[identity]
+git_name = "Daniel Waltz"
+default_profile = "personal"
+projects_root = "~/Projects"
+
+[profiles.personal]
+name = "Personal"
+email = "danielbwaltz@gmail.com"
+
+[profiles.moser]
+name = "Moser"
+email = "daniel.waltz@moserit.com"
+vault_name = "Moser Consulting"
+
+[profiles.fssa]
+name = "FSSA"
+email = "daniel.waltz@fssa.in.gov"
+vault_name = "Moser Consulting"
+
+[profiles.iga]
+name = "IGA"
+email = "daniel.waltz@iga.in.gov"
+vault_name = "Moser Consulting"

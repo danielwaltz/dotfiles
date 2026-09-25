@@ -3,7 +3,6 @@
 emulate -L zsh
 setopt pipe_fail no_xtrace
 
-# Use UTF-8 bytes so icon rendering does not depend on the active locale.
 readonly ICON_ERROR=$'\xef\x81\x97'
 readonly ICON_KEY=$'\xef\x82\x84'
 readonly ICON_LOCK=$'\xef\x80\xa3'
@@ -22,21 +21,14 @@ readonly -a ICONS_LOADING=(
   $'\xf3\xb0\xaa\xa5'
 )
 
-readonly DEFAULT_PROFILE='personal'
+readonly PROFILE_CONFIG_FILE="$HOME/.config/dotfiles/profiles.zsh"
 
-readonly -A PROFILE_CONFIG=(
-  personal.name 'Personal'
-  personal.vault_name 'Personal'
+if [[ ! -r "$PROFILE_CONFIG_FILE" ]]; then
+  print -u2 -r -- "Missing profile configuration: ${PROFILE_CONFIG_FILE}. Run chezmoi apply."
+  exit 1
+fi
 
-  moser.name 'Moser'
-  moser.vault_name 'Moser Consulting'
-
-  fssa.name 'FSSA'
-  fssa.vault_name 'Moser Consulting'
-
-  iga.name 'IGA'
-  iga.vault_name 'Moser Consulting'
-)
+source "$PROFILE_CONFIG_FILE" || exit 1
 
 function status_success() {
   print -P -r -- "%F{green}${1}%f ${2}"
@@ -124,12 +116,12 @@ function profile_exists() {
 
 function validate_profile_config() {
   local profile="$1" field key
-  local -a required_fields=(name vault_name)
+  local -a required_fields=(name vault_name gpg_key_name)
 
   for field in "${required_fields[@]}"; do
     key="${profile}.${field}"
     if [[ -z "${PROFILE_CONFIG[$key]-}" ]]; then
-      status_error "Profile ${profile} is missing ${field} in PROFILE_CONFIG."
+      status_error "Profile ${profile} is missing ${field}. Check .chezmoidata/profiles.toml and run chezmoi apply."
       return 1
     fi
   done
@@ -372,7 +364,7 @@ function load_credentials() {
   validate_profile_config "$profile" || return 1
   profile_name="${PROFILE_CONFIG[${profile}.name]}"
   vault_name="${PROFILE_CONFIG[${profile}.vault_name]}"
-  gpg_key_name="${profile_name} GPG Key"
+  gpg_key_name="${PROFILE_CONFIG[${profile}.gpg_key_name]}"
 
   require_commands pass-cli keychain ssh-add gpg gpgconf gpg-connect-agent awk || return 1
   start_ssh_agent || return 1

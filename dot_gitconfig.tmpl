@@ -1,7 +1,9 @@
+{{- $config := includeTemplate "profile-data" . | fromJson -}}
+{{- $default := get $config.profiles $config.default_profile -}}
 [user]
-	name = Daniel Waltz
-	email = danielbwaltz@gmail.com
-	signingKey = danielbwaltz@gmail.com
+	name = {{ $default.git_name | quote }}
+	email = {{ $default.email | quote }}
+	signingKey = {{ $default.signing_key | quote }}
 [branch]
 	sort = -committerdate
 [column]
@@ -50,9 +52,9 @@
 	sort = version:refname
 [gpg]
 	program = gpg
-[includeIf "gitdir:~/Projects/moser/"]
-	path = ~/.gitconfig-moser
-[includeIf "gitdir:~/Projects/fssa/"]
-	path = ~/.gitconfig-fssa
-[includeIf "gitdir:~/Projects/iga/"]
-	path = ~/.gitconfig-iga
+{{- range $id := $config.git_profiles }}
+{{- $profile := get $config.profiles $id }}
+{{- $directory := $profile.directory | replace "\\" "\\\\" | replace "*" "\\*" | replace "?" "\\?" | replace "[" "\\[" | replace "]" "\\]" }}
+[includeIf {{ printf "gitdir:%s/" (trimSuffix "/" $directory) | quote }}]
+	path = {{ printf "~/.config/git/chezmoi-profiles/%s.gitconfig" $id | quote }}
+{{- end }}
