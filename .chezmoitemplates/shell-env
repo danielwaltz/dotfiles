@@ -1,0 +1,7 @@
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR="vim"
+export VISUAL=$EDITOR
+
+{{- if eq .chezmoi.os "linux" }}
+export PROTON_PASS_LINUX_KEYRING=dbus
+{{- end }}
