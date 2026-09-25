@@ -10,6 +10,22 @@ readonly ICON_PROFILE=$'\uf2bd'
 readonly ICON_UNLOCK=$'\uf09c'
 readonly ICON_WARNING=$'\uf071'
 
+readonly DEFAULT_PROFILE='personal'
+
+readonly -A PROFILE_CONFIG=(
+  personal.name 'Personal'
+  personal.vault_name 'Personal'
+
+  moser.name 'Moser'
+  moser.vault_name 'Moser Consulting'
+
+  fssa.name 'FSSA'
+  fssa.vault_name 'Moser Consulting'
+
+  iga.name 'IGA'
+  iga.vault_name 'Moser Consulting'
+)
+
 function status_success() {
   print -P -r -- "%F{green}${1}%f ${2}"
 }
@@ -20,6 +36,37 @@ function status_warning() {
 
 function status_error() {
   print -u2 -P -r -- "%F{red}${ICON_ERROR}%f ${1}"
+}
+
+function run_with_loading() {
+  local message="$1"
+  shift
+
+  if [[ ! -t 1 ]]; then
+    "$@"
+    return $?
+  fi
+
+  local output_file process_id result
+  local index=1
+  local -a indicators=('.' '..' '...')
+
+  output_file="$(mktemp "${TMPDIR:-/tmp}/auth.XXXXXX")" || return 1
+  "$@" >"$output_file" 2>&1 &
+  process_id=$!
+
+  while kill -0 "$process_id" 2>/dev/null; do
+    print -n -P -r -- "\r%F{yellow}${ICON_KEY}%f ${message}${indicators[index]}"
+    (( index = index % ${#indicators} + 1 ))
+    sleep 0.35
+  done
+
+  wait "$process_id"
+  result=$?
+  print -n -r -- $'\r\e[2K'
+  [[ ! -s "$output_file" ]] || command cat -- "$output_file"
+  command rm -f -- "$output_file"
+  return "$result"
 }
 
 function run_quiet() {
@@ -33,10 +80,48 @@ function run_quiet() {
 }
 
 function usage() {
-  print -r -- 'Usage: auth [personal|moser|fssa|iga|unlock|lock]'
+  local -a profile_ids
+
+  profile_ids=("${(@f)$(configured_profile_ids)}")
+  print -r -- "Usage: auth [${(j:|:)profile_ids}|unlock|lock]"
   print -r -- ''
   print -r -- 'Load credentials, unlock Proton Pass, or remove loaded credentials.'
-  print -r -- 'The default profile is personal.'
+  print -r -- "The default profile is ${DEFAULT_PROFILE}."
+}
+
+function configured_profile_ids() {
+  local key profile
+  local -a profiles
+
+  for key in "${(@k)PROFILE_CONFIG}"; do
+    [[ "$key" == *.name ]] || continue
+    profile="${key%.name}"
+    [[ "$profile" == "$DEFAULT_PROFILE" ]] || profiles+=("$profile")
+  done
+
+  if [[ -n "${PROFILE_CONFIG[${DEFAULT_PROFILE}.name]-}" ]]; then
+    print -r -- "$DEFAULT_PROFILE"
+  fi
+  (( ${#profiles} == 0 )) || print -rl -- ${(on)profiles}
+}
+
+function profile_exists() {
+  local key="${1}.name"
+
+  [[ -n "${PROFILE_CONFIG[$key]-}" ]]
+}
+
+function validate_profile_config() {
+  local profile="$1" field key
+  local -a required_fields=(name vault_name)
+
+  for field in "${required_fields[@]}"; do
+    key="${profile}.${field}"
+    if [[ -z "${PROFILE_CONFIG[$key]-}" ]]; then
+      status_error "Profile ${profile} is missing ${field} in PROFILE_CONFIG."
+      return 1
+    fi
+  done
 }
 
 function require_commands() {
@@ -271,6 +356,12 @@ function unlock_session() {
 
 function load_credentials() {
   local profile="$1" result=0
+  local profile_name vault_name gpg_key_name
+
+  validate_profile_config "$profile" || return 1
+  profile_name="${PROFILE_CONFIG[${profile}.name]}"
+  vault_name="${PROFILE_CONFIG[${profile}.vault_name]}"
+  gpg_key_name="${profile_name} GPG Key"
 
   require_commands pass-cli keychain ssh-add gpg gpgconf gpg-connect-agent awk || return 1
   start_ssh_agent || return 1
@@ -279,28 +370,14 @@ function load_credentials() {
   {
     if unlock_pass; then
       status_success "$ICON_UNLOCK" 'Proton Pass unlocked.'
-      case "$profile" in
-        personal)
-          if run_quiet pass-cli ssh-agent load --vault-name 'Personal'; then
-            status_success "$ICON_KEY" 'SSH keys loaded: Personal.'
-          else
-            result=1
-          fi
-          load_gpg_key 'Personal' 'Personal GPG Key' || result=1
-          ;;
-        moser|fssa|iga)
-          if run_quiet pass-cli ssh-agent load --vault-name 'Moser Consulting'; then
-            status_success "$ICON_KEY" 'SSH keys loaded: Moser Consulting.'
-          else
-            result=1
-          fi
-          case "$profile" in
-            moser) load_gpg_key 'Moser Consulting' 'Moser GPG Key' || result=1 ;;
-            fssa) load_gpg_key 'Moser Consulting' 'FSSA GPG Key' || result=1 ;;
-            iga) load_gpg_key 'Moser Consulting' 'IGA GPG Key' || result=1 ;;
-          esac
-          ;;
-      esac
+      if run_with_loading 'SSH keys loading' \
+          run_quiet pass-cli ssh-agent load --vault-name "$vault_name"; then
+        status_success "$ICON_KEY" "SSH keys loaded: ${vault_name}."
+      else
+        result=1
+      fi
+      run_with_loading 'GPG key loading' \
+        load_gpg_key "$vault_name" "$gpg_key_name" || result=1
     else
       result=1
     fi
@@ -313,7 +390,7 @@ function load_credentials() {
   }
 
   if (( result == 0 )); then
-    status_success "$ICON_PROFILE" "Credentials ready: ${profile}."
+    status_success "$ICON_PROFILE" "Credentials ready: ${profile_name}."
   else
     status_warning 'Authentication was incomplete; some keys may already be loaded.'
   fi
@@ -351,7 +428,7 @@ function lock_credentials() {
 }
 
 function main() {
-  local command="${1:-personal}"
+  local command="${1:-$DEFAULT_PROFILE}"
 
   if (( $# > 1 )); then
     usage >&2
@@ -359,14 +436,17 @@ function main() {
   fi
 
   case "$command" in
-    personal|moser|fssa|iga) load_credentials "$command" ;;
     unlock) unlock_session ;;
     lock) lock_credentials ;;
     -h|--help|help) usage ;;
     *)
-      status_error "Unknown command: ${command}"
-      usage >&2
-      return 2
+      if profile_exists "$command"; then
+        load_credentials "$command"
+      else
+        status_error "Unknown command: ${command}"
+        usage >&2
+        return 2
+      fi
       ;;
   esac
 }
