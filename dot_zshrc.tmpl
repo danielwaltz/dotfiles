@@ -40,66 +40,66 @@ function findpkg() {
 }
 
 function update() {
-  echo '\e[32m\ue5fc chezmoi'
+  echo '\e[32m\xee\x97\xbc chezmoi'
   chezmoi update --apply
 
-  echo '\e[32m\ue795 antidote'
+  echo '\e[32m\xee\x9e\x95 antidote'
   antidote update
 
   if command -v apt &> /dev/null; then
-    echo '\e[32m\ue77d apt'
+    echo '\e[32m\xee\x9d\xbd apt'
     sudo apt update && sudo apt upgrade
   fi
 
   if command -v dnf &> /dev/null; then
-    echo '\e[32m\ue7d9 dnf'
+    echo '\e[32m\xee\x9f\x99 dnf'
     sudo dnf upgrade
   fi
 
   if command -v pacman &> /dev/null; then
     if command -v paru &> /dev/null; then
-      echo '\e[32m\ue732 paru'
+      echo '\e[32m\xee\x9c\xb2 paru'
       paru -Syu
     else
-      echo '\e[32m\ue732 pacman'
+      echo '\e[32m\xee\x9c\xb2 pacman'
       sudo pacman -Syu
     fi
   fi
 
   if command -v flatpak &> /dev/null; then
-    echo '\e[32m\uf1b2 flatpak'
+    echo '\e[32m\xef\x86\xb2 flatpak'
     sudo flatpak update --system -y && flatpak update --user -y
   fi
 
   if command -v mas &> /dev/null; then
-    echo '\e[32m\ue711 mas'
+    echo '\e[32m\xee\x9c\x91 mas'
     mas upgrade
   fi
 
-  echo '\e[32m\uf0fc brew'
+  echo '\e[32m\xef\x83\xbc brew'
   brew update && brew upgrade -y && brew upgrade -y --cask
 
-  echo '\e[32m\uf1b2 mise'
+  echo '\e[32m\xef\x86\xb2 mise'
   mise upgrade && mise prune -y
 }
 
 function cleanup() {
   if command -v apt &> /dev/null; then
-    echo '\e[32m\ue77d apt'
+    echo '\e[32m\xee\x9d\xbd apt'
     sudo apt autoremove --purge
   fi
 
   if command -v dnf &> /dev/null; then
-    echo '\e[32m\ue7d9 dnf'
+    echo '\e[32m\xee\x9f\x99 dnf'
     sudo dnf autoremove
   fi
 
   if command -v pacman &> /dev/null; then
     if command -v paru &> /dev/null; then
-      echo '\e[32m\ue732 paru'
+      echo '\e[32m\xee\x9c\xb2 paru'
       paru -Rsn $(paru -Qtdq)
     else
-      echo '\e[32m\uf303 pacman'
+      echo '\e[32m\xef\x8c\x83 pacman'
       sudo pacman -Rns $(pacman -Qtdq)
     fi
 
@@ -107,19 +107,19 @@ function cleanup() {
   fi
 
   if command -v flatpak &> /dev/null; then
-    echo '\e[32m\uf1b2 flatpak'
+    echo '\e[32m\xef\x86\xb2 flatpak'
     flatpak uninstall --unused -y
   fi
 
   if command -v docker &> /dev/null; then
-    echo '\e[32m\ue7b0 docker'
+    echo '\e[32m\xee\x9e\xb0 docker'
     docker system prune -f
   fi
 
-  echo '\e[32m\uf0fc brew'
+  echo '\e[32m\xef\x83\xbc brew'
   brew cleanup
 
-  echo '\e[32m\uf1b2 mise'
+  echo '\e[32m\xef\x86\xb2 mise'
   mise prune -y
 }
 
