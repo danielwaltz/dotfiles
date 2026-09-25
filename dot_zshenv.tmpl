@@ -1,1 +1,6 @@
+{{- if eq .chezmoi.os "linux" -}}
+unset LC_ALL
+export LANG=C.UTF-8
+export LC_CTYPE=C.UTF-8
+{{ end -}}
 {{ includeTemplate "shell-env" . }}
