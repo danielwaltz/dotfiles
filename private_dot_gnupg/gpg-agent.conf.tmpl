@@ -1,4 +1,5 @@
-pinentry-program {{ .chezmoi.homeDir }}/.local/bin/pinentry-pass-cli
+pinentry-program {{ output "brew" "--prefix" | trim }}/opt/pinentry/bin/pinentry-curses
 allow-preset-passphrase
 default-cache-ttl 2147483647
 max-cache-ttl 2147483647
+no-allow-external-cache

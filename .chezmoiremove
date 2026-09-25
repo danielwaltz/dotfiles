@@ -1,0 +1,2 @@
+# Retired Proton-only pinentry. GnuPG now uses Homebrew's pinentry-curses.
+.local/bin/pinentry-pass-cli
