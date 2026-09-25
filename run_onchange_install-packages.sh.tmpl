@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+{{ includeTemplate "brew-shellenv" . }}
 
 # {{ include "dot_Brewfile.tmpl" | sha256sum }}
 brew bundle --file="$HOME/.Brewfile"
