@@ -4,7 +4,6 @@ emulate -L zsh
 setopt pipe_fail no_xtrace
 
 readonly ICON_ERROR=$'\uf057'
-readonly ICON_GPG=$'\uf505'
 readonly ICON_KEY=$'\uf084'
 readonly ICON_LOCK=$'\uf023'
 readonly ICON_PROFILE=$'\uf2bd'
@@ -23,7 +22,6 @@ function status_error() {
   print -u2 -P -r -- "%F{red}${ICON_ERROR}%f ${1}"
 }
 
-# Hide routine command output, but retain failures with a consistent prefix.
 function run_quiet() {
   local output line
 
@@ -59,6 +57,69 @@ function key_fingerprint() {
         $1 == "fpr" && primary { fingerprint=$10; primary=0 }
         END { if (count == 1 && fingerprint != "") print fingerprint; else exit 1 }
       '
+}
+
+function command_version() {
+  "$1" --version 2>/dev/null | awk 'NR == 1 { print $3; exit }'
+}
+
+function running_gpg_agent_version() {
+  gpg-connect-agent 'GETINFO version' /bye 2>/dev/null \
+    | awk '$1 == "D" { print $2; exit }'
+}
+
+function stop_systemd_gpg_agent() {
+  local unit
+  local -a active_units units
+
+  command -v systemctl >/dev/null 2>&1 || return 0
+  units=(
+    gpg-agent.service
+    gpg-agent.socket
+    gpg-agent-browser.socket
+    gpg-agent-extra.socket
+    gpg-agent-ssh.socket
+  )
+
+  for unit in "${units[@]}"; do
+    if systemctl --user --quiet is-active "$unit" >/dev/null 2>&1; then
+      active_units+=("$unit")
+    fi
+  done
+
+  (( ${#active_units} == 0 )) || run_quiet systemctl --user stop "${active_units[@]}"
+}
+
+function ensure_gpg_agent() {
+  local gpg_version gpgconf_version agent_version
+
+  gpg_version="$(command_version gpg)" || return 1
+  gpgconf_version="$(command_version gpgconf)" || return 1
+  if [[ -z "$gpg_version" || -z "$gpgconf_version" ]]; then
+    status_error 'Unable to determine the installed GnuPG version.'
+    return 1
+  fi
+  if [[ "$gpg_version" != "$gpgconf_version" ]]; then
+    status_error "gpg ${gpg_version} and gpgconf ${gpgconf_version} come from different installations."
+    return 1
+  fi
+
+  run_quiet gpgconf --launch gpg-agent || return 1
+  agent_version="$(running_gpg_agent_version)"
+  [[ "$agent_version" == "$gpg_version" ]] && return 0
+
+  if [[ -n "$agent_version" ]]; then
+    status_warning "Replacing gpg-agent ${agent_version} with ${gpg_version}."
+  fi
+  stop_systemd_gpg_agent || return 1
+  run_quiet gpgconf --kill gpg-agent || return 1
+  run_quiet gpgconf --launch gpg-agent || return 1
+
+  agent_version="$(running_gpg_agent_version)"
+  if [[ "$agent_version" != "$gpg_version" ]]; then
+    status_error "gpg-agent ${agent_version:-unknown} does not match gpg ${gpg_version}."
+    return 1
+  fi
 }
 
 function cache_gpg_key() {
@@ -131,7 +192,7 @@ function load_gpg_key() {
   fi
 
   print -r -- "${fingerprint}:6:" | run_quiet gpg --batch --import-ownertrust || return 1
-  status_success "$ICON_GPG" "GPG key loaded: ${key_name}."
+  status_success "$ICON_KEY" "GPG key loaded: ${key_name}."
 }
 
 function start_ssh_agent() {
@@ -211,9 +272,9 @@ function unlock_session() {
 function load_credentials() {
   local profile="$1" result=0
 
-  require_commands pass-cli keychain ssh-add gpg gpgconf awk || return 1
+  require_commands pass-cli keychain ssh-add gpg gpgconf gpg-connect-agent awk || return 1
   start_ssh_agent || return 1
-  run_quiet gpgconf --launch gpg-agent || return 1
+  ensure_gpg_agent || return 1
 
   {
     if unlock_pass; then
@@ -273,7 +334,7 @@ function lock_credentials() {
     result=1
   fi
   if run_quiet gpgconf --reload gpg-agent; then
-    status_success "$ICON_GPG" 'GPG passphrases cleared.'
+    status_success "$ICON_KEY" 'GPG passphrases cleared.'
   else
     result=1
   fi
