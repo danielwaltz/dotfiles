@@ -1,0 +1,11 @@
+{{- $config := includeTemplate "profile-data" . | fromJson -}}
+# Generated from .chezmoidata/profiles.toml. Edit the source, then run chezmoi apply.
+# Other Zsh scripts can source this file to read the resolved profile settings.
+typeset -gr DEFAULT_PROFILE={{ $config.default_profile | shellQuote }}
+typeset -grA PROFILE_CONFIG=(
+{{- range $id, $profile := $config.profiles }}
+{{- range $field, $value := $profile }}
+  {{ printf "%s.%s" $id $field | shellQuote }} {{ $value | shellQuote }}
+{{- end }}
+{{- end }}
+)

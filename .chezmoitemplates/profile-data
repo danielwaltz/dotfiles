@@ -1,0 +1,80 @@
+{{- $identity := .identity -}}
+{{- $profiles := .profiles -}}
+{{- if not (kindIs "map" $identity) -}}
+  {{- fail "profiles.toml: identity must be a table" -}}
+{{- end -}}
+{{- if not (kindIs "map" $profiles) -}}
+  {{- fail "profiles.toml: profiles must be a table" -}}
+{{- end -}}
+{{- range $field := list "git_name" "default_profile" "projects_root" -}}
+  {{- $value := get $identity $field -}}
+  {{- if not (kindIs "string" $value) -}}
+    {{- fail (printf "profiles.toml: identity.%s must be a string" $field) -}}
+  {{- end -}}
+  {{- if or (eq (trim $value) "") (regexMatch "[[:cntrl:]]" $value) -}}
+    {{- fail (printf "profiles.toml: identity.%s must be nonempty and contain no control characters" $field) -}}
+  {{- end -}}
+{{- end -}}
+{{- $defaultProfile := $identity.default_profile -}}
+{{- if not (hasKey $profiles $defaultProfile) -}}
+  {{- fail "profiles.toml: identity.default_profile must name an existing profile" -}}
+{{- end -}}
+{{- $root := $identity.projects_root -}}
+{{- if not (or (hasPrefix "~/" $root) (hasPrefix "/" $root)) -}}
+  {{- fail "profiles.toml: identity.projects_root must be an absolute or ~/ path" -}}
+{{- end -}}
+{{- $resolved := dict -}}
+{{- $directories := dict -}}
+{{- range $id, $profile := $profiles -}}
+  {{- if or (not (regexMatch "^[a-z][a-z0-9_-]*$" $id)) (has $id (list "help" "lock" "unlock")) -}}
+    {{- fail (printf "profiles.toml: invalid or reserved profile ID %q" $id) -}}
+  {{- end -}}
+  {{- if not (kindIs "map" $profile) -}}
+    {{- fail (printf "profiles.toml: profiles.%s must be a table" $id) -}}
+  {{- end -}}
+  {{- range $field, $value := $profile -}}
+    {{- if not (has $field (list "name" "email" "directory" "git_name" "signing_key" "vault_name" "gpg_key_name")) -}}
+      {{- fail (printf "profiles.toml: unknown field profiles.%s.%s" $id $field) -}}
+    {{- end -}}
+    {{- if not (kindIs "string" $value) -}}
+      {{- fail (printf "profiles.toml: profiles.%s.%s must be a string" $id $field) -}}
+    {{- end -}}
+    {{- if or (eq (trim $value) "") (regexMatch "[[:cntrl:]]" $value) -}}
+      {{- fail (printf "profiles.toml: profiles.%s.%s must be nonempty and contain no control characters" $id $field) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- range $field := list "name" "email" -}}
+    {{- if not (hasKey $profile $field) -}}
+      {{- fail (printf "profiles.toml: profiles.%s is missing %s" $id $field) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $directory := get $profile "directory" | default (printf "%s/%s" (trimSuffix "/" $root) $id) -}}
+  {{- if hasPrefix "~/" $directory -}}
+    {{- $directory = printf "%s/%s" $.chezmoi.homeDir (trimPrefix "~/" $directory) -}}
+  {{- else if not (hasPrefix "/" $directory) -}}
+    {{- fail (printf "profiles.toml: profiles.%s.directory must be an absolute or ~/ path" $id) -}}
+  {{- end -}}
+  {{- $directory = clean $directory -}}
+  {{- if hasKey $directories $directory -}}
+    {{- fail (printf "profiles.toml: profiles %s and %s use the same directory %s" (get $directories $directory) $id $directory) -}}
+  {{- end -}}
+  {{- $_ := set $directories $directory $id -}}
+  {{- $_ := set $resolved $id (dict
+    "name" $profile.name
+    "email" $profile.email
+    "directory" $directory
+    "git_name" (get $profile "git_name" | default $identity.git_name)
+    "signing_key" (get $profile "signing_key" | default $profile.email)
+    "vault_name" (get $profile "vault_name" | default $profile.name)
+    "gpg_key_name" (get $profile "gpg_key_name" | default (printf "%s GPG Key" $profile.name))
+  ) -}}
+{{- end -}}
+{{- /* Sorting normalized paths puts each parent before its descendants. */ -}}
+{{- $gitProfiles := list -}}
+{{- range $directory := keys $directories | sortAlpha -}}
+  {{- $id := get $directories $directory -}}
+  {{- if ne $id $defaultProfile -}}
+    {{- $gitProfiles = append $gitProfiles $id -}}
+  {{- end -}}
+{{- end -}}
+{{- dict "default_profile" $defaultProfile "profiles" $resolved "git_profiles" $gitProfiles | toJson -}}
