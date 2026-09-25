@@ -10,6 +10,17 @@ readonly ICON_PROFILE=$'\uf2bd'
 readonly ICON_UNLOCK=$'\uf09c'
 readonly ICON_WARNING=$'\uf071'
 
+readonly -a ICONS_LOADING=(
+  $'\U000f0a9e'
+  $'\U000f0a9f'
+  $'\U000f0aa0'
+  $'\U000f0aa1'
+  $'\U000f0aa2'
+  $'\U000f0aa3'
+  $'\U000f0aa4'
+  $'\U000f0aa5'
+)
+
 readonly DEFAULT_PROFILE='personal'
 
 readonly -A PROFILE_CONFIG=(
@@ -49,15 +60,14 @@ function run_with_loading() {
 
   local output_file process_id result
   local index=1
-  local -a indicators=('.' '..' '...')
 
   output_file="$(mktemp "${TMPDIR:-/tmp}/auth.XXXXXX")" || return 1
   "$@" >"$output_file" 2>&1 &
   process_id=$!
 
   while kill -0 "$process_id" 2>/dev/null; do
-    print -n -P -r -- $'\r\e[2K'"%F{yellow}${ICON_KEY}%f ${message}${indicators[index]}"
-    (( index = index % ${#indicators} + 1 ))
+    print -n -P -r -- $'\r\e[2K'"%F{yellow}${ICONS_LOADING[index]}%f ${message}"
+    (( index = index % ${#ICONS_LOADING} + 1 ))
     sleep 0.2
   done
 
