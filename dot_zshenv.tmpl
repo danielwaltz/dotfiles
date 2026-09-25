@@ -1,6 +1,19 @@
 {{- if eq .chezmoi.os "linux" -}}
-unset LC_ALL
-export LANG=C.UTF-8
-export LC_CTYPE=C.UTF-8
+function _set_utf8_locale() {
+  local locale_name
+
+  for locale_name in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8; do
+    if LC_ALL="$locale_name" command locale charmap >/dev/null 2>&1; then
+      unset LC_ALL
+      export LANG="$locale_name"
+      export LC_CTYPE="$locale_name"
+      return
+    fi
+  done
+}
+
+_set_utf8_locale
+unfunction _set_utf8_locale
 {{ end -}}
+
 {{ includeTemplate "shell-env" . }}
