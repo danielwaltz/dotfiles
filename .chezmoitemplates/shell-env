@@ -2,6 +2,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export EDITOR="vim"
 export VISUAL=$EDITOR
 
-{{- if eq .chezmoi.os "linux" }}
+{{- if and (eq .chezmoi.os "linux") (not (contains "microsoft" (lower .chezmoi.kernel.osrelease))) }}
 export PROTON_PASS_LINUX_KEYRING=dbus
 {{- end }}
