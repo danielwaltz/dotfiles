@@ -3,22 +3,23 @@
 emulate -L zsh
 setopt pipe_fail no_xtrace
 
-readonly ICON_ERROR=$'\uf057'
-readonly ICON_KEY=$'\uf084'
-readonly ICON_LOCK=$'\uf023'
-readonly ICON_PROFILE=$'\uf2bd'
-readonly ICON_UNLOCK=$'\uf09c'
-readonly ICON_WARNING=$'\uf071'
+# Use UTF-8 bytes so icon rendering does not depend on the active locale.
+readonly ICON_ERROR=$'\xef\x81\x97'
+readonly ICON_KEY=$'\xef\x82\x84'
+readonly ICON_LOCK=$'\xef\x80\xa3'
+readonly ICON_PROFILE=$'\xef\x8a\xbd'
+readonly ICON_UNLOCK=$'\xef\x82\x9c'
+readonly ICON_WARNING=$'\xef\x81\xb1'
 
 readonly -a ICONS_LOADING=(
-  $'\U000f0a9e'
-  $'\U000f0a9f'
-  $'\U000f0aa0'
-  $'\U000f0aa1'
-  $'\U000f0aa2'
-  $'\U000f0aa3'
-  $'\U000f0aa4'
-  $'\U000f0aa5'
+  $'\xf3\xb0\xaa\x9e'
+  $'\xf3\xb0\xaa\x9f'
+  $'\xf3\xb0\xaa\xa0'
+  $'\xf3\xb0\xaa\xa1'
+  $'\xf3\xb0\xaa\xa2'
+  $'\xf3\xb0\xaa\xa3'
+  $'\xf3\xb0\xaa\xa4'
+  $'\xf3\xb0\xaa\xa5'
 )
 
 readonly DEFAULT_PROFILE='personal'
@@ -139,7 +140,7 @@ function require_commands() {
 
   for dependency in "$@"; do
     if ! command -v "$dependency" >/dev/null 2>&1; then
-      status_error "Missing ${dependency}; run brew bundle --file=\"$HOME/.Brewfile\"."
+      status_error "Missing ${dependency}. Run brew bundle --file=\"$HOME/.Brewfile\"."
       return 1
     fi
   done
@@ -282,7 +283,7 @@ function load_gpg_key() {
   if ! print -r -- 'dotfiles auth signing check' \
       | run_quiet gpg --batch --yes --pinentry-mode error --local-user "$fingerprint" \
           --output /dev/null --detach-sign; then
-    status_error "${key_name}: signing check failed; verify the key and passphrase in Proton Pass."
+    status_error "${key_name}: signing check failed. Verify the key and passphrase in Proton Pass."
     return 1
   fi
 
@@ -352,8 +353,8 @@ function ensure_pass_locked() {
 
   case "$lock_status" in
     0) return 0 ;;
-    2) status_warning 'Proton Pass has no session lock; run auth to create one.' ;;
-    3) status_warning 'Proton Pass is logged out; run auth to sign in.' ;;
+    2) status_warning 'Proton Pass has no session lock. Run auth to create one.' ;;
+    3) status_warning 'Proton Pass is logged out. Run auth to sign in.' ;;
   esac
   return "$lock_status"
 }
@@ -380,13 +381,13 @@ function load_credentials() {
   {
     if unlock_pass; then
       status_success "$ICON_UNLOCK" 'Proton Pass unlocked.'
-      if run_with_loading 'SSH keys loading' \
+      if run_with_loading 'Loading SSH keys...' \
           run_quiet pass-cli ssh-agent load --vault-name "$vault_name"; then
         status_success "$ICON_KEY" "SSH keys loaded: ${vault_name}."
       else
         result=1
       fi
-      run_with_loading 'GPG key loading' \
+      run_with_loading 'Loading GPG key...' \
         load_gpg_key "$vault_name" "$gpg_key_name" || result=1
     else
       result=1
@@ -402,7 +403,7 @@ function load_credentials() {
   if (( result == 0 )); then
     status_success "$ICON_PROFILE" "Credentials ready: ${profile_name}."
   else
-    status_warning 'Authentication was incomplete; some keys may already be loaded.'
+    status_warning 'Authentication was incomplete. Some keys may already be loaded.'
   fi
   return "$result"
 }
