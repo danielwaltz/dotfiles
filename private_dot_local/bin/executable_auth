@@ -56,9 +56,9 @@ function run_with_loading() {
   process_id=$!
 
   while kill -0 "$process_id" 2>/dev/null; do
-    print -n -P -r -- "\r%F{yellow}${ICON_KEY}%f ${message}${indicators[index]}"
+    print -n -P -r -- $'\r\e[2K'"%F{yellow}${ICON_KEY}%f ${message}${indicators[index]}"
     (( index = index % ${#indicators} + 1 ))
-    sleep 0.35
+    sleep 0.2
   done
 
   wait "$process_id"
