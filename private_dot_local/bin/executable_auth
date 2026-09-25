@@ -143,11 +143,12 @@ function start_ssh_agent() {
 
 # Return 2 when the session has no lock and 3 when it needs a login.
 function lock_pass() {
-  local output
+  local output normalized_output
 
   output="$(pass-cli session lock 2>&1)" && {
     return 0
   }
+  normalized_output="${(L)output}"
 
   if [[ "$output" == *SessionLocked* ]]; then
     return 0
@@ -157,7 +158,9 @@ function lock_pass() {
     return 2
   fi
 
-  if [[ "$output" == *"pass-cli login"* ]]; then
+  if [[ "$normalized_output" == *"pass-cli login"* ||
+        "$normalized_output" == *"there is no session"* ||
+        "$normalized_output" == *"requires an authenticated client"* ]]; then
     return 3
   fi
 
