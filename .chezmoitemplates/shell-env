@@ -2,6 +2,24 @@ export PATH="$HOME/.local/bin:$PATH"
 export EDITOR="vim"
 export VISUAL=$EDITOR
 
-{{- if and (eq .chezmoi.os "linux") (not (contains "microsoft" (lower .chezmoi.kernel.osrelease))) }}
-export PROTON_PASS_LINUX_KEYRING=dbus
+{{- if eq .chezmoi.os "linux" }}
+if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] && {
+  { command -v gdbus >/dev/null 2>&1 &&
+    gdbus call --session --timeout 1 \
+      --dest org.freedesktop.secrets \
+      --object-path /org/freedesktop/secrets \
+      --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1; } ||
+  { command -v busctl >/dev/null 2>&1 &&
+    busctl --user --quiet --timeout=1s call \
+      org.freedesktop.secrets /org/freedesktop/secrets \
+      org.freedesktop.DBus.Peer Ping >/dev/null 2>&1; } ||
+  { command -v dbus-send >/dev/null 2>&1 &&
+    dbus-send --session --print-reply --reply-timeout=1000 \
+      --dest=org.freedesktop.secrets /org/freedesktop/secrets \
+      org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1; }
+}; then
+  export PROTON_PASS_LINUX_KEYRING=dbus
+else
+  unset PROTON_PASS_LINUX_KEYRING
+fi
 {{- end }}
