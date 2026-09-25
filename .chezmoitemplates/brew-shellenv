@@ -1,0 +1,18 @@
+# Resolve Homebrew before loading tools or plugins, including in login shells.
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+else
+  for _dotfiles_brew in \
+    "${HOMEBREW_PREFIX:-/nonexistent}/bin/brew" \
+    /opt/homebrew/bin/brew \
+    /usr/local/bin/brew \
+    /home/linuxbrew/.linuxbrew/bin/brew \
+    "$HOME/.linuxbrew/bin/brew"
+  do
+    if [ -x "$_dotfiles_brew" ]; then
+      eval "$("$_dotfiles_brew" shellenv)"
+      break
+    fi
+  done
+  unset _dotfiles_brew
+fi

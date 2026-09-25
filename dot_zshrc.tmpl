@@ -5,15 +5,15 @@
 
 ### options
 zstyle :omz:update mode disabled
-zstyle :omz:plugins:keychain agents gpg,ssh
-zstyle :omz:plugins:keychain options --quiet
+zstyle :omz:plugins:keychain options --quiet --no-inherit
+
+### path
+{{ includeTemplate "brew-shellenv" . }}
+export PATH="$HOME/.local/bin:$PATH"
 
 ### antidote
 source ~/.local/share/antidote/antidote.zsh
 antidote load
-
-### path
-export PATH="$HOME/.local/bin:$PATH"
 
 ### startup
 if [[ -o interactive ]]; then
