@@ -9,7 +9,6 @@ zstyle :omz:plugins:keychain options --quiet --no-inherit
 
 ### path
 {{ includeTemplate "brew-shellenv" . }}
-export PATH="$HOME/.local/bin:$PATH"
 
 ### antidote
 source ~/.local/share/antidote/antidote.zsh
@@ -148,11 +147,7 @@ alias dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 {{- end }}
 
 ### init
-export EDITOR="vim"
-export VISUAL=$EDITOR
-export OS="`uname`"
 [[ -t 0 ]] && export GPG_TTY="$TTY"
-export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 
