@@ -1,0 +1,249 @@
+#!/usr/bin/env zsh
+
+emulate -L zsh
+setopt pipe_fail no_xtrace
+
+function usage() {
+  print -r -- 'Usage: auth [personal|moser|fssa|iga|unlock|lock]'
+  print -r -- ''
+  print -r -- 'Load credentials, unlock Proton Pass, or remove loaded credentials.'
+  print -r -- 'The default profile is personal.'
+}
+
+function require_commands() {
+  local dependency
+
+  for dependency in "$@"; do
+    if ! command -v "$dependency" >/dev/null 2>&1; then
+      print -u2 -- "Missing ${dependency}; run brew bundle --file=\"$HOME/.Brewfile\"."
+      return 1
+    fi
+  done
+}
+
+function key_fingerprint() {
+  gpg --batch --with-colons --import-options show-only --import \
+    | awk -F: '
+        $1 == "pub" || $1 == "sec" { primary=1; count++; next }
+        $1 == "fpr" && primary { fingerprint=$10; primary=0 }
+        END { if (count == 1 && fingerprint != "") print fingerprint; else exit 1 }
+      '
+}
+
+function cache_gpg_key() {
+  local fingerprint="$1" item_uri="$2"
+  local libexec_dir preset_passphrase key_data keygrips keygrip
+
+  libexec_dir="$(gpgconf --list-dirs libexecdir)" || return 1
+  preset_passphrase="${libexec_dir}/gpg-preset-passphrase"
+  if [[ ! -x "$preset_passphrase" ]]; then
+    print -u2 -- "gpg-preset-passphrase not found at ${preset_passphrase}."
+    return 1
+  fi
+
+  key_data="$(gpg --batch --with-colons --with-keygrip --list-secret-keys "$fingerprint")" || return 1
+  keygrips="$(print -r -- "$key_data" | awk -F: '
+    $1 == "sec" || $1 == "ssb" { available=($15 == "+") }
+    $1 == "grp" && available { print $10 }
+  ')" || return 1
+  if [[ -z "$keygrips" ]]; then
+    print -u2 -- "No local secret key material found for ${fingerprint}."
+    return 1
+  fi
+
+  for keygrip in ${(f)keygrips}; do
+    pass-cli item view "${item_uri}/passphrase" \
+      | "$preset_passphrase" --preset "$keygrip" || return 1
+  done
+}
+
+function load_gpg_key() {
+  local vault_name="$1" key_name="$2"
+  local item_uri="pass://${vault_name}/${key_name}"
+  local key_id public_key private_key fingerprint private_fingerprint
+
+  key_id="$(pass-cli item view "${item_uri}/Key ID")" || return 1
+  key_id="${(U)key_id}"
+  key_id="${key_id#0X}"
+  if [[ "$key_id" == *[^0-9A-F]* ]] || \
+      (( ${#key_id} != 16 && ${#key_id} != 40 && ${#key_id} != 64 )); then
+    print -u2 -- "${key_name}: Key ID must be a 16-digit key ID or full primary fingerprint."
+    return 1
+  fi
+
+  public_key="$(pass-cli item view "${item_uri}/public_key")" || return 1
+  fingerprint="$(print -r -- "$public_key" | key_fingerprint)" || return 1
+  if [[ "$fingerprint" != "$key_id" && \
+        ! ( ${#key_id} == 16 && "$fingerprint" == *"$key_id" ) ]]; then
+    print -u2 -- "${key_name}: public key does not match its Key ID."
+    return 1
+  fi
+
+  private_key="$(pass-cli item view "${item_uri}/private_key")" || return 1
+  private_fingerprint="$(print -r -- "$private_key" | key_fingerprint)" || return 1
+  if [[ "$private_fingerprint" != "$fingerprint" ]]; then
+    print -u2 -- "${key_name}: private and public keys do not match."
+    return 1
+  fi
+
+  print -r -- "$public_key" | gpg --batch --import || return 1
+  print -r -- "$private_key" | gpg --batch --import || return 1
+  private_key=
+
+  cache_gpg_key "$fingerprint" "$item_uri" || return 1
+
+  if ! print -r -- 'dotfiles auth signing check' \
+      | gpg --batch --yes --pinentry-mode error --local-user "$fingerprint" \
+          --output /dev/null --detach-sign; then
+    print -u2 -- "${key_name}: signing check failed; verify the key and passphrase in Proton Pass."
+    return 1
+  fi
+
+  print -r -- "${fingerprint}:6:" | gpg --batch --import-ownertrust || return 1
+  print -r -- "${key_name} ready."
+}
+
+function start_ssh_agent() {
+  local agent_env
+
+  agent_env="$(keychain agent start --quiet --no-inherit --eval --host "${SHORT_HOST:-${(%):-%m}}")" || return 1
+  eval "$agent_env"
+}
+
+# Return 2 when the session has no lock and 3 when it needs a login.
+function lock_pass() {
+  local output
+
+  output="$(pass-cli session lock 2>&1)" && {
+    [[ -n "$output" ]] && print -r -- "$output"
+    return 0
+  }
+
+  if [[ "$output" == *SessionLocked* ]]; then
+    return 0
+  fi
+
+  if [[ "$output" == *"Session has no lock."* ]]; then
+    return 2
+  fi
+
+  if [[ "$output" == *"pass-cli login"* ]]; then
+    return 3
+  fi
+
+  [[ -n "$output" ]] && print -u2 -r -- "$output"
+  return 1
+}
+
+function unlock_pass() {
+  local lock_status
+
+  lock_pass
+  lock_status=$?
+
+  case "$lock_status" in
+    0) pass-cli session unlock ;;
+    2) pass-cli session create-lock ;;
+    3) pass-cli login && pass-cli session create-lock ;;
+    *) return "$lock_status" ;;
+  esac
+}
+
+function ensure_pass_locked() {
+  local lock_status
+
+  lock_pass
+  lock_status=$?
+
+  case "$lock_status" in
+    0) return 0 ;;
+    2) print -u2 -- 'Proton Pass has no session lock; run auth to create one.' ;;
+    3) print -u2 -- 'Proton Pass is logged out; run auth to sign in.' ;;
+  esac
+  return "$lock_status"
+}
+
+function unlock_session() {
+  require_commands pass-cli || return 1
+  unlock_pass || return 1
+  print -r -- 'Proton Pass is unlocked.'
+}
+
+function load_credentials() {
+  local profile="$1" result=0
+
+  require_commands pass-cli keychain ssh-add gpg gpgconf awk || return 1
+  start_ssh_agent || return 1
+  gpgconf --launch gpg-agent || return 1
+
+  {
+    if unlock_pass; then
+      case "$profile" in
+        personal)
+          pass-cli ssh-agent load --vault-name 'Personal' || result=1
+          load_gpg_key 'Personal' 'Personal GPG Key' || result=1
+          ;;
+        moser|fssa|iga)
+          pass-cli ssh-agent load --vault-name 'Moser Consulting' || result=1
+          case "$profile" in
+            moser) load_gpg_key 'Moser Consulting' 'Moser GPG Key' || result=1 ;;
+            fssa) load_gpg_key 'Moser Consulting' 'FSSA GPG Key' || result=1 ;;
+            iga) load_gpg_key 'Moser Consulting' 'IGA GPG Key' || result=1 ;;
+          esac
+          ;;
+      esac
+    else
+      result=1
+    fi
+  } always {
+    ensure_pass_locked || result=1
+  }
+
+  if (( result == 0 )); then
+    print -r -- "${profile} credentials loaded; Proton Pass is locked."
+  else
+    print -u2 -- 'Authentication was incomplete; some keys may already be loaded.'
+  fi
+  return "$result"
+}
+
+function lock_credentials() {
+  local result=0
+
+  require_commands pass-cli keychain ssh-add gpgconf || return 1
+  if start_ssh_agent; then
+    ssh-add -D || result=1
+  else
+    result=1
+  fi
+  gpgconf --reload gpg-agent || result=1
+  ensure_pass_locked || result=1
+
+  if (( result == 0 )); then
+    print -r -- 'Credentials removed; Proton Pass is locked.'
+  fi
+  return "$result"
+}
+
+function main() {
+  local command="${1:-personal}"
+
+  if (( $# > 1 )); then
+    usage >&2
+    return 2
+  fi
+
+  case "$command" in
+    personal|moser|fssa|iga) load_credentials "$command" ;;
+    unlock) unlock_session ;;
+    lock) lock_credentials ;;
+    -h|--help|help) usage ;;
+    *)
+      print -u2 -- "Unknown command: ${command}"
+      usage >&2
+      return 2
+      ;;
+  esac
+}
+
+main "$@"
