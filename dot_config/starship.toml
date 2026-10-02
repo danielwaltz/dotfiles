@@ -35,3 +35,6 @@ format = "[$ssh_symbol$hostname]($style) "
 detect_extensions = []
 detect_files = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml", ".node-version", ".nvmrc"]
 detect_folders = []
+
+[python]
+symbol = " "
