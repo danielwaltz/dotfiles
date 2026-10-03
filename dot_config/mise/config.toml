@@ -5,5 +5,14 @@ node = "latest"
 pnpm = "latest"
 
 [settings]
-idiomatic_version_file_enable_tools = ["bun", "deno", "node", "npm", "pnpm", "python", "ruby", "yarn"]
+idiomatic_version_file_enable_tools = [
+  "bun",
+  "deno",
+  "node",
+  "npm",
+  "pnpm",
+  "python",
+  "ruby",
+  "yarn",
+]
 
