@@ -1,21 +1,21 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
+  "plugins": [
     "opencode-models-discovery@latest"
   ],
-  "permission": {
-    "read": "allow",
-    "edit": "allow",
-    "glob": "allow",
-    "grep": "allow",
-    "list": "allow",
-    "bash": "ask"
-  },
-  "provider": {
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "list", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "*", "effect": "ask" }
+  ],
+  "providers": {
     "local": {
       "name": "Local Models",
-      "npm": "@ai-sdk/openai-compatible",
-      "options": {
+      "package": "aisdk:@ai-sdk/openai-compatible",
+      "settings": {
         "baseURL": "https://llms.danielwaltz.net/v1",
         "modelsDiscovery": {
           "enabled": true
