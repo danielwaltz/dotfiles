@@ -13,17 +13,17 @@
     "show_pinned_tabs_in_separate_row": true
   },
   "git_panel": {
-    "tree_view": true,
+    "tree_view": true
   },
   "base_keymap": "VSCode",
   "seed_search_query_from_cursor": "selection",
   "sticky_scroll": {
-    "enabled": false,
+    "enabled": false
   },
   "minimap": {
     "display_in": "all_editors",
     "show": "auto",
-    "max_width_columns": 80,
+    "max_width_columns": 80
   },
   "cursor_blink": true,
   "buffer_font_fallbacks": ["JetBrains Mono", "monospace"],
@@ -31,7 +31,7 @@
     "json": [".graphqlconfig", ".postcssrc"],
     "shellscript": [".aliases", "setup"],
     "dotenv": [".env.*"],
-    "html": ["svg"],
+    "html": ["svg"]
   },
   "linked_edits": true,
   "show_edit_predictions": true,
@@ -40,20 +40,20 @@
   "agent": {
     "default_model": {
       "provider": "copilot_chat",
-      "model": "claude-sonnet-4.5",
+      "model": "claude-sonnet-4.5"
     },
-    "model_parameters": [],
+    "model_parameters": []
   },
   "icon_theme": "Material Icon Theme",
   "theme": {
     "mode": "system",
     "dark": "Ice Ice OLED",
-    "light": "One Light",
+    "light": "One Light"
   },
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_size": 14,
   "buffer_line_height": {
-    "custom": 1.6,
+    "custom": 1.6
   },
   "ui_font_family": ".SystemUIFont",
   "ui_font_size": 14,
@@ -61,48 +61,48 @@
   "inlay_hints": {
     "toggle_on_modifiers_press": {
       "control": true,
-      "alt": true,
-    },
+      "alt": true
+    }
   },
   "autosave": "on_focus_change",
   "project_panel": {
     "auto_reveal_entries": false,
     "entry_spacing": "standard",
-    "indent_size": 12,
+    "indent_size": 12
   },
   "tabs": {
     "show_close_button": "hidden",
     "file_icons": true,
-    "git_status": true,
+    "git_status": true
   },
   "formatter": "auto",
   "terminal": {
     "max_scroll_history_lines": 5000,
     "env": {
-      "Q_NEW_SESSION": "\"1\"",
+      "Q_NEW_SESSION": "\"1\""
     },
     "dock": "right",
     "default_width": 600,
-    "font_size": 12,
+    "font_size": 12
   },
   "languages": {
     "Plain Text": {
-      "soft_wrap": "editor_width",
+      "soft_wrap": "editor_width"
     },
     "JavaScript": {
       "code_actions_on_format": {
-        "source.fixAll.eslint": true,
-      },
+        "source.fixAll.eslint": true
+      }
     },
     "TypeScript": {
       "code_actions_on_format": {
-        "source.fixAll.eslint": true,
-      },
+        "source.fixAll.eslint": true
+      }
     },
     "Vue.js": {
       "code_actions_on_format": {
-        "source.fixAll.eslint": true,
-      },
-    },
-  },
+        "source.fixAll.eslint": true
+      }
+    }
+  }
 }
