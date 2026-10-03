@@ -1,8 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugins": [
-    "opencode-models-discovery@latest"
-  ],
+  "plugins": ["opencode-models-discovery@latest"],
   "permissions": [
     { "action": "read", "resource": "*", "effect": "allow" },
     { "action": "edit", "resource": "*", "effect": "allow" },
@@ -28,8 +26,9 @@
     { "action": "shell", "resource": "wc *", "effect": "allow" },
     { "action": "shell", "resource": "which *", "effect": "allow" },
     { "action": "shell", "resource": "wget *", "effect": "allow" },
-    { "action": "shell", "resource": "*", "effect": "ask" }
+    { "action": "shell", "resource": "*", "effect": "ask" },
   ],
+  "disabled_providers": ["opencode"],
   "providers": {
     "local": {
       "name": "Local Models",
@@ -39,9 +38,9 @@
         "modelsDiscovery": {
           "enabled": true,
           "modelInfoFormat": "models.dev",
-          "smartModelName": true
-        }
-      }
-    }
-  }
+          "smartModelName": true,
+        },
+      },
+    },
+  },
 }
