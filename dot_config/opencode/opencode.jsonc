@@ -14,11 +14,13 @@
   "providers": {
     "local": {
       "name": "Local Models",
-      "package": "aisdk:@ai-sdk/openai-compatible",
+      "package": "@opencode-ai/ai/providers/openai-compatible",
       "settings": {
         "baseURL": "https://llms.danielwaltz.net/v1",
         "modelsDiscovery": {
-          "enabled": true
+          "enabled": true,
+          "modelInfoFormat": "models.dev",
+          "smartModelName": true
         }
       }
     }
