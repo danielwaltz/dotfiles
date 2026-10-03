@@ -23,6 +23,7 @@
     { "action": "shell", "resource": "git log *", "effect": "allow" },
     { "action": "shell", "resource": "git show *", "effect": "allow" },
     { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "grep *", "effect": "allow" },
     { "action": "shell", "resource": "head *", "effect": "allow" },
     { "action": "shell", "resource": "jq *", "effect": "allow" },
     { "action": "shell", "resource": "ls *", "effect": "allow" },
