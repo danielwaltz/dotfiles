@@ -12,11 +12,9 @@
     { "action": "webfetch", "resource": "*", "effect": "allow" },
     { "action": "websearch", "resource": "*", "effect": "allow" },
     { "action": "shell", "resource": "*", "effect": "ask" },
-    { "action": "shell", "resource": "bat *", "effect": "allow" },
     { "action": "shell", "resource": "cat *", "effect": "allow" },
     { "action": "shell", "resource": "date", "effect": "allow" },
     { "action": "shell", "resource": "echo *", "effect": "allow" },
-    { "action": "shell", "resource": "eza *", "effect": "allow" },
     { "action": "shell", "resource": "fd *", "effect": "allow" },
     { "action": "shell", "resource": "find *", "effect": "allow" },
     { "action": "shell", "resource": "git diff *", "effect": "allow" },
@@ -33,7 +31,6 @@
     { "action": "shell", "resource": "uname *", "effect": "allow" },
     { "action": "shell", "resource": "wc *", "effect": "allow" },
     { "action": "shell", "resource": "which *", "effect": "allow" },
-    { "action": "shell", "resource": "wget *", "effect": "allow" },
   ],
   "providers": {
     "local": {
