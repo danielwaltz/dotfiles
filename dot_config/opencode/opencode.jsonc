@@ -42,7 +42,7 @@
         "baseURL": "https://lemonade.danielwaltz.net/v1",
         "modelsDiscovery": {
           "enabled": true,
-          "modelInfoFormat": "models.dev",
+          "modelInfoFormat": "llama-swap",
           "smartModelName": true,
         },
       },
@@ -54,7 +54,7 @@
         "baseURL": "https://strata.danielwaltz.net/v1",
         "modelsDiscovery": {
           "enabled": true,
-          "modelInfoFormat": "models.dev",
+          "modelInfoFormat": "llama-swap",
           "smartModelName": true,
         },
       },
