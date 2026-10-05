@@ -13,6 +13,7 @@
     { "action": "websearch", "resource": "*", "effect": "allow" },
     { "action": "shell", "resource": "*", "effect": "ask" },
     { "action": "shell", "resource": "cat *", "effect": "allow" },
+    { "action": "shell", "resource": "cd *", "effect": "allow" },
     { "action": "shell", "resource": "date", "effect": "allow" },
     { "action": "shell", "resource": "echo *", "effect": "allow" },
     { "action": "shell", "resource": "fd *", "effect": "allow" },
