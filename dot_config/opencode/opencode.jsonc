@@ -35,11 +35,23 @@
     { "action": "shell", "resource": "which *", "effect": "allow" },
   ],
   "providers": {
-    "local": {
-      "name": "Local Models",
+    "lemonade": {
+      "name": "Lemonade",
       "package": "@opencode-ai/ai/providers/openai-compatible",
       "settings": {
-        "baseURL": "https://llms.danielwaltz.net/v1",
+        "baseURL": "https://lemonade.danielwaltz.net/v1",
+        "modelsDiscovery": {
+          "enabled": true,
+          "modelInfoFormat": "models.dev",
+          "smartModelName": true,
+        },
+      },
+    },
+    "strata": {
+      "name": "Strata",
+      "package": "@opencode-ai/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://strata.danielwaltz.net/v1",
         "modelsDiscovery": {
           "enabled": true,
           "modelInfoFormat": "models.dev",
