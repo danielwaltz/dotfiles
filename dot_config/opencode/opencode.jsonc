@@ -29,6 +29,7 @@
     { "action": "shell", "resource": "ls *", "effect": "allow" },
     { "action": "shell", "resource": "pwd", "effect": "allow" },
     { "action": "shell", "resource": "rg *", "effect": "allow" },
+    { "action": "shell", "resource": "strings *", "effect": "allow" },
     { "action": "shell", "resource": "tail *", "effect": "allow" },
     { "action": "shell", "resource": "uname *", "effect": "allow" },
     { "action": "shell", "resource": "wc *", "effect": "allow" },
