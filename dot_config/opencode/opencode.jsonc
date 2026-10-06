@@ -39,7 +39,7 @@
       "name": "Lemonade",
       "package": "@opencode-ai/ai/providers/openai-compatible",
       "settings": {
-        "baseURL": "https://lemonade.danielwaltz.net/v1",
+        "baseURL": "http://thebeast:13305/v1",
         "modelsDiscovery": {
           "enabled": true,
           "modelInfoFormat": "llama-swap",
@@ -51,7 +51,7 @@
       "name": "Strata",
       "package": "@opencode-ai/ai/providers/openai-compatible",
       "settings": {
-        "baseURL": "https://strata.danielwaltz.net/v1",
+        "baseURL": "http://thebeast:8080/v1",
         "modelsDiscovery": {
           "enabled": true,
           "modelInfoFormat": "llama-swap",
