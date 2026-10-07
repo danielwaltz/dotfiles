@@ -47,18 +47,48 @@
           "smartModelName": true,
         },
       },
-    },
-    "strata": {
-      "name": "Strata",
-      "package": "@opencode-ai/ai/providers/openai-compatible",
-      "settings": {
-        "baseURL": "http://thebeast:8080/v1",
-        "modelsDiscovery": {
-          "enabled": true,
-          "modelInfoFormat": "llama-swap",
-          "smartModelName": true,
-        },
-      },
+      "models": {
+        "Qwen3.8-27B-TWIN-TURBO": {
+          "name": "Qwen3.8 27B Twin Turbo",
+          "variants": [
+            {
+              "id": "spoon",
+              "name": "Spoon (Ultra Research)",
+              "settings": {
+                "reasoningEffort": "spoon"
+              }
+            },
+            {
+              "id": "einstein",
+              "name": "Einstein (Multi-Agent)",
+              "settings": {
+                "reasoningEffort": "einstein"
+              }
+            },
+            {
+              "id": "xhigh",
+              "name": "Extra High",
+              "settings": {
+                "reasoningEffort": "xhigh"
+              }
+            },
+            {
+              "id": "medium",
+              "name": "Medium",
+              "settings": {
+                "reasoningEffort": "medium"
+              }
+            },
+            {
+              "id": "low",
+              "name": "Low",
+              "settings": {
+                "reasoningEffort": "low"
+              }
+            },
+          ]
+        }
+      }
     },
   },
 }
