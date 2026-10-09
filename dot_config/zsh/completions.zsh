@@ -131,3 +131,10 @@ zstyle ':completion:*' list-colors \
   'pi=0;33' 'so=0;35' 'bd=0;33' 'cd=0;33' 'or=0;31' \
   'ma=0;4;36' $'ec=\e[0m'
 zstyle ':autocomplete:*:*' list-lines 8
+zstyle -e ':autocomplete:list-choices:*' ignored-input '
+  if (( CURRENT == 1 )); then
+    reply=( "*" )
+  else
+    reply=()
+  fi
+'
