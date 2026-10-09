@@ -1,0 +1,18 @@
+{{- $hosts := includeTemplate "sudo-data" . | fromJson -}}
+# Generated from .chezmoidata/sudo.toml. Edit the source, then run chezmoi apply.
+typeset -grA SUDO_PASS_HOSTS=(
+{{- range $host, $uri := $hosts }}
+  {{ $host | shellQuote }} {{ $uri | shellQuote }}
+{{- end }}
+)
+
+function _dotfiles_sudo_secret_uri() {
+  emulate -L zsh
+  local machine_host secret_uri
+
+  machine_host="$(command hostname)" || return 1
+  secret_uri="${SUDO_PASS_HOSTS[$machine_host]-}"
+  [[ -n "$secret_uri" ]] || secret_uri="${SUDO_PASS_HOSTS[${machine_host%%.*}]-}"
+  [[ -n "$secret_uri" ]] || return 1
+  print -r -- "$secret_uri"
+}

@@ -1,0 +1,33 @@
+#!/usr/bin/env zsh
+
+emulate -L zsh
+setopt no_xtrace no_verbose
+
+readonly config_file="$HOME/.config/dotfiles/sudo.zsh"
+
+if [[ ! -r "$config_file" ]]; then
+  print -u2 -r -- "Missing sudo configuration: ${config_file}. Run chezmoi apply."
+  exit 1
+fi
+source "$config_file" || exit 1
+
+if ! secret_uri="$(_dotfiles_sudo_secret_uri)"; then
+  print -u2 -r -- 'No sudo password configured for this host. Add a mapping in .chezmoidata/sudo.toml and run chezmoi apply.'
+  exit 1
+fi
+
+if ! command -v pass-cli >/dev/null 2>&1; then
+  print -u2 -r -- 'Missing pass-cli. Install it with brew bundle.'
+  exit 1
+fi
+
+if ! password="$(command pass-cli item view "$secret_uri")"; then
+  print -u2 -r -- 'Could not read the sudo password from Proton Pass. If locked, run auth unlock; if logged out, run pass-cli login.'
+  exit 1
+fi
+if [[ -z "$password" || "$password" == *$'\n'* || "$password" == *$'\r'* || "$password" == *$'\0'* ]]; then
+  print -u2 -r -- 'The configured sudo password must be a nonempty single line.'
+  exit 1
+fi
+
+print -r -- "$password"
