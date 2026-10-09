@@ -22,9 +22,17 @@ _dotfiles_package_scripts() {
   script_names=$(jq -r '(.scripts // {}) | keys[]' "$package_json" 2>/dev/null) || return 1
   [[ -n $script_names ]] || return 1
 
+  if (( $+commands[fzf] )); then
+    script_names=$(print -r -- "$script_names" |
+      FZF_DEFAULT_OPTS= FZF_DEFAULT_OPTS_FILE= command fzf --filter "$PREFIX$SUFFIX") || return 1
+    local -a scripts=( "${(@f)script_names}" ) expl
+    _wanted -V scripts expl 'package scripts' compadd -U -a scripts
+    return $?
+  fi
+
   local -a scripts=( "${(@f)script_names}" )
   local -a expl
-  _wanted scripts expl 'package scripts' compadd -a scripts
+  _wanted scripts expl 'package scripts' compadd -M 'r:|=* l:|=*' -a scripts
 }
 
 _dotfiles_package_dependencies() {
