@@ -36,7 +36,8 @@ _dotfiles_opencode_model
 function ask_opencode() {
   emulate -L zsh
   setopt pipefail
-  local user_prompt="$BUFFER" suggestion result_file worker_pid spinner_index=1
+  unsetopt monitor notify
+  local user_prompt="$BUFFER" suggestion result_file worker_pid
   local -a model_args
 
   [[ -n "${user_prompt//[[:space:]]/}" ]] || return 0
@@ -69,12 +70,7 @@ code fences, or markdown. Do not execute commands or use tools." 2>&1 \
   ) >"$result_file" 2>/dev/null &
   worker_pid=$!
 
-  while kill -0 "$worker_pid" 2>/dev/null; do
-    zle -M "${DOTFILES_SPINNER_ICONS[spinner_index]} Asking OpenCode..."
-    zle -R
-    (( spinner_index = spinner_index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
-    sleep "$DOTFILES_SPINNER_INTERVAL"
-  done
+  _dotfiles_spinner 'Asking OpenCode...' "$worker_pid"
 
   if ! wait "$worker_pid" || ! suggestion=$(<"$result_file"); then
     command rm -f -- "$result_file"
