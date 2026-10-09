@@ -35,6 +35,7 @@
     { "action": "shell", "resource": "wc *", "effect": "allow" },
     { "action": "shell", "resource": "which *", "effect": "allow" },
   ],
+  "model": "lemonade/Qwen3.8-27B-TURBO",
   "providers": {
     "lemonade": {
       "name": "Lemonade",
