@@ -35,14 +35,16 @@ function status_error() {
 
 function clear_loading_lines() {
   local -i lines="$1"
+  local output=''
 
   while (( lines-- > 0 )); do
-    print -n -r -- $'\e[1A\r\e[2K'
+    output+=$'\e[1A\r\e[2K'
   done
+  [[ -z "$output" ]] || print -n -r -- "$output"
 }
 
 function load_keys_in_parallel() {
-  local vault_name="$1" gpg_key_name="$2" output_dir
+  local vault_name="$1" gpg_key_name="$2" output_dir frame
   local -a process_ids labels=('SSH keys' 'GPG key') states=(loading loading)
   local -i result=0 remaining=2 task index=1 interactive=0 progress_lines=0
   [[ -t 1 ]] && interactive=1
@@ -54,7 +56,9 @@ function load_keys_in_parallel() {
     load_gpg_key "$vault_name" "$gpg_key_name" >"${output_dir}/2" 2>&1 &
     process_ids[2]="$!"
 
-    if (( ! interactive )); then
+    if (( interactive )); then
+      print -n -r -- $'\e[?25l'
+    else
       print -r -- 'Loading SSH keys...'
       print -r -- 'Loading GPG key...'
     fi
@@ -81,14 +85,15 @@ function load_keys_in_parallel() {
 
       (( remaining )) || break
       if (( interactive )); then
-        clear_loading_lines "$progress_lines"
+        frame=''
+        (( progress_lines == 0 )) || frame+=$'\e['"${progress_lines}"$'A'
         progress_lines=0
         for task in 1 2; do
           [[ "${states[task]}" == loading ]] || continue
-          print -n -P -r -- "%F{${DOTFILES_SPINNER_COLOR}}${DOTFILES_SPINNER_ICONS[index]}%f"
-          print -r -- " Loading ${labels[task]}..."
+          frame+=$'\r'"%F{${DOTFILES_SPINNER_COLOR}}${DOTFILES_SPINNER_ICONS[index]}%f Loading ${labels[task]}..."$'\e[K\n'
           (( progress_lines++ ))
         done
+        print -n -P -r -- "$frame"
         (( index = index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
       fi
       sleep "$DOTFILES_SPINNER_INTERVAL"
@@ -98,6 +103,7 @@ function load_keys_in_parallel() {
       [[ -z "${process_ids[task]-}" ]] || wait "${process_ids[task]}" 2>/dev/null
     done
     clear_loading_lines "$progress_lines"
+    (( ! interactive )) || print -n -r -- $'\e[?25h'
     command rm -f -- "${output_dir}/1" "${output_dir}/2"
     command rmdir -- "$output_dir"
   }
