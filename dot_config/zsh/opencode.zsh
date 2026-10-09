@@ -1,6 +1,8 @@
 # Inspired by andreacasarin/zsh-ask-opencode's Ctrl+O widget:
 # https://github.com/andreacasarin/zsh-ask-opencode/blob/main/zsh-ask-opencode.plugin.zsh
 
+source "$HOME/.config/dotfiles/spinner.zsh" || return 1
+
 if (( ! ${+PROFILE_CONFIG} )); then
   source "$HOME/.config/dotfiles/profiles.zsh" || return 1
 fi
@@ -36,7 +38,6 @@ function ask_opencode() {
   setopt pipefail
   local user_prompt="$BUFFER" suggestion result_file worker_pid spinner_index=1
   local -a model_args
-  local -a spinner=("⣾" "⣽" "⣻" "⢿" "⡿" "⣟" "⣯" "⣷")
 
   [[ -n "${user_prompt//[[:space:]]/}" ]] || return 0
   if ! command -v opencode >/dev/null || ! command -v jq >/dev/null; then
@@ -69,9 +70,9 @@ code fences, or markdown. Do not execute commands or use tools." 2>&1 \
   worker_pid=$!
 
   while kill -0 "$worker_pid" 2>/dev/null; do
-    zle -M "${spinner[spinner_index]} Asking OpenCode..."
+    zle -M "${DOTFILES_SPINNER_ICONS[spinner_index]} Asking OpenCode..."
     zle -R
-    (( spinner_index = spinner_index % ${#spinner} + 1 ))
+    (( spinner_index = spinner_index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
     sleep 0.1
   done
 

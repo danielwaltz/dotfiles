@@ -10,16 +10,7 @@ readonly ICON_PROFILE=$'\xef\x8a\xbd'
 readonly ICON_UNLOCK=$'\xef\x82\x9c'
 readonly ICON_WARNING=$'\xef\x81\xb1'
 
-readonly -a ICONS_LOADING=(
-  $'\xf3\xb0\xaa\x9e'
-  $'\xf3\xb0\xaa\x9f'
-  $'\xf3\xb0\xaa\xa0'
-  $'\xf3\xb0\xaa\xa1'
-  $'\xf3\xb0\xaa\xa2'
-  $'\xf3\xb0\xaa\xa3'
-  $'\xf3\xb0\xaa\xa4'
-  $'\xf3\xb0\xaa\xa5'
-)
+source "$HOME/.config/dotfiles/spinner.zsh" || exit 1
 
 readonly PROFILE_CONFIG_FILE="$HOME/.config/dotfiles/profiles.zsh"
 
@@ -59,8 +50,8 @@ function run_with_loading() {
   process_id=$!
 
   while kill -0 "$process_id" 2>/dev/null; do
-    print -n -P -r -- $'\r\e[2K'"%F{yellow}${ICONS_LOADING[index]}%f ${message}"
-    (( index = index % ${#ICONS_LOADING} + 1 ))
+    print -n -P -r -- $'\r\e[2K'"%F{yellow}${DOTFILES_SPINNER_ICONS[index]}%f ${message}"
+    (( index = index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
     sleep 0.2
   done
 
