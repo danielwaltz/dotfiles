@@ -1,8 +1,3 @@
-{{- if eq .chezmoi.os "darwin" }}
-# Kiro CLI pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
-{{- end }}
-
 ### options
 zstyle :omz:update mode disabled
 zstyle :omz:plugins:keychain options --quiet --no-inherit
@@ -13,6 +8,23 @@ zstyle :omz:plugins:keychain options --quiet --no-inherit
 ### antidote
 source ~/.local/share/antidote/antidote.zsh
 antidote load
+
+#### autocomplete
+add-zsh-hook -d precmd ensure-compinit-during-precmd
+unfunction compinit_deferred queued_compcmd
+unset __compcmd_queue
+bindkey '^I' complete-word
+bindkey '^[[Z' expand-word
+bindkey '^[[A' up-line-or-search
+bindkey '^[OA' up-line-or-search
+bindkey '^[[B' down-line-or-select
+bindkey '^[OB' down-line-or-select
+bindkey -M menuselect '^M' .accept-line
+bindkey -M menuselect '^J' .accept-line
+zstyle ':completion:*:descriptions' format '%F{green}%B◆ %d%b%f'
+zstyle ':completion:*:warnings' format '%F{yellow}%d%f'
+zstyle ':completion:*' list-colors ${(s.:.)${LS_COLORS:-'di=1;34:ln=1;36:ex=1;32:pi=33:so=35:bd=33:cd=33:or=1;31'}} 'no=38;5;8' 'fi=38;5;8' 'ma=1;37;44'
+zstyle ':autocomplete:*:*' list-lines 8
 
 ### startup
 if [[ -o interactive ]]; then
@@ -150,8 +162,3 @@ alias dsdestroy='find . -name '"'"'*.DS_Store'"'"' -type f -ls -delete'
 [[ -t 0 ]] && export GPG_TTY="$TTY"
 [[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-
-{{- if eq .chezmoi.os "darwin" }}
-# Kiro CLI post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
-{{- end }}
