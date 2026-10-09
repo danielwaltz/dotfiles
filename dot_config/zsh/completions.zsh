@@ -1,7 +1,3 @@
-if (( $+commands[pnpm] )); then
-  source <(pnpm completion zsh)
-fi
-
 if (( $+commands[bun] )); then
   source <(SHELL=zsh bun completions)
 fi
@@ -22,17 +18,26 @@ _dotfiles_package_scripts() {
   script_names=$(jq -r '(.scripts // {}) | keys[]' "$package_json" 2>/dev/null) || return 1
   [[ -n $script_names ]] || return 1
 
+  local -a match_options=( -M 'r:|=* l:|=*' )
   if (( $+commands[fzf] )); then
     script_names=$(print -r -- "$script_names" |
       FZF_DEFAULT_OPTS= FZF_DEFAULT_OPTS_FILE= command fzf --filter "$PREFIX$SUFFIX") || return 1
-    local -a scripts=( "${(@f)script_names}" ) expl
-    _wanted -V scripts expl 'package scripts' compadd -U -a scripts
-    return $?
+    match_options=( -U )
   fi
 
   local -a scripts=( "${(@f)script_names}" )
-  local -a expl
-  _wanted scripts expl 'package scripts' compadd -M 'r:|=* l:|=*' -a scripts
+  local -A script_commands
+  local script_name script_command
+  while IFS=$'\t' read -r script_name script_command; do
+    script_commands[$script_name]=$script_command
+  done < <(jq -r '(.scripts // {}) | to_entries[] |
+    "\(.key)\t\(.value | gsub("[\\r\\n\\t]"; " "))"' "$package_json")
+
+  local -a entries
+  for script_name in "${scripts[@]}"; do
+    entries+=( "${${script_name//\\/\\\\}//:/\\:}:${script_commands[$script_name]}" )
+  done
+  _describe -V -t scripts 'package scripts' entries "${match_options[@]}"
 }
 
 _dotfiles_package_dependencies() {
@@ -43,7 +48,7 @@ _dotfiles_package_dependencies() {
     "$package_json" 2>/dev/null) || return 1
   [[ -n $names ]] || return 1
   local -a packages=( "${(@f)names}" ) expl
-  _wanted dependencies expl 'project dependencies' compadd -a packages
+  _wanted dependencies expl 'project dependencies' compadd -ld packages -a packages
 }
 
 _dotfiles_registry_packages() {
@@ -75,14 +80,23 @@ _dotfiles_registry_packages() {
   fi
   [[ -n $names ]] || return 1
   local -a packages=( "${(@f)names}" ) expl
-  _wanted -V packages expl 'registry packages' compadd -a packages
+  _wanted -V packages expl 'registry packages' compadd -ld packages -a packages
 }
 
 _dotfiles_npm_completion() {
   local candidates
   candidates=$(COMP_CWORD=$((CURRENT-1)) COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" \
     npm completion -- "${words[@]}" 2>/dev/null) || return 1
-  [[ -n $candidates ]] && compadd -- "${(@f)candidates}"
+  [[ -n $candidates ]] || return 1
+  local -a matches=( "${(@f)candidates}" )
+  compadd -ld matches -a matches
+}
+
+_dotfiles_pnpm_completion() {
+  local -a reply
+  reply=( "${(@f)$(COMP_CWORD=$((CURRENT-1)) COMP_LINE="$BUFFER" \
+    COMP_POINT="$CURSOR" SHELL=zsh pnpm completion-server -- "${words[@]}" 2>/dev/null)}" )
+  compadd -ld reply -a reply
 }
 
 _dotfiles_package_completion() {
@@ -113,7 +127,7 @@ _dotfiles_package_completion() {
 
   case ${words[1]} in
     npm) _dotfiles_npm_completion ;;
-    pnpm) (( $+functions[_pnpm_completion] )) && _pnpm_completion ;;
+    pnpm) _dotfiles_pnpm_completion ;;
     yarn) autoload -Uz _yarn; _yarn ;;
     bun) autoload -Uz _bun; _bun ;;
   esac
@@ -132,10 +146,16 @@ bindkey '^[[B' down-line-or-select
 bindkey '^[OB' down-line-or-select
 bindkey -M menuselect '^M' .accept-line
 bindkey -M menuselect '^J' .accept-line
-zstyle ':completion:*:descriptions' format '%F{green}◆ %d%f'
+zstyle ':completion:*' format ''
+zstyle ':completion:(list-choices|complete-word):*:bun::descriptions' format ''
+zstyle ':completion:(list-choices|complete-word):*:bun-grouped:*' format ''
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' list-grouped no
+zstyle ':completion:*' list-separator '--'
 zstyle ':completion:*:warnings' format ''
 zstyle ':completion:*' list-colors \
-  'no=0;2' 'fi=0;2' 'di=0;34' 'ln=0;36' 'ex=0;32' \
+  '=(#b)([^[:space:]]##)[[:blank:]]##(--)[[:blank:]]##(*)=0;2=0;38;5;245=0;2=0;2' \
+  'no=0;38;5;245' 'fi=0;2' 'di=0;34' 'ln=0;36' 'ex=0;32' \
   'pi=0;33' 'so=0;35' 'bd=0;33' 'cd=0;33' 'or=0;31' \
   'ma=0;4;36' $'ec=\e[0m'
 zstyle ':autocomplete:*:*' list-lines 8
