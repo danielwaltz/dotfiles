@@ -3,6 +3,8 @@ export EDITOR="vim"
 export VISUAL=$EDITOR
 
 {{- if eq .chezmoi.os "linux" }}
+export LANG="${LANG:-C.UTF-8}"
+
 if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] && {
   { command -v gdbus >/dev/null 2>&1 &&
     gdbus call --session --timeout 1 \
