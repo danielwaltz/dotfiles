@@ -1,0 +1,25 @@
+{{- $sudo := .sudo -}}
+{{- if not (kindIs "map" $sudo) -}}
+  {{- fail "sudo.toml: sudo must be a table" -}}
+{{- end -}}
+{{- range $field, $_ := $sudo -}}
+  {{- if ne $field "hosts" -}}
+    {{- fail (printf "sudo.toml: unknown field sudo.%s" $field) -}}
+  {{- end -}}
+{{- end -}}
+{{- $hosts := $sudo.hosts -}}
+{{- if not (kindIs "map" $hosts) -}}
+  {{- fail "sudo.toml: sudo.hosts must be a table" -}}
+{{- end -}}
+{{- range $host, $uri := $hosts -}}
+  {{- if not (regexMatch "^[A-Za-z0-9][A-Za-z0-9._-]*$" $host) -}}
+    {{- fail (printf "sudo.toml: invalid hostname %q" $host) -}}
+  {{- end -}}
+  {{- if not (kindIs "string" $uri) -}}
+    {{- fail (printf "sudo.toml: sudo.hosts.%s must be a string" $host) -}}
+  {{- end -}}
+  {{- if or (regexMatch "[[:cntrl:]]" $uri) (not (regexMatch "^pass://[^/]+/[^/]+/[^/]+$" $uri)) -}}
+    {{- fail (printf "sudo.toml: sudo.hosts.%s must use pass://vault/item/field with no control characters" $host) -}}
+  {{- end -}}
+{{- end -}}
+{{- $hosts | toJson -}}
