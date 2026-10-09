@@ -73,7 +73,7 @@ code fences, or markdown. Do not execute commands or use tools." 2>&1 \
     zle -M "${DOTFILES_SPINNER_ICONS[spinner_index]} Asking OpenCode..."
     zle -R
     (( spinner_index = spinner_index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
-    sleep 0.1
+    sleep "$DOTFILES_SPINNER_INTERVAL"
   done
 
   if ! wait "$worker_pid" || ! suggestion=$(<"$result_file"); then
