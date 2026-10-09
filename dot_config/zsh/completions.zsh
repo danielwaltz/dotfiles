@@ -138,8 +138,10 @@ compdef _dotfiles_package_completion npm yarn pnpm bun
 add-zsh-hook -d precmd ensure-compinit-during-precmd
 unfunction compinit_deferred queued_compcmd
 unset __compcmd_queue
-bindkey '^I' complete-word
-bindkey '^[[Z' expand-word
+bindkey '^I' menu-select
+bindkey '^[[Z' menu-select
+bindkey -M menuselect '^I' menu-complete
+bindkey -M menuselect '^[[Z' reverse-menu-complete
 _dotfiles_dismiss_completions() {
   if (( $+functions[zasync] )); then
     zasync cancel wait
@@ -152,24 +154,8 @@ zle -N dotfiles-dismiss-completions _dotfiles_dismiss_completions
 bindkey '^[' dotfiles-dismiss-completions
 bindkey -M menuselect '^[' dotfiles-dismiss-completions
 zstyle ':autocomplete:dotfiles-dismiss-completions:*' ignore yes
-_dotfiles_completion_or_history() {
-  if [[ -n ${BUFFER//[[:space:]]/} && -n ${_lastcomp[list]} ]] &&
-      (( ${_lastcomp[nmatches]:-0} > 0 )); then
-    zle menu-select -w
-  else
-    _lastcomp[list]=''
-    case $WIDGET in
-      dotfiles-up) zle .up-line-or-history ;;
-      dotfiles-down) zle .down-line-or-history ;;
-    esac
-  fi
-}
-zle -N dotfiles-up _dotfiles_completion_or_history
-zle -N dotfiles-down _dotfiles_completion_or_history
-bindkey '^[[A' dotfiles-up
-bindkey '^[OA' dotfiles-up
-bindkey '^[[B' dotfiles-down
-bindkey '^[OB' dotfiles-down
+bindkey '^[[A' up-line-or-history '^[OA' up-line-or-history
+bindkey '^[[B' down-line-or-history '^[OB' down-line-or-history
 bindkey -M menuselect '^[[A' up-line-or-history '^[OA' up-line-or-history
 bindkey -M menuselect '^[[B' down-line-or-history '^[OB' down-line-or-history
 bindkey '^[[D' backward-char '^[OD' backward-char
