@@ -140,6 +140,18 @@ unfunction compinit_deferred queued_compcmd
 unset __compcmd_queue
 bindkey '^I' complete-word
 bindkey '^[[Z' expand-word
+_dotfiles_dismiss_completions() {
+  if (( $+functions[zasync] )); then
+    zasync cancel wait
+    zasync cancel complete
+  fi
+  _lastcomp[list]=''
+  zle -Rc
+}
+zle -N dotfiles-dismiss-completions _dotfiles_dismiss_completions
+bindkey '^[' dotfiles-dismiss-completions
+bindkey -M menuselect '^[' dotfiles-dismiss-completions
+zstyle ':autocomplete:dotfiles-dismiss-completions:*' ignore yes
 _dotfiles_completion_or_history() {
   if [[ -n ${BUFFER//[[:space:]]/} && -n ${_lastcomp[list]} ]] &&
       (( ${_lastcomp[nmatches]:-0} > 0 )); then
@@ -173,11 +185,55 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:*' list-grouped no
 zstyle ':completion:*' list-separator '--'
 zstyle ':completion:*:warnings' format ''
-zstyle ':completion:*' list-colors \
-  '=(#b)([^[:space:]]##)[[:blank:]]##(--)[[:blank:]]##(*)=0;2=0;38;5;245=0;2=0;2' \
-  'no=0;38;5;245' 'fi=0;2' 'di=0;34' 'ln=0;36' 'ex=0;32' \
-  'pi=0;33' 'so=0;35' 'bd=0;33' 'cd=0;33' 'or=0;31' \
-  'ma=0;4;36' $'ec=\e[0m'
+() {
+  local dim_text='0;2'
+  local script_name_gray='0;38;5;245'
+  local default_text_gray=$script_name_gray
+  local file_text=$dim_text
+  local directory_blue='0;34'
+  local symlink_cyan='0;36'
+  local executable_green='0;32'
+  local pipe_yellow='0;33'
+  local socket_magenta='0;35'
+  local device_yellow='0;33'
+  local broken_symlink_red='0;31'
+
+  local selection_text_dark_gray=236
+  local selection_background_cyan=6
+  local selection_style="0;38;5;${selection_text_dark_gray};48;5;${selection_background_cyan}"
+  local footer_text_gray=245
+  local footer_style="%k%F{${footer_text_gray}}"
+  local more_prompt="${footer_style}(MORE)%f%k"
+  local selection_footer_prompt="${footer_style}line %l %p%f%k"
+  local reset_colors=$'\e[0m'
+
+  zstyle ':completion:*' list-colors \
+    "=(#b)([^[:space:]]##)[[:blank:]]##(--)[[:blank:]]##(*)=${dim_text}=${script_name_gray}=${dim_text}=${dim_text}" \
+    "no=${default_text_gray}" \
+    "fi=${file_text}" \
+    "di=${directory_blue}" \
+    "ln=${symlink_cyan}" \
+    "ex=${executable_green}" \
+    "pi=${pipe_yellow}" \
+    "so=${socket_magenta}" \
+    "bd=${device_yellow}" \
+    "cd=${device_yellow}" \
+    "or=${broken_symlink_red}" \
+    "ma=${selection_style}" \
+    "ec=${reset_colors}"
+
+  zstyle ':completion:*:default' select-prompt "$selection_footer_prompt"
+
+  local widget='.autocomplete:async:list-choices:completion-widget'
+  local original='%F{0}%K{12}(MORE)%f%k'
+  local previous='%F{236}%K{cyan}(MORE)%f%k'
+  local previous_indexed='%F{236}%K{6}(MORE)%f%k'
+  if (( $+functions[$widget] )); then
+    functions[$widget]=${functions[$widget]//"$original"/"$more_prompt"}
+    functions[$widget]=${functions[$widget]//"$previous"/"$more_prompt"}
+    functions[$widget]=${functions[$widget]//"$previous_indexed"/"$more_prompt"}
+  fi
+}
 zstyle ':autocomplete:*:*' list-lines 8
 zstyle -e ':autocomplete:list-choices:*' ignored-input '
   if (( CURRENT == 1 )); then
