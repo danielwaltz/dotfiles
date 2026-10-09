@@ -33,27 +33,74 @@ function status_error() {
   print -u2 -P -r -- "%F{red}${ICON_ERROR}%f ${1}"
 }
 
-function run_with_loading() {
-  local message="$1"
-  shift
+function clear_loading_lines() {
+  local -i lines="$1"
 
-  if [[ ! -t 1 ]]; then
-    "$@"
-    return $?
-  fi
+  while (( lines-- > 0 )); do
+    print -n -r -- $'\e[1A\r\e[2K'
+  done
+}
 
-  local output_file process_id result
+function load_keys_in_parallel() {
+  local vault_name="$1" gpg_key_name="$2" output_dir
+  local -a process_ids labels=('SSH keys' 'GPG key') states=(loading loading)
+  local -i result=0 remaining=2 task index=1 interactive=0 progress_lines=0
+  [[ -t 1 ]] && interactive=1
 
-  output_file="$(mktemp "${TMPDIR:-/tmp}/auth.XXXXXX")" || return 1
-  "$@" >"$output_file" 2>&1 &
-  process_id=$!
+  output_dir="$(mktemp -d "${TMPDIR:-/tmp}/auth.XXXXXX")" || return 1
+  {
+    load_ssh_keys "$vault_name" >"${output_dir}/1" 2>&1 &
+    process_ids[1]="$!"
+    load_gpg_key "$vault_name" "$gpg_key_name" >"${output_dir}/2" 2>&1 &
+    process_ids[2]="$!"
 
-  _dotfiles_spinner "$message" "$process_id"
+    if (( ! interactive )); then
+      print -r -- 'Loading SSH keys...'
+      print -r -- 'Loading GPG key...'
+    fi
 
-  wait "$process_id"
-  result=$?
-  [[ ! -s "$output_file" ]] || command cat -- "$output_file"
-  command rm -f -- "$output_file"
+    while (( remaining )); do
+      for task in 1 2; do
+        [[ "${states[task]}" == loading ]] || continue
+        kill -0 "${process_ids[task]}" 2>/dev/null && continue
+
+        clear_loading_lines "$progress_lines"
+        progress_lines=0
+        if wait "${process_ids[task]}"; then
+          states[task]=loaded
+        else
+          states[task]=failed
+          result=1
+        fi
+        [[ ! -s "${output_dir}/${task}" ]] || command cat -- "${output_dir}/${task}"
+        if [[ "${states[task]}" == failed ]]; then
+          status_error "${labels[task]} failed to load."
+        fi
+        (( remaining-- ))
+      done
+
+      (( remaining )) || break
+      if (( interactive )); then
+        clear_loading_lines "$progress_lines"
+        progress_lines=0
+        for task in 1 2; do
+          [[ "${states[task]}" == loading ]] || continue
+          print -n -P -r -- "%F{${DOTFILES_SPINNER_COLOR}}${DOTFILES_SPINNER_ICONS[index]}%f"
+          print -r -- " Loading ${labels[task]}..."
+          (( progress_lines++ ))
+        done
+        (( index = index % ${#DOTFILES_SPINNER_ICONS} + 1 ))
+      fi
+      sleep "$DOTFILES_SPINNER_INTERVAL"
+    done
+  } always {
+    for task in 1 2; do
+      [[ -z "${process_ids[task]-}" ]] || wait "${process_ids[task]}" 2>/dev/null
+    done
+    clear_loading_lines "$progress_lines"
+    command rm -f -- "${output_dir}/1" "${output_dir}/2"
+    command rmdir -- "$output_dir"
+  }
   return "$result"
 }
 
@@ -275,6 +322,13 @@ function start_ssh_agent() {
   eval "$agent_env"
 }
 
+function load_ssh_keys() {
+  local vault_name="$1"
+
+  run_quiet pass-cli ssh-agent load --vault-name "$vault_name" || return 1
+  status_success "$ICON_KEY" "SSH keys loaded: ${vault_name}."
+}
+
 # Return 2 when the session has no lock and 3 when it needs a login.
 function lock_pass() {
   local output normalized_output
@@ -358,14 +412,7 @@ function load_credentials() {
   {
     if unlock_pass; then
       status_success "$ICON_UNLOCK" 'Proton Pass unlocked.'
-      if run_with_loading 'Loading SSH keys...' \
-          run_quiet pass-cli ssh-agent load --vault-name "$vault_name"; then
-        status_success "$ICON_KEY" "SSH keys loaded: ${vault_name}."
-      else
-        result=1
-      fi
-      run_with_loading 'Loading GPG key...' \
-        load_gpg_key "$vault_name" "$gpg_key_name" || result=1
+      load_keys_in_parallel "$vault_name" "$gpg_key_name" || result=1
     else
       result=1
     fi
