@@ -140,10 +140,30 @@ unfunction compinit_deferred queued_compcmd
 unset __compcmd_queue
 bindkey '^I' complete-word
 bindkey '^[[Z' expand-word
-bindkey '^[[A' up-line-or-search
-bindkey '^[OA' up-line-or-search
-bindkey '^[[B' down-line-or-select
-bindkey '^[OB' down-line-or-select
+_dotfiles_completion_or_history() {
+  if [[ -n ${BUFFER//[[:space:]]/} && -n ${_lastcomp[list]} ]] &&
+      (( ${_lastcomp[nmatches]:-0} > 0 )); then
+    zle menu-select -w
+  else
+    _lastcomp[list]=''
+    case $WIDGET in
+      dotfiles-up) zle .up-line-or-history ;;
+      dotfiles-down) zle .down-line-or-history ;;
+    esac
+  fi
+}
+zle -N dotfiles-up _dotfiles_completion_or_history
+zle -N dotfiles-down _dotfiles_completion_or_history
+bindkey '^[[A' dotfiles-up
+bindkey '^[OA' dotfiles-up
+bindkey '^[[B' dotfiles-down
+bindkey '^[OB' dotfiles-down
+bindkey -M menuselect '^[[A' up-line-or-history '^[OA' up-line-or-history
+bindkey -M menuselect '^[[B' down-line-or-history '^[OB' down-line-or-history
+bindkey '^[[D' backward-char '^[OD' backward-char
+bindkey '^[[C' forward-char '^[OC' forward-char
+bindkey -M menuselect '^[[D' .backward-char '^[OD' .backward-char
+bindkey -M menuselect '^[[C' .forward-char '^[OC' .forward-char
 bindkey -M menuselect '^M' .accept-line
 bindkey -M menuselect '^J' .accept-line
 zstyle ':completion:*' format ''
