@@ -1,18 +1,20 @@
-{{- $hosts := includeTemplate "sudo-data" . | fromJson -}}
-# Generated from .chezmoidata/sudo.toml. Edit the source, then run chezmoi apply.
-typeset -grA SUDO_PASS_HOSTS=(
-{{- range $host, $uri := $hosts }}
-  {{ $host | shellQuote }} {{ $uri | shellQuote }}
+{{- $config := includeTemplate "sudo-data" . | fromJson -}}
+# Generated from .chezmoidata/profiles.toml and .chezmoidata/hosts.toml. Edit the source, then run chezmoi apply.
+typeset -gr SUDO_PASS_DEFAULT_VAULT={{ $config.default_vault | shellQuote }}
+typeset -grA SUDO_PASS_VAULTS=(
+{{- range $host, $vault := $config.hosts }}
+  {{ $host | shellQuote }} {{ $vault | shellQuote }}
 {{- end }}
 )
 
 function _dotfiles_sudo_secret_uri() {
   emulate -L zsh
-  local machine_host secret_uri
+  local machine_host vault
 
-  machine_host="$(command hostname)" || return 1
-  secret_uri="${SUDO_PASS_HOSTS[$machine_host]-}"
-  [[ -n "$secret_uri" ]] || secret_uri="${SUDO_PASS_HOSTS[${machine_host%%.*}]-}"
-  [[ -n "$secret_uri" ]] || return 1
-  print -r -- "$secret_uri"
+  machine_host="$HOST"
+  [[ "$machine_host" =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]] || return 1
+  vault="${SUDO_PASS_VAULTS[$machine_host]-}"
+  [[ -n "$vault" ]] || vault="${SUDO_PASS_VAULTS[${machine_host%%.*}]-}"
+  [[ -n "$vault" ]] || vault="$SUDO_PASS_DEFAULT_VAULT"
+  print -r -- "pass://${vault}/${machine_host}/User Password"
 }

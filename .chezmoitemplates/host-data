@@ -1,0 +1,32 @@
+{{- $hosts := .hosts -}}
+{{- if not (kindIs "map" $hosts) -}}
+  {{- fail "hosts.toml: hosts must be a table" -}}
+{{- end -}}
+{{- range $host, $profile := $hosts -}}
+  {{- if not (regexMatch "^[A-Za-z0-9][A-Za-z0-9._-]*$" $host) -}}
+    {{- fail (printf "hosts.toml: invalid hostname %q" $host) -}}
+  {{- end -}}
+  {{- if not (kindIs "map" $profile) -}}
+    {{- fail (printf "hosts.toml: hosts.%s must be a table" $host) -}}
+  {{- end -}}
+  {{- range $field, $value := $profile -}}
+    {{- if not (has $field (list "autocomplete_model" "default_profile")) -}}
+      {{- fail (printf "hosts.toml: unknown field hosts.%s.%s" $host $field) -}}
+    {{- end -}}
+    {{- if not (kindIs "string" $value) -}}
+      {{- fail (printf "hosts.toml: hosts.%s.%s must be a string" $host $field) -}}
+    {{- end -}}
+    {{- if or (eq (trim $value) "") (regexMatch "[[:cntrl:]]" $value) -}}
+      {{- fail (printf "hosts.toml: hosts.%s.%s must be nonempty and contain no control characters" $host $field) -}}
+    {{- end -}}
+    {{- if eq $field "default_profile" -}}
+      {{- if or (eq $value "defaults") (not (hasKey $.profiles $value)) -}}
+        {{- fail (printf "hosts.toml: hosts.%s.default_profile must name an existing profile" $host) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if and (eq $field "autocomplete_model") (not (regexMatch "^[^[:space:]/]+/[^[:space:]]+$" $value)) -}}
+      {{- fail (printf "hosts.toml: hosts.%s.autocomplete_model must use provider/model format" $host) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $hosts | toJson -}}
