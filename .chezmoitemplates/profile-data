@@ -33,7 +33,7 @@
     {{- fail (printf "profiles.toml: profiles.%s must be a table" $id) -}}
   {{- end -}}
   {{- range $field, $value := $profile -}}
-    {{- if not (has $field (list "name" "email" "directory" "git_name" "signing_key" "vault_name" "gpg_key_name")) -}}
+    {{- if not (has $field (list "name" "email" "directory" "git_name" "signing_key" "vault_name" "gpg_key_name" "autocomplete_model")) -}}
       {{- fail (printf "profiles.toml: unknown field profiles.%s.%s" $id $field) -}}
     {{- end -}}
     {{- if not (kindIs "string" $value) -}}
@@ -42,6 +42,9 @@
     {{- if or (eq (trim $value) "") (regexMatch "[[:cntrl:]]" $value) -}}
       {{- fail (printf "profiles.toml: profiles.%s.%s must be nonempty and contain no control characters" $id $field) -}}
     {{- end -}}
+  {{- end -}}
+  {{- if and (hasKey $profile "autocomplete_model") (not (regexMatch "^[^[:space:]/]+/[^[:space:]]+$" $profile.autocomplete_model)) -}}
+    {{- fail (printf "profiles.toml: profiles.%s.autocomplete_model must use provider/model format" $id) -}}
   {{- end -}}
   {{- range $field := list "name" "email" -}}
     {{- if not (hasKey $profile $field) -}}
@@ -67,6 +70,7 @@
     "signing_key" (get $profile "signing_key" | default $profile.email)
     "vault_name" (get $profile "vault_name" | default $profile.name)
     "gpg_key_name" (get $profile "gpg_key_name" | default (printf "%s GPG Key" $profile.name))
+    "autocomplete_model" (get $profile "autocomplete_model" | default (get (get $profiles $defaultProfile) "autocomplete_model"))
   ) -}}
 {{- end -}}
 {{- /* Sorting normalized paths puts each parent before its descendants. */ -}}

@@ -6,18 +6,23 @@ projects_root = "~/Projects"
 [profiles.personal]
 name = "Personal"
 email = "danielbwaltz@gmail.com"
+autocomplete_model = "lemonade/Qwen3.8-27B-TURBO"
+vault_name = "Personal"
 
 [profiles.moser]
 name = "Moser"
 email = "daniel.waltz@moserit.com"
+autocomplete_model = "openai/gpt-6-luna"
 vault_name = "Moser Consulting"
 
 [profiles.fssa]
 name = "FSSA"
 email = "daniel.waltz@fssa.in.gov"
+autocomplete_model = "openai/gpt-6-luna"
 vault_name = "Moser Consulting"
 
 [profiles.iga]
 name = "IGA"
 email = "daniel.waltz@iga.in.gov"
+autocomplete_model = "openai/gpt-6-luna"
 vault_name = "Moser Consulting"
