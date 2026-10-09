@@ -4,7 +4,7 @@ set -euo pipefail
 {{ includeTemplate "brew-shellenv" . }}
 
 # {{ include "dot_Brewfile.tmpl" | sha256sum }}
-brew bundle --file="$HOME/.Brewfile"
+brew bundle install --no-upgrade --file="$HOME/.Brewfile"
 
 # {{ include "dot_config/mise/config.toml" | sha256sum }}
 mise install
