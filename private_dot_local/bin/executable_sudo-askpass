@@ -3,6 +3,13 @@
 emulate -L zsh
 setopt no_xtrace no_verbose
 
+if [[ -n "${DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR-}" ]]; then
+  if ! command mkdir -- "$DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR/attempted" 2>/dev/null; then
+    print -u2 -r -- 'The vault password was already submitted. Refusing another sudo password attempt.'
+    exit 1
+  fi
+fi
+
 readonly config_file="$HOME/.config/dotfiles/sudo.zsh"
 
 if [[ ! -r "$config_file" ]]; then
@@ -12,7 +19,7 @@ fi
 source "$config_file" || exit 1
 
 if ! secret_uri="$(_dotfiles_sudo_secret_uri)"; then
-  print -u2 -r -- 'No sudo password configured for this host. Add a mapping in .chezmoidata/sudo.toml and run chezmoi apply.'
+  print -u2 -r -- 'Could not determine a valid hostname for the sudo password item.'
   exit 1
 fi
 
@@ -21,9 +28,33 @@ if ! command -v pass-cli >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! password="$(command pass-cli item view "$secret_uri")"; then
-  print -u2 -r -- 'Could not read the sudo password from Proton Pass. If locked, run auth unlock; if logged out, run pass-cli login.'
-  exit 1
+error_file=$(command mktemp "${TMPDIR:-/tmp}/sudo-askpass-error.XXXXXXXX") || exit 1
+trap 'command rm -f -- "$error_file"' EXIT
+
+if ! password="$(command pass-cli item view "$secret_uri" 2>"$error_file")"; then
+  read_error="$(<"$error_file")"
+  password=''
+  if [[ "$read_error" != *SessionLocked* ]]; then
+    print -u2 -r -- 'Could not read the sudo password from Proton Pass. If logged out, run pass-cli login.'
+    exit 1
+  fi
+
+  if ! { exec {tty_fd}<>/dev/tty } 2>/dev/null; then
+    print -u2 -r -- 'Proton Pass is locked and no terminal is available. Run auth unlock in a terminal first.'
+    exit 1
+  fi
+  print -u "$tty_fd" -r -- 'Proton Pass is locked. Unlock it to continue.'
+  if ! command pass-cli session unlock <&$tty_fd >&$tty_fd 2>&1; then
+    exec {tty_fd}>&-
+    print -u2 -r -- 'Could not unlock Proton Pass.'
+    exit 1
+  fi
+  exec {tty_fd}>&-
+
+  if ! password="$(command pass-cli item view "$secret_uri")"; then
+    print -u2 -r -- 'Could not read the sudo password after unlocking Proton Pass.'
+    exit 1
+  fi
 fi
 if [[ -z "$password" || "$password" == *$'\n'* || "$password" == *$'\r'* || "$password" == *$'\0'* ]]; then
   print -u2 -r -- 'The configured sudo password must be a nonempty single line.'

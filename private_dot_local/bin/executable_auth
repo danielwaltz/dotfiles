@@ -127,7 +127,7 @@ function usage() {
   print -r -- "Usage: auth [${(j:|:)profile_ids}|unlock|lock]"
   print -r -- ''
   print -r -- 'Load credentials, unlock Proton Pass, or remove loaded credentials.'
-  print -r -- "The default profile is ${DEFAULT_PROFILE}."
+  print -r -- "Without an argument, use the current directory's profile, or ${DEFAULT_PROFILE} outside profile directories."
 }
 
 function configured_profile_ids() {
@@ -469,7 +469,7 @@ function lock_credentials() {
 }
 
 function main() {
-  local command="${1:-$DEFAULT_PROFILE}"
+  local command="${1:-$(_dotfiles_current_profile)}"
 
   if (( $# > 1 )); then
     usage >&2

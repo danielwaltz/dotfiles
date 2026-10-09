@@ -3,34 +3,24 @@
 
 source "$HOME/.config/dotfiles/spinner.zsh" || return 1
 
-if (( ! ${+PROFILE_CONFIG} )); then
+if (( ! ${+HOST_CONFIG} )); then
   source "$HOME/.config/dotfiles/profiles.zsh" || return 1
 fi
 
 function _dotfiles_opencode_model() {
   emulate -L zsh
-  local profile="$DEFAULT_PROFILE" key candidate directory
-  local current_directory="${PWD:A}" matched_length=0
+  local machine_host model
 
-  for key in "${(@k)PROFILE_CONFIG}"; do
-    [[ "$key" == *.directory ]] || continue
-    candidate="${key%.directory}"
-    directory="${PROFILE_CONFIG[$key]}"
-    directory="${directory:A}"
-    if [[ "$current_directory" == "$directory" ||
-          "$current_directory" == "${directory%/}/"* ]]; then
-      if (( ${#directory} > matched_length )); then
-        profile="$candidate"
-        matched_length=${#directory}
-      fi
-    fi
-  done
-
-  export ASK_OPENCODE_MODEL="${PROFILE_CONFIG[${profile}.autocomplete_model]}"
+  machine_host="$HOST"
+  model="${HOST_CONFIG[${machine_host}.autocomplete_model]-}"
+  [[ -n "$model" ]] || model="${HOST_CONFIG[${machine_host%%.*}.autocomplete_model]-}"
+  if [[ -n "$model" ]]; then
+    export ASK_OPENCODE_MODEL="$model"
+  else
+    unset ASK_OPENCODE_MODEL
+  fi
 }
 
-autoload -Uz add-zsh-hook
-add-zsh-hook chpwd _dotfiles_opencode_model
 _dotfiles_opencode_model
 
 function ask_opencode() {
@@ -46,7 +36,7 @@ function ask_opencode() {
     return 1
   fi
 
-  [[ -z "$ASK_OPENCODE_MODEL" ]] || model_args=(--model "$ASK_OPENCODE_MODEL")
+  [[ -z "${ASK_OPENCODE_MODEL-}" ]] || model_args=(--model "$ASK_OPENCODE_MODEL")
   if ! result_file=$(command mktemp "${TMPDIR:-/tmp}/ask-opencode.XXXXXXXX"); then
     zle -M 'Could not create a temporary file for OpenCode.'
     return 1

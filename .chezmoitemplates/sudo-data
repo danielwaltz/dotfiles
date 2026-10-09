@@ -1,25 +1,15 @@
-{{- $sudo := .sudo -}}
-{{- if not (kindIs "map" $sudo) -}}
-  {{- fail "sudo.toml: sudo must be a table" -}}
-{{- end -}}
-{{- range $field, $_ := $sudo -}}
-  {{- if ne $field "hosts" -}}
-    {{- fail (printf "sudo.toml: unknown field sudo.%s" $field) -}}
+{{- $config := includeTemplate "profile-data" . | fromJson -}}
+{{- $hosts := includeTemplate "host-data" . | fromJson -}}
+{{- $resolved := dict -}}
+{{- range $id, $profile := $config.profiles -}}
+  {{- if regexMatch "/" $profile.vault_name -}}
+    {{- fail (printf "profiles.toml: profiles.%s vault name must contain no slashes for sudo references" $id) -}}
   {{- end -}}
 {{- end -}}
-{{- $hosts := $sudo.hosts -}}
-{{- if not (kindIs "map" $hosts) -}}
-  {{- fail "sudo.toml: sudo.hosts must be a table" -}}
+{{- range $host, $settings := $hosts -}}
+  {{- $shortHost := get $hosts (first (splitList "." $host)) | default dict -}}
+  {{- $id := get $settings "default_profile" | default (get $shortHost "default_profile") | default $.profiles.defaults.default_profile -}}
+  {{- $_ := set $resolved $host (get $config.profiles $id).vault_name -}}
 {{- end -}}
-{{- range $host, $uri := $hosts -}}
-  {{- if not (regexMatch "^[A-Za-z0-9][A-Za-z0-9._-]*$" $host) -}}
-    {{- fail (printf "sudo.toml: invalid hostname %q" $host) -}}
-  {{- end -}}
-  {{- if not (kindIs "string" $uri) -}}
-    {{- fail (printf "sudo.toml: sudo.hosts.%s must be a string" $host) -}}
-  {{- end -}}
-  {{- if or (regexMatch "[[:cntrl:]]" $uri) (not (regexMatch "^pass://[^/]+/[^/]+/[^/]+$" $uri)) -}}
-    {{- fail (printf "sudo.toml: sudo.hosts.%s must use pass://vault/item/field with no control characters" $host) -}}
-  {{- end -}}
-{{- end -}}
-{{- $hosts | toJson -}}
+{{- $default := get $config.profiles $.profiles.defaults.default_profile -}}
+{{- dict "hosts" $resolved "default_vault" $default.vault_name | toJson -}}

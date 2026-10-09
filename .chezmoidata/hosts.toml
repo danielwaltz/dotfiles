@@ -1,0 +1,7 @@
+[hosts.mosermacbookpro]
+default_profile = "moser"
+autocomplete_model = "openai/gpt-6-luna"
+
+[hosts.LSA4398]
+default_profile = "iga"
+autocomplete_model = "openai/gpt-6-luna"
