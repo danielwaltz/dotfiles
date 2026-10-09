@@ -124,7 +124,10 @@ bindkey '^[[B' down-line-or-select
 bindkey '^[OB' down-line-or-select
 bindkey -M menuselect '^M' .accept-line
 bindkey -M menuselect '^J' .accept-line
-zstyle ':completion:*:descriptions' format '%F{green}%B◆ %d%b%f'
+zstyle ':completion:*:descriptions' format '%F{green}◆ %d%f'
 zstyle ':completion:*:warnings' format ''
-zstyle ':completion:*' list-colors ${(s.:.)${LS_COLORS:-'di=1;34:ln=1;36:ex=1;32:pi=33:so=35:bd=33:cd=33:or=1;31'}} 'no=38;5;8' 'fi=38;5;8' 'ma=1;37;44'
+zstyle ':completion:*' list-colors \
+  'no=0;2' 'fi=0;2' 'di=0;34' 'ln=0;36' 'ex=0;32' \
+  'pi=0;33' 'so=0;35' 'bd=0;33' 'cd=0;33' 'or=0;31' \
+  'ma=0;4;36' $'ec=\e[0m'
 zstyle ':autocomplete:*:*' list-lines 8
