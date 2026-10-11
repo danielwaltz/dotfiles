@@ -1,44 +1,11 @@
-### options
-zstyle :omz:update mode disabled
-zstyle :omz:plugins:keychain options --quiet --no-inherit
-
-### path
 {{ includeTemplate "brew-shellenv" . }}
 
-### antidote
-source ~/.local/share/antidote/antidote.zsh
-antidote load
-
-### completions
+source "$HOME/.config/zsh/init.zsh"
 source "$HOME/.config/zsh/completions.zsh"
-
-### functions
 source "$HOME/.config/zsh/functions.zsh"
-
-### aliases
 source "$HOME/.config/zsh/aliases.zsh"
-
-### sudo
 source "$HOME/.config/zsh/sudo.zsh"
-
-### opencode
 source "$HOME/.config/zsh/opencode.zsh"
-
-### init
-[[ -t 0 ]] && export GPG_TTY="$TTY"
-[[ -n $GHOSTTY_RESOURCES_DIR ]] && source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
-[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-
-### syntax highlighting
-_dotfiles_load_syntax_highlighting() {
-  add-zsh-hook -d precmd _dotfiles_load_syntax_highlighting
-  source "$(antidote path zsh-users/zsh-syntax-highlighting)/zsh-syntax-highlighting.zsh"
-  unfunction _dotfiles_load_syntax_highlighting
-}
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd _dotfiles_load_syntax_highlighting
-
-### startup
-if [[ -o interactive ]]; then
-  fastfetch
-fi
+source "$HOME/.config/zsh/syntax.zsh"
+source "$HOME/.config/zsh/integrations.zsh"
+source "$HOME/.config/zsh/startup.zsh"
