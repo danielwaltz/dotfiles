@@ -81,7 +81,7 @@ function cleanup() {
       sudo pacman -Rns $(pacman -Qtdq)
     fi
 
-    paccache -r
+    paccache -rk1
   fi
 
   if command -v flatpak &> /dev/null; then
