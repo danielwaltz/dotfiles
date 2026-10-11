@@ -35,7 +35,7 @@
     { "action": "shell", "resource": "wc *", "effect": "allow" },
     { "action": "shell", "resource": "which *", "effect": "allow" },
   ],
-  "model": "lemonade/Qwen3.8-27B-TURBO",
+  "model": "lemonade/Ternary-Bonsai-2-27B",
   "providers": {
     "lemonade": {
       "name": "Lemonade",
