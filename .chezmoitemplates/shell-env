@@ -2,6 +2,8 @@ export PATH="$HOME/.local/bin:$PATH"
 export EDITOR="vim"
 export VISUAL=$EDITOR
 
+[[ -t 0 ]] && export GPG_TTY="$TTY"
+
 {{- if eq .chezmoi.os "linux" }}
 export LANG="${LANG:-C.UTF-8}"
 
