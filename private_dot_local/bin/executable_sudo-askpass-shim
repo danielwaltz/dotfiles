@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 #
 # sudo-askpass-shim: sudo shim for non-interactive callers (AUR helpers like
 # `paru` and `yay`). Those helpers exec `sudo` directly, bypassing the
