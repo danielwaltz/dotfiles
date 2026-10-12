@@ -6,9 +6,7 @@
 # terminal password prompt.
 #
 # This shim re-enters the dotfiles askpass path: it adds -A so sudo reads the
-# password via $SUDO_ASKPASS (sudo-askpass -> Proton Pass), and sets
-# DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR so the double-prompt guard in sudo-askpass
-# applies.
+# password via $SUDO_ASKPASS (sudo-askpass -> Proton Pass).
 #
 # If $SUDO_ASKPASS is not set (integration disabled in this environment), it
 # falls back to plain sudo. As with the zsh function, an explicitly supplied
@@ -21,10 +19,6 @@ set -u
 
 # Only use the askpass path when the integration is active for the caller.
 if [[ -n "${SUDO_ASKPASS-}" ]]; then
-  attempt_dir=$(command mktemp -d "${TMPDIR:-/tmp}/sudo-askpass.XXXXXXXX") || exit 1
-  export DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR="$attempt_dir"
-  trap 'command rm -rf -- "$attempt_dir"' EXIT
-
   # Same option scan as the zsh sudo() function: bail out when the caller
   # passes an explicit authentication flag, and skip values so the words
   # following a value-taking option are not mistaken for sudo options.

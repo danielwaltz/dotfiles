@@ -10,7 +10,7 @@ fi
 
 function sudo() {
   emulate -L zsh
-  local option flags flag attempt_dir
+  local option flags flag
   local -i index=1 position
 
   if (( ! DOTFILES_SUDO_ASKPASS_ENABLED )); then
@@ -55,11 +55,5 @@ function sudo() {
     (( index++ ))
   done
 
-  attempt_dir=$(command mktemp -d "${TMPDIR:-/tmp}/sudo-askpass.XXXXXXXX") || return 1
-  local -x DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR="$attempt_dir"
-  {
-    command sudo -A "$@"
-  } always {
-    command rm -rf -- "$attempt_dir"
-  }
+  command sudo -A "$@"
 }

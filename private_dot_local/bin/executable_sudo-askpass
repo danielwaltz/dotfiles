@@ -3,13 +3,6 @@
 emulate -L zsh
 setopt no_xtrace no_verbose
 
-if [[ -n "${DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR-}" ]]; then
-  if ! command mkdir -- "$DOTFILES_SUDO_ASKPASS_ATTEMPT_DIR/attempted" 2>/dev/null; then
-    print -u2 -r -- 'The vault password was already submitted. Refusing another sudo password attempt.'
-    exit 1
-  fi
-fi
-
 readonly config_file="$HOME/.config/dotfiles/sudo.zsh"
 
 if [[ ! -r "$config_file" ]]; then
