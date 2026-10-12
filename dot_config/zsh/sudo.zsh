@@ -57,3 +57,22 @@ function sudo() {
 
   command sudo -A "$@"
 }
+
+# Edit files as root via the same askpass flow as sudo(). Mirrors the
+# standard sudoedit semantics: use the user's editor (VISUAL/EDITOR/vi),
+# and skip sudo when already root.
+function sudoedit() {
+  local editor
+
+  editor="${VISUAL:-}"
+  [[ -z "$editor" ]] && editor="${EDITOR:-}"
+  [[ -z "$editor" ]] && editor=vi
+
+  if [[ $EUID -eq 0 ]]; then
+    "$editor" "$@"
+    return $?
+  fi
+
+  sudo "$editor" "$@"
+  return $?
+}
