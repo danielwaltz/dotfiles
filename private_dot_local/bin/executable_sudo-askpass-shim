@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 #
 # sudo-askpass-shim: sudo shim for non-interactive callers (AUR helpers like
 # `paru` and `yay`). Those helpers exec `sudo` directly, bypassing the
@@ -13,6 +13,9 @@
 # If $SUDO_ASKPASS is not set (integration disabled in this environment), it
 # falls back to plain sudo. As with the zsh function, an explicitly supplied
 # authentication option is respected and the call is passed through unchanged.
+#
+# Syntax stays compatible with bash 3.2+ and zsh: no exec of shell builtins,
+# no bash-only indirect positional expansion.
 
 set -u
 
@@ -25,13 +28,20 @@ if [[ -n "${SUDO_ASKPASS-}" ]]; then
   # Same option scan as the zsh sudo() function: bail out when the caller
   # passes an explicit authentication flag, and skip values so the words
   # following a value-taking option are not mistaken for sudo options.
+  # (bash arrays are 0-based; zsh arrays are 1-based.)
+  args=("$@")
   n=$#
+  suboff=0
+  if [[ -n "${BASH_VERSION-}" ]]; then
+    suboff=1
+  fi
   idx=1
   while (( idx <= n )); do
-    opt="${!idx}"
+    opt="${args[$((idx-suboff))]}"
     case "$opt" in
       --askpass|--stdin|--non-interactive)
-        exec command sudo "$@"
+        command sudo "$@"
+        exit $?
         ;;
       --auth-type|--close-from|--login-class|--chdir|--group|--host|--prompt|--chroot|--role|--command-timeout|--type|--other-user|--user)
         (( idx += 2 )); continue
@@ -44,7 +54,8 @@ if [[ -n "${SUDO_ASKPASS-}" ]]; then
           flag="${flags:position-1:1}"
           case "$flag" in
             A|S|n)
-              exec command sudo "$@"
+              command sudo "$@"
+              exit $?
               ;;
             a|C|c|D|g|h|p|R|r|T|t|U|u)
               # A value can follow the option directly or be the next argument.
@@ -59,7 +70,9 @@ if [[ -n "${SUDO_ASKPASS-}" ]]; then
     (( idx++ ))
   done
 
-  exec command sudo -A "$@"
+  command sudo -A "$@"
+  exit $?
 fi
 
-exec command sudo "$@"
+command sudo "$@"
+exit $?
