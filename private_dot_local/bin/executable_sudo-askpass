@@ -27,26 +27,50 @@ trap 'command rm -f -- "$error_file"' EXIT
 if ! password="$(command pass-cli item view "$secret_uri" 2>"$error_file")"; then
   read_error="$(<"$error_file")"
   password=''
-  if [[ "$read_error" != *SessionLocked* ]]; then
-    print -u2 -r -- 'Could not read the sudo password from Proton Pass. If logged out, run pass-cli login.'
+
+  locked=0
+  if [[ "$read_error" == *SessionLocked* ]]; then
+    locked=1
+  elif ! [[ "$read_error" =~ '(?i)(no active session|requires an authenticated client|there is no session|pass-cli login)' ]]; then
+    print -u2 -r -- 'Could not read the sudo password from Proton Pass. If it is locked out or signed out, run auth in a terminal first.'
     exit 1
   fi
 
   if ! { exec {tty_fd}<>/dev/tty } 2>/dev/null; then
-    print -u2 -r -- 'Proton Pass is locked and no terminal is available. Run auth unlock in a terminal first.'
+    if (( locked )); then
+      print -u2 -r -- 'Proton Pass is locked and no terminal is available. Run auth unlock in a terminal first.'
+    else
+      print -u2 -r -- 'Proton Pass is signed out and no terminal is available. Run auth in a terminal first.'
+    fi
     exit 1
   fi
-  print -u "$tty_fd" -r -- 'Proton Pass is locked. Unlock it to continue.'
-  if ! command pass-cli session unlock <&$tty_fd >&$tty_fd 2>&1; then
-    exec {tty_fd}>&-
-    print -u2 -r -- 'Could not unlock Proton Pass.'
-    exit 1
-  fi
-  exec {tty_fd}>&-
 
-  if ! password="$(command pass-cli item view "$secret_uri")"; then
-    print -u2 -r -- 'Could not read the sudo password after unlocking Proton Pass.'
-    exit 1
+  if (( locked )); then
+    print -u "$tty_fd" -r -- 'Proton Pass is locked. Unlock it to continue.'
+    if ! command pass-cli session unlock <&$tty_fd >&$tty_fd 2>&1; then
+      exec {tty_fd}>&-
+      print -u2 -r -- 'Could not unlock Proton Pass.'
+      exit 1
+    fi
+    exec {tty_fd}>&-
+
+    if ! password="$(command pass-cli item view "$secret_uri")"; then
+      print -u2 -r -- 'Could not read the sudo password after unlocking Proton Pass.'
+      exit 1
+    fi
+  else
+    print -u "$tty_fd" -r -- 'Proton Pass is signed out. Sign in to continue.'
+    if ! command pass-cli login <&$tty_fd >&$tty_fd 2>&1; then
+      exec {tty_fd}>&-
+      print -u2 -r -- 'Could not sign in to Proton Pass.'
+      exit 1
+    fi
+    exec {tty_fd}>&-
+
+    if ! password="$(command pass-cli item view "$secret_uri")"; then
+      print -u2 -r -- 'Could not read the sudo password after signing into Proton Pass.'
+      exit 1
+    fi
   fi
 fi
 if [[ -z "$password" || "$password" == *$'\n'* || "$password" == *$'\r'* || "$password" == *$'\0'* ]]; then
