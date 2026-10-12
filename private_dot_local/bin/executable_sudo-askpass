@@ -16,63 +16,100 @@ if ! secret_uri="$(_dotfiles_sudo_secret_uri)"; then
   exit 1
 fi
 
-if ! command -v pass-cli >/dev/null 2>&1; then
-  print -u2 -r -- 'Missing pass-cli. Install it with brew bundle.'
-  exit 1
-fi
-
-error_file=$(command mktemp "${TMPDIR:-/tmp}/sudo-askpass-error.XXXXXXXX") || exit 1
-trap 'command rm -f -- "$error_file"' EXIT
-
-if ! password="$(command pass-cli item view "$secret_uri" 2>"$error_file")"; then
-  read_error="$(<"$error_file")"
-  password=''
-
-  locked=0
-  if [[ "$read_error" == *SessionLocked* ]]; then
-    locked=1
-  elif ! [[ "$read_error" =~ '(?i)(no active session|requires an authenticated client|there is no session|pass-cli login)' ]]; then
-    print -u2 -r -- 'Could not read the sudo password from Proton Pass. If it is locked out or signed out, run auth in a terminal first.'
-    exit 1
-  fi
+# Fall back to the system default when pass-cli is unavailable: prompt for the
+# sudo password on the terminal and print it to stdout (askpass contract).
+# This is how plain `sudo` without `-A` would behave.
+#
+# Exit 0 with the password on stdout on success; exit 1 if no terminal is
+# available or no password was entered (sudo re-prompts as it normally would).
+prompt_system_password() {
+  local pass ret
 
   if ! { exec {tty_fd}<>/dev/tty } 2>/dev/null; then
-    if (( locked )); then
-      print -u2 -r -- 'Proton Pass is locked and no terminal is available. Run auth unlock in a terminal first.'
-    else
-      print -u2 -r -- 'Proton Pass is signed out and no terminal is available. Run auth in a terminal first.'
-    fi
-    exit 1
+    print -u2 -r -- 'Could not prompt for a password (no terminal available). Run in an interactive session first.'
+    return 1
   fi
 
-  if (( locked )); then
-    print -u "$tty_fd" -r -- 'Proton Pass is locked. Unlock it to continue.'
-    if ! command pass-cli session unlock <&$tty_fd >&$tty_fd 2>&1; then
-      exec {tty_fd}>&-
-      print -u2 -r -- 'Could not unlock Proton Pass.'
-      exit 1
-    fi
-    exec {tty_fd}>&-
+  printf 'sudo password: ' >&$tty_fd
+  stty -echo <&$tty_fd 2>/dev/null
+  IFS= read -r -s <&$tty_fd
+  ret=$?
+  stty echo <&$tty_fd 2>/dev/null
+  printf '\n' >&$tty_fd
+  exec {tty_fd}>&-
 
-    if ! password="$(command pass-cli item view "$secret_uri")"; then
-      print -u2 -r -- 'Could not read the sudo password after unlocking Proton Pass.'
-      exit 1
-    fi
-  else
-    print -u "$tty_fd" -r -- 'Proton Pass is signed out. Sign in to continue.'
-    if ! command pass-cli login <&$tty_fd >&$tty_fd 2>&1; then
-      exec {tty_fd}>&-
-      print -u2 -r -- 'Could not sign in to Proton Pass.'
-      exit 1
-    fi
-    exec {tty_fd}>&-
+  if (( ret == 0 )) && [[ -n $pass ]]; then
+    print -r -- "$pass"
+    return 0
+  fi
+  return 1
+}
 
-    if ! password="$(command pass-cli item view "$secret_uri")"; then
-      print -u2 -r -- 'Could not read the sudo password after signing into Proton Pass.'
+# Resolve pass-cli. It may not be in the caller's PATH (brew filters the
+# environment when it uses $SUDO_ASKPASS), so also check the standard
+# Homebrew install locations.
+pass_cli="$(command -v pass-cli 2>/dev/null)"
+[[ -z $pass_cli ]] && pass_cli="$(command -v "$HOMEBREW_PREFIX/bin/pass-cli" 2>/dev/null)"
+[[ -z $pass_cli ]] && pass_cli="$(command -v /usr/local/bin/pass-cli 2>/dev/null)"
+
+if [[ -z $pass_cli ]]; then
+  print -u2 -r -- 'pass-cli unavailable; entering the sudo password directly.'
+  password="$(prompt_system_password)" || exit 1
+else
+  error_file=$(command mktemp "${TMPDIR:-/tmp}/sudo-askpass-error.XXXXXXXX") || exit 1
+  trap 'command rm -f -- "$error_file"' EXIT
+
+  if ! password="$(command "$pass_cli" item view "$secret_uri" 2>"$error_file")"; then
+    read_error="$(<"$error_file")"
+    password=''
+
+    locked=0
+    if [[ "$read_error" == *SessionLocked* ]]; then
+      locked=1
+    elif ! [[ "$read_error" =~ '(?i)(no active session|requires an authenticated client|there is no session|pass-cli login)' ]]; then
+      print -u2 -r -- 'Could not read the sudo password from Proton Pass. If it is locked out or signed out, run auth in a terminal first.'
       exit 1
+    fi
+
+    if ! { exec {tty_fd}<>/dev/tty } 2>/dev/null; then
+      if (( locked )); then
+        print -u2 -r -- 'Proton Pass is locked and no terminal is available. Run auth unlock in a terminal first.'
+      else
+        print -u2 -r -- 'Proton Pass is signed out and no terminal is available. Run auth in a terminal first.'
+      fi
+      exit 1
+    fi
+
+    if (( locked )); then
+      print -u "$tty_fd" -r -- 'Proton Pass is locked. Unlock it to continue.'
+      if ! command "$pass_cli" session unlock <&$tty_fd >&$tty_fd 2>&1; then
+        exec {tty_fd}>&-
+        print -u2 -r -- 'Could not unlock Proton Pass.'
+        exit 1
+      fi
+      exec {tty_fd}>&-
+
+      if ! password="$(command "$pass_cli" item view "$secret_uri")"; then
+        print -u2 -r -- 'Could not read the sudo password after unlocking Proton Pass.'
+        exit 1
+      fi
+    else
+      print -u "$tty_fd" -r -- 'Proton Pass is signed out. Sign in to continue.'
+      if ! command "$pass_cli" login <&$tty_fd >&$tty_fd 2>&1; then
+        exec {tty_fd}>&-
+        print -u2 -r -- 'Could not sign in to Proton Pass.'
+        exit 1
+      fi
+      exec {tty_fd}>&-
+
+      if ! password="$(command "$pass_cli" item view "$secret_uri")"; then
+        print -u2 -r -- 'Could not read the sudo password after signing into Proton Pass.'
+        exit 1
+      fi
     fi
   fi
 fi
+
 if [[ -z "$password" || "$password" == *$'\n'* || "$password" == *$'\r'* || "$password" == *$'\0'* ]]; then
   print -u2 -r -- 'The configured sudo password must be a nonempty single line.'
   exit 1
