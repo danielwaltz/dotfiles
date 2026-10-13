@@ -12,9 +12,11 @@
 #        * item view succeeds   -> emit the password
 #        * session locked       -> prompt for the lock code on the tty,
 #                                 `session unlock`, re-read
-#        * session signed out   -> `login --interactive` (only when the CLI
-#                                 advertises it; the default web login hangs
-#                                 in an askpass context), re-read
+#        * session signed out   -> default (web) `login`: opens the browser
+#                                 and blocks until the sign-in completes
+#                                 (nothing is ever typed on the tty, the
+#                                 browser handles authentication), capped by
+#                                 a timeout, re-read
 #        * other error / re-auth fail -> fall through to step 2
 #   2. per-machine keychain item via the `security` CLI (capability probe
 #      only; no OS detection; no-ops when `security` or the item is absent)
@@ -89,7 +91,7 @@ is_session_locked() {
 }
 
 is_signed_out() {
-  matches_ci "$1" 'no active session|there is no session|no session|signed out|not signed in|not logged in|requires an authenticated client|pass-cli login|authentication required'
+  matches_ci "$1" 'no active session|there is no session|no session|signed out|not signed in|not logged in|requires an authenticated client|pass-cli login|authentication required|session expired|unauthenticated|invalid session'
 }
 
 validate_password() {
@@ -161,6 +163,36 @@ read_pass_cli_item() {
   return $ret
 }
 
+# ---- bounded execution ----------------------------------------------------
+
+# run_bounded TIMEOUT...CMD — execute CMD with a bounded wait so a hung
+# process (e.g. a pending browser sign-in) cannot block sudo indefinitely.
+# Returns CMD's exit code, or 124 on timeout. No coreutils/gtimeout
+# dependency; polls a background job each second.
+run_bounded() {
+  local timeout_seconds remaining pid rc
+
+  timeout_seconds="$1"
+  shift
+
+  "$@" &
+  pid=$!
+  remaining=$timeout_seconds
+  while (( remaining > 0 )); do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      wait "$pid" 2>/dev/null
+      return $?
+    fi
+    sleep 1
+    (( remaining-- ))
+  done
+  kill "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null
+  rc=$?
+  (( rc == 0 )) || return 124
+  return 124
+}
+
 # ---- keychain (capability probe only; no OS detection) -------------------
 
 # Per-machine service name for the keychain backup item.
@@ -181,7 +213,12 @@ keychain_seed() {
   command -v security >/dev/null 2>&1 || return
   # Skip re-seeding when a readable item already exists.
   command security find-generic-password -s "$svc" -w >/dev/null 2>&1 && return
+  local rc
   printf '%s\n' "$password" | command security add-generic-password -s "$svc" -i >/dev/null 2>&1
+  rc=$?
+  if (( rc != 0 )); then
+    print -u2 -r -- "sudo-askpass: keychain seed failed (security add-generic-password, exit $rc)."
+  fi
 }
 
 # Read the password from the per-machine keychain item. On success sets
@@ -225,26 +262,44 @@ get_password_from_pass_cli() {
   err="${(L)err}"
 
   if is_session_locked "$err" || is_signed_out "$err"; then
-    if open_tty; then
-      recovered=1
-      if is_session_locked "$err"; then
+    if is_session_locked "$err"; then
+      if open_tty; then
+        recovered=1
         print -u "$tty_fd" -r -- 'Proton Pass is locked. Enter the lock code:'
         stty -echo <&$tty_fd 2>/dev/null
         command "$pass_cli" session unlock <&$tty_fd >&$tty_fd 2>&1
+        close_tty
       else
-        print -u "$tty_fd" -r -- 'Proton Pass is signed out. Signing in...'
-        # Only interactive CLI login can complete in an askpass context;
-        # the default `login` web flow would hang, so only try it when the
-        # CLI advertises --interactive.
-        if command "$pass_cli" login --help 2>&1 | command grep -q -- --interactive; then
-          stty -echo <&$tty_fd 2>/dev/null
-          command "$pass_cli" login --interactive <&$tty_fd >&$tty_fd 2>&1
+        print -u2 -r -- 'No terminal to unlock the locked Pass session; falling back.'
+      fi
+    else
+      # Signed out: run the default (web) sign-in. It opens the browser and
+      # blocks until the sign-in completes; nothing is typed on the tty.
+      if open_tty; then
+        recovered=1
+        print -u "$tty_fd" -- 'Proton Pass is signed out. Signing in via browser; complete the sign-in in your browser.'
+        # Attach login output to the tty so it is visible. Stdin is /dev/null
+        # so no accidental interactive prompt.
+        if [[ -n $pass_cli ]]; then
+          run_bounded 300 "$pass_cli" login </dev/null >&$tty_fd 2>&1
+        fi
+        close_tty
+      else
+        recovered=1
+        print -u2 -r -- 'Proton Pass is signed out; attempting browser sign-in without a terminal.'
+        if [[ -n $pass_cli ]]; then
+          # stdout is the askpass password pipe, so discard login output;
+          # stderr falls through to the caller (usually the sudo stderr).
+          run_bounded 300 "$pass_cli" login </dev/null >/dev/null
         fi
       fi
-      close_tty
-    else
-      print -u2 -r -- 'No terminal to recover the Pass session; falling back.'
     fi
+  else
+    # Unrecognized pass-cli error: dump the full stderr text (stderr only;
+    # error text never contains the password) so the caller's transcript shows
+    # the actual root cause, e.g. "Reason: <...>" from the Caused-by chain.
+    print -u2 -r -- "sudo-askpass: pass-cli item view failed (falling back). Full error:"
+    print -u2 -r -- "$err"
   fi
 
   if (( recovered )); then
@@ -273,6 +328,7 @@ if [[ -z $password ]]; then
   # or without the item).
   keychain_read
   if [[ -z $password ]]; then
+    print -u2 -r -- 'sudo-askpass: pass-cli and keychain unavailable; falling back to terminal sudo-password prompt.'
     prompt_system_password || exit 1
   fi
 fi
