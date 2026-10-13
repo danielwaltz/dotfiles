@@ -39,7 +39,7 @@
     { "action": "shell", "resource": "which *", "effect": "allow" },
     { "action": "shell", "resource": "xargs *", "effect": "allow" },
   ],
-  "model": "lemonade/KAT-Coder-V2.5",
+  "model": "lemonade/Cyber-Tiel-Coder-35B",
   "providers": {
     "lemonade": {
       "name": "Lemonade",
