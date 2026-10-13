@@ -16,7 +16,10 @@
 #                                 and blocks until the sign-in completes
 #                                 (nothing is ever typed on the tty, the
 #                                 browser handles authentication), capped by
-#                                 a timeout, re-read
+#                                 a timeout. On success, sets up a session
+#                                 lock (`session create-lock`) so future
+#                                 access requires the lock code (TTY case
+#                                 only).
 #        * other error / re-auth fail -> fall through to step 2
 #   2. per-machine keychain item via the `security` CLI (capability probe
 #      only; no OS detection; no-ops when `security` or the item is absent)
@@ -189,6 +192,7 @@ run_bounded() {
     (( remaining-- ))
   done
   kill "$pid" 2>/dev/null
+  command pkill -TERM -P "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null
   rc=$?
   (( rc == 0 )) || return 124
@@ -284,6 +288,11 @@ get_password_from_pass_cli() {
         # so no accidental interactive prompt.
         if [[ -n $pass_cli ]]; then
           run_bounded 300 "$pass_cli" login </dev/null >&$tty_fd 2>&1
+        fi
+        # Set up a session lock so future access requires the lock code.
+        # Bounded to 60s so a distracted user does not block sudo forever.
+        if [[ -n $pass_cli ]]; then
+          run_bounded 60 "$pass_cli" session create-lock </dev/null >&$tty_fd 2>&1
         fi
         close_tty
       else
