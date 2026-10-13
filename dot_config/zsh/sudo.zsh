@@ -69,10 +69,12 @@ function sudoedit() {
   [[ -z "$editor" ]] && editor=vi
 
   if [[ $EUID -eq 0 ]]; then
-    "$editor" "$@"
+    "$editor" -- "$@"
     return $?
   fi
 
-  sudo "$editor" "$@"
+  # `--` separates the command from its arguments so a path starting with
+  # a dash is never parsed as an editor or sudo option.
+  sudo "$editor" -- "$@"
   return $?
 }
