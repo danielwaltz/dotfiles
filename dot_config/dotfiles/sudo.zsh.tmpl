@@ -7,11 +7,29 @@ typeset -grA SUDO_PASS_VAULTS=(
 {{- end }}
 )
 
+# Stable per-machine hostname known to chezmoi (a key in
+# .chezmoidata/hosts.toml). Used as the lookup key for the password
+# manager and the keychain service. The live hostname changes with the
+# tailscale connection and must not be used as a key.
+function _dotfiles_stable_host() {
+  emulate -L zsh
+  local c data host
+  c="$(command -v chezmoi 2>/dev/null)"
+  [[ -n $c ]] || for c in "${HOMEBREW_PREFIX:-}/bin/chezmoi" /opt/homebrew/bin/chezmoi /usr/local/bin/chezmoi /home/linuxbrew/bin/chezmoi; do
+    [[ -x $c ]] && break
+  done
+  [[ -x $c ]] || return 1
+  data="$(command "$c" data 2>/dev/null)" || return 1
+  host="$(printf '%s' "$data" | grep -oE '"hostname"[[:space:]]*:[[:space:]]*"[^"]+' | head -n1 | cut -d'"' -f4)"
+  [[ -n $host ]] || return 1
+  print -r -- "$host"
+}
+
 function _dotfiles_sudo_secret_uri() {
   emulate -L zsh
   local machine_host vault
 
-  machine_host="$HOST"
+  machine_host="$(_dotfiles_stable_host)"
   [[ "$machine_host" =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]] || return 1
   vault="${SUDO_PASS_VAULTS[$machine_host]-}"
   [[ -n "$vault" ]] || vault="${SUDO_PASS_VAULTS[${machine_host%%.*}]-}"

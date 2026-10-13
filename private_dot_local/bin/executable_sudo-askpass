@@ -44,8 +44,10 @@ if [[ ! -r $config_file ]]; then
 fi
 source "$config_file" || exit 1
 
-# sudo does not preserve $HOST; the hostname is always on the safe path.
-[[ -n ${HOST-} ]] || export HOST="$(command hostname)"
+# Lookups are keyed by the stable hostname resolved from chezmoi data
+# (_dotfiles_stable_host, defined in the sourced sudo.zsh). The live
+# hostname changes with the tailscale connection and must not be used as
+# a key.
 
 if ! secret_uri="$(_dotfiles_sudo_secret_uri)"; then
   print -u2 -r -- 'Could not determine the sudo password item.'
@@ -198,7 +200,7 @@ run_bounded() {
 # Per-machine service name for the keychain backup item.
 keychain_service_name() {
   local host
-  host="$HOST"
+  host="$(_dotfiles_stable_host)"
   [[ $host =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]] || return 1
   print -r -- "dotfiles.sudo.$host"
 }
