@@ -194,8 +194,6 @@ run_bounded() {
   kill "$pid" 2>/dev/null
   command pkill -TERM -P "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null
-  rc=$?
-  (( rc == 0 )) || return 124
   return 124
 }
 
