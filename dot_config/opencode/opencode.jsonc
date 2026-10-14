@@ -39,7 +39,7 @@
     { "action": "shell", "resource": "which *", "effect": "allow" },
     { "action": "shell", "resource": "xargs *", "effect": "allow" },
   ],
-  "model": "lemonade/Cyber-Tiel-Coder-35B",
+  "model": "lemonade/Tiel-Coder-35B",
   "providers": {
     "lemonade": {
       "name": "Lemonade",
@@ -53,6 +53,17 @@
           "models": {
             "excludeBy": [{ "field": "id", "match": "GGUF" }],
           },
+        },
+      },
+      "models": {
+        "Tiel-Coder-35B": {
+          "reasoning": true,
+          "variants": [
+            { "id": "none", "settings": { "reasoningEffort": "none" } },
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "high", "settings": { "reasoningEffort": "high" } },
+          ],
         },
       },
     },
