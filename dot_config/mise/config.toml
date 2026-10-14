@@ -13,6 +13,5 @@ tool_update.global_auto = "12h"
 
 [tools]
 bun = "latest"
-deno = "latest"
 node = "latest"
 pnpm = "latest"
