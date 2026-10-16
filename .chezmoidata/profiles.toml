@@ -11,14 +11,14 @@ vault_name = "Personal"
 [profiles.moser]
 name = "Moser"
 email = "daniel.waltz@moserit.com"
-vault_name = "Moser Consulting"
+vault_name = "Work"
 
 [profiles.fssa]
 name = "FSSA"
 email = "daniel.waltz@fssa.in.gov"
-vault_name = "Moser Consulting"
+vault_name = "Work"
 
 [profiles.iga]
 name = "IGA"
 email = "daniel.waltz@iga.in.gov"
-vault_name = "Moser Consulting"
+vault_name = "Work"
