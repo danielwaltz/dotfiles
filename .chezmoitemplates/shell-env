@@ -29,28 +29,12 @@ fi
 {{- end }}
 
 # ---- sudo askpass (Proton Pass / pass-cli) ----------------------------------
-# Probe `pass-cli` install locations (capability probes only, no OS
-# detection) so the askpass flow is available from any shell, not just the
-# interactive zsh wrapper in ~/.zshrc. When `pass-cli` cannot be resolved,
-# or ~/.local/bin/sudo-askpass is missing, SUDO_ASKPASS is left unset and
-# sudo falls back to the ordinary terminal prompt.
+# Resolve pass-cli via the shared helper ($HOME/.local/bin/dotfiles-pass-cli),
+# the single source of truth for pass-cli discovery. When pass-cli cannot be
+# resolved, or ~/.local/bin/sudo-askpass is missing, SUDO_ASKPASS is left
+# unset and sudo falls back to the ordinary terminal prompt.
 if [ -z "${SUDO_ASKPASS:-}" ] && [ -x "$HOME/.local/bin/sudo-askpass" ]; then
-  _dotfiles_pass_cli=''
-  for _dotfiles_candidate in \
-    "$(command -v pass-cli 2>/dev/null)" \
-    "${HOMEBREW_PREFIX:-}/bin/pass-cli" \
-    /opt/homebrew/bin/pass-cli \
-    /usr/local/bin/pass-cli \
-    "$HOME/.local/bin/pass-cli" \
-    "$HOME/.linuxbrew/bin/pass-cli" \
-    /home/linuxbrew/.linuxbrew/bin/pass-cli
-  do
-    [ -n "$_dotfiles_candidate" ] && [ -x "$_dotfiles_candidate" ] || continue
-    "$_dotfiles_candidate" --version >/dev/null 2>&1 || continue
-    _dotfiles_pass_cli="$_dotfiles_candidate"
-    break
-  done
-  unset _dotfiles_candidate
+  _dotfiles_pass_cli="$(command "$HOME/.local/bin/dotfiles-pass-cli" 2>/dev/null)"
   if [ -n "$_dotfiles_pass_cli" ]; then
     SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
     export SUDO_ASKPASS

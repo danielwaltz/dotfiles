@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 #
-# sudo-askpass — read the sudo password for the current machine.
+# sudo-askpass - read the sudo password for the current machine.
 #
 # Ladder (first success wins). Diagnostics always go to stderr; on success
 # stdout contains only the password (the askpass contract).
 #
-#   1. pass-cli — resolved from PATH, then from static install locations
+#   1. pass-cli - resolved from PATH, then from static install locations
 #      (Homebrew arm64/x86_64, Linuxbrew, manual). A candidate must be
 #      executable and respond to --version (a foreign binary at that path
 #      must not win).
@@ -113,29 +113,20 @@ validate_password() {
 
 # ---- pass-cli -------------------------------------------------------------
 
+# Resolve pass-cli via the shared helper (single source of truth). The helper
+# probes PATH + static install locations and rejects any candidate that does
+# not respond to --version. sudo resets $PATH, so the helper is invoked by its
+# absolute path (resolved next to this script) to survive that.
+readonly pass_cli_helper="${0:h:-$HOME/.local/bin}/dotfiles-pass-cli"
+
 pass_cli=''
 
-# Resolve pass-cli. sudo may reset PATH, so also probe static install
-# locations. A candidate is accepted only if it is executable and responds
-# to --version.
 resolve_pass_cli() {
-  local candidate
-
-  for candidate in \
-    "$(command -v pass-cli 2>/dev/null)" \
-    "${HOMEBREW_PREFIX:-}/bin/pass-cli" \
-    /opt/homebrew/bin/pass-cli \
-    /usr/local/bin/pass-cli \
-    "$HOME/.local/bin/pass-cli" \
-    "$HOME/.linuxbrew/bin/pass-cli" \
-    /home/linuxbrew/.linuxbrew/bin/pass-cli
-  do
-    [[ -n $candidate && -x $candidate ]] || continue
-    "$candidate" --version >/dev/null 2>&1 || continue
-    pass_cli="$candidate"
-    return 0
-  done
-  return 1
+  local path
+  path="$(command "$pass_cli_helper" 2>/dev/null)" || return 1
+  [[ -n $path && -x $path ]] || return 1
+  pass_cli="$path"
+  return 0
 }
 
 read_pass_cli_item() {
@@ -148,7 +139,7 @@ read_pass_cli_item() {
 
 # ---- bounded execution ----------------------------------------------------
 
-# run_bounded TIMEOUT...CMD — execute CMD with a bounded wait so a hung
+# run_bounded TIMEOUT...CMD - execute CMD with a bounded wait so a hung
 # process (e.g. a pending browser sign-in) cannot block sudo indefinitely.
 # Returns CMD's exit code, or 124 on timeout. No coreutils/gtimeout
 # dependency; polls a background job each second.
