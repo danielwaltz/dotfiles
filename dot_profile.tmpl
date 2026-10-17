@@ -1,3 +1,20 @@
 {{ includeTemplate "brew-shellenv" . }}
 
 {{ includeTemplate "shell-env" . }}
+
+{{- if exec "grep" "-q" "android" "/proc/version" -}}
+
+
+# --- Android Terminal VM: force Homebrew zsh -----------------------------
+# This VM (Android 16 Terminal) launches `/bin/bash -l` and ignores the
+# login shell recorded in /etc/passwd. bash DOES read this file, so switch
+# to Homebrew zsh once the interactive shell is running.
+#
+# Guarded to this environment only: the kernel in /proc/version contains
+# "android" here and not on your other hosts, so this only runs on this VM.
+if [ -n "$PS1" ]; then
+  if zsh_bin="$(command -v zsh 2>/dev/null)"; then
+    exec "$zsh_bin" -l
+  fi
+fi
+{{- end -}}
