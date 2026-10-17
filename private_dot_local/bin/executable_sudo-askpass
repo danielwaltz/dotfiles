@@ -21,12 +21,17 @@
 #                                 access requires the lock code (TTY case
 #                                 only).
 #        * other error / re-auth fail -> fall through to step 2
-#   2. per-machine keychain item via the `security` CLI (capability probe
-#      only; no OS detection; no-ops when `security` or the item is absent)
-#   3. sudo password prompt on /dev/tty
+#   2. Per-machine system Keychain item via the `security` CLI (capability
+#      probe only; no OS detection; no-ops when `security` or the item is
+#      absent). This is the system default fallback.
 #
-# Exit 0 with the password on stdout, 1 otherwise. Prompts never block:
-# when no terminal is available, report an error and fall through.
+#   Manual/custom password entry is intentionally NOT a fallback. If neither
+#   step 1 nor step 2 can supply a password, sudo-askpass cancels (exit 1) and
+#   tells the user to unlock Proton Pass and try again in a real terminal.
+#
+# Exit 0 with the password on stdout, 1 otherwise. When no terminal is
+# available, the lock-code unlock cannot happen; report an error and fall
+# through to cancellation rather than blocking.
 #
 # SUDO_PASS_STRICT=1: hard-fail (exit 1) the instant pass-cli is available
 # but cannot supply the password, skipping the keychain/terminal fallbacks.
@@ -104,33 +109,6 @@ validate_password() {
   [[ $1 == *$'\n'* ]] && return 1
   [[ $1 == *$'\r'* ]] && return 1
   return 0
-}
-
-# ---- terminal prompt -----------------------------------------------------
-
-# Prompt for the sudo password on /dev/tty (no echo). On success sets $pass
-# word and returns 0; otherwise returns 1.
-prompt_system_password() {
-  local pass ret
-
-  if ! open_tty; then
-    print -u2 -r -- 'No terminal available; cannot prompt for the sudo password.'
-    return 1
-  fi
-
-  printf 'sudo password: ' >&$tty_fd
-  stty -echo <&$tty_fd 2>/dev/null
-  IFS= read -r -s pass <&$tty_fd
-  ret=$?
-  stty echo <&$tty_fd 2>/dev/null
-  printf '\n' >&$tty_fd
-  close_tty
-
-  if (( ret == 0 )) && [[ -n $pass ]]; then
-    password="$pass"
-    return 0
-  fi
-  return 1
 }
 
 # ---- pass-cli -------------------------------------------------------------
@@ -333,12 +311,15 @@ if [[ -z $password ]]; then
     exit 1
   fi
 
-  # Keychain backup (capability-probed; no-op on machines without `security`
-  # or without the item).
+  # Keychain backup: the system default fallback (capability-probed; no-op on
+  # machines without `security` or without the item).
   keychain_read
   if [[ -z $password ]]; then
-    print -u2 -r -- 'sudo-askpass: pass-cli and keychain unavailable; falling back to terminal sudo-password prompt.'
-    prompt_system_password || exit 1
+    # Neither Proton Pass nor the system Keychain could supply a password and
+    # there is no manual fallback. Cancel: the user must unlock Proton Pass
+    # (locked or signed out) and retry in a real terminal.
+    print -u2 -r -- 'sudo-askpass: no sudo password available (Proton Pass and the system Keychain). Unlock Proton Pass and try again.'
+    exit 1
   fi
 fi
 
