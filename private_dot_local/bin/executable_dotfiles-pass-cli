@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# dotfiles-pass-cli - resolve the Proton Pass CLI (`pass-cli`) for the sudo
+# askpass integration.
+#
+# Prints the resolved path on stdout and exits 0 when found; prints nothing and
+# exits 1 when absent. This is the single source of truth for pass-cli
+# discovery, shared by:
+#   * ~/.local/bin/sudo-askpass (resolve_pass_cli)
+#   * ~/.zshenv (the embedded askpass probe in dot_config/.../shell-env)
+#
+# Capability probe only (no OS detection): a candidate wins only if it is
+# executable AND responds to `--version`, so a foreign binary at a known path
+# must not masquerade as pass-cli. The static install locations are probed
+# separately because `sudo` resets $PATH before running the askpass.
+
+for candidate in \
+  "$(command -v pass-cli 2>/dev/null)" \
+  "${HOMEBREW_PREFIX:-}/bin/pass-cli" \
+  /opt/homebrew/bin/pass-cli \
+  /usr/local/bin/pass-cli \
+  "$HOME/.local/bin/pass-cli" \
+  "$HOME/.linuxbrew/bin/pass-cli" \
+  /home/linuxbrew/.linuxbrew/bin/pass-cli
+do
+  [ -n "$candidate" ] && [ -x "$candidate" ] || continue
+  "$candidate" --version >/dev/null 2>&1 || continue
+  printf '%s\n' "$candidate"
+  exit 0
+done
+
+exit 1
