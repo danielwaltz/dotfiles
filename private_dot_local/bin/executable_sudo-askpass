@@ -117,7 +117,10 @@ validate_password() {
 # probes PATH + static install locations and rejects any candidate that does
 # not respond to --version. sudo resets $PATH, so the helper is invoked by its
 # absolute path (resolved next to this script) to survive that.
-readonly pass_cli_helper="${0:h:-$HOME/.local/bin}/dotfiles-pass-cli"
+# The pass-cli helper is deployed beside this script (next to sudo-askpass).
+# sudo resets $PATH, so resolve it by its own directory, not by name.
+readonly pass_cli_dir="${0:h}"
+readonly pass_cli_helper="${pass_cli_dir:-$HOME/.local/bin}/dotfiles-pass-cli"
 
 pass_cli=''
 
