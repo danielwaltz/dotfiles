@@ -39,7 +39,7 @@
     { "action": "shell", "resource": "which *", "effect": "allow" },
     { "action": "shell", "resource": "xargs *", "effect": "allow" },
   ],
-  "model": "lemonade/Tiel-Coder-35B",
+  "model": "lemonade/Qwen3.6-35B-A3B",
   "providers": {
     "lemonade": {
       "name": "Lemonade",
@@ -63,6 +63,15 @@
             { "id": "low", "settings": { "reasoningEffort": "low" } },
             { "id": "medium", "settings": { "reasoningEffort": "medium" } },
             { "id": "high", "settings": { "reasoningEffort": "high" } },
+          ],
+        },
+        "Qwen3.8-27B": {
+          "reasoning": true,
+          "variants": [
+            { "id": "none", "settings": { "reasoningEffort": "none" } },
+            { "id": "low", "settings": { "reasoningEffort": "low" } },
+            { "id": "medium", "settings": { "reasoningEffort": "medium" } },
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } },
           ],
         },
       },
