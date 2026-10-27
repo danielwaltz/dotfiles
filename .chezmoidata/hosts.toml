@@ -1,5 +1,7 @@
 [hosts.mosermacbookpro]
 autocomplete_model = "openai/gpt-6-luna"
+vault_name = "Work"
 
 [hosts.LSA4398]
 autocomplete_model = "openai/gpt-6-luna"
+vault_name = "Work"

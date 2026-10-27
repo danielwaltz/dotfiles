@@ -1,5 +1,5 @@
 {{- $config := includeTemplate "sudo-data" . | fromJson -}}
-# Generated from .chezmoidata/profiles.toml and .chezmoidata/hosts.toml. Edit the source, then run chezmoi apply.
+# Generated from .chezmoidata/profiles.toml and .chezmoidata/hosts.toml. A host's vault_name overrides its profile vault. Edit the source, then run chezmoi apply.
 typeset -gr SUDO_PASS_DEFAULT_VAULT={{ $config.default_vault | shellQuote }}
 typeset -grA SUDO_PASS_VAULTS=(
 {{- range $host, $vault := $config.hosts }}

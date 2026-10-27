@@ -10,7 +10,7 @@
     {{- fail (printf "hosts.toml: hosts.%s must be a table" $host) -}}
   {{- end -}}
   {{- range $field, $value := $profile -}}
-    {{- if not (has $field (list "autocomplete_model" "default_profile")) -}}
+    {{- if not (has $field (list "autocomplete_model" "default_profile" "vault_name")) -}}
       {{- fail (printf "hosts.toml: unknown field hosts.%s.%s" $host $field) -}}
     {{- end -}}
     {{- if not (kindIs "string" $value) -}}
@@ -23,6 +23,9 @@
       {{- if or (eq $value "defaults") (not (hasKey $.profiles $value)) -}}
         {{- fail (printf "hosts.toml: hosts.%s.default_profile must name an existing profile" $host) -}}
       {{- end -}}
+    {{- end -}}
+    {{- if and (eq $field "vault_name") (regexMatch "/" $value) -}}
+      {{- fail (printf "hosts.toml: hosts.%s.vault_name must contain no slashes for sudo references" $host) -}}
     {{- end -}}
     {{- if and (eq $field "autocomplete_model") (not (regexMatch "^[^[:space:]/]+/[^[:space:]]+$" $value)) -}}
       {{- fail (printf "hosts.toml: hosts.%s.autocomplete_model must use provider/model format" $host) -}}
