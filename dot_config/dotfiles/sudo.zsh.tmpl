@@ -27,12 +27,13 @@ function _dotfiles_stable_host() {
 
 function _dotfiles_sudo_secret_uri() {
   emulate -L zsh
-  local machine_host vault
+  local machine_host lookup_host vault
 
   machine_host="$(_dotfiles_stable_host)"
   [[ "$machine_host" =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]] || return 1
+  lookup_host="${machine_host:l}"
   vault="${SUDO_PASS_VAULTS[$machine_host]-}"
   [[ -n "$vault" ]] || vault="${SUDO_PASS_VAULTS[${machine_host%%.*}]-}"
   [[ -n "$vault" ]] || vault="$SUDO_PASS_DEFAULT_VAULT"
-  print -r -- "pass://${vault}/${machine_host}/User Password"
+  print -r -- "pass://${vault}/${lookup_host}/User Password"
 }
